@@ -7,12 +7,15 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 # Library
 add_library(SpotifyAPILib STATIC
-        src/library.cpp
+        src/auth.cpp
 )
 
 target_include_directories(SpotifyAPILib PUBLIC include)
 
 # Dependencies
+find_package(CURL REQUIRED)
+target_link_libraries(SpotifyAPILib PRIVATE CURL::libcurl)
+
 
 # Examples (Test)
 add_executable(example_test examples/example.cpp)
