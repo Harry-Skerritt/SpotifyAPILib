@@ -36,7 +36,12 @@ int main() {
     }
 
     Spotify::Auth client({client_key, client_secret});
-    client.authenticateClient();
+
+    auto url = client.getAuthURL(
+    "http://127.0.0.1:8888/callback",
+    {"user-read-private", "user-read-email"});
+
+    std::cout << url << std::endl;
 
     return 0;
 }

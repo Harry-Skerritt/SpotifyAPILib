@@ -13,6 +13,7 @@
 #include <iostream>
 #include <curl/curl.h>
 
+
 namespace Spotify {
 
     struct ClientKeys {
@@ -34,14 +35,19 @@ namespace Spotify {
         Auth(ClientKeys keys );
         ~Auth() = default; // Todo: for now
 
-        AuthResponse authenticateClient();
+        AuthResponse authenticateClient(); // Todo: Deprecate?
+
+        std::string getAuthURL(
+            const std::string &redirectUri,
+            const std::vector<std::string> &scopes,
+            std::optional<std::string> state = std::nullopt);
 
 
 
         private:
         std::string generateRandomState(size_t length = 16);
         std::string urlEncode(const std::string &value);
-        void requestAuthorisation();
+
 
         // Vars
         public:

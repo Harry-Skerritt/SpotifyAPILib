@@ -12,40 +12,12 @@ Spotify::Auth::Auth(ClientKeys keys) {
 
 Spotify::AuthResponse Spotify::Auth::authenticateClient() {
     AuthResponse response;
-    requestAuthorisation();
+
 
     // Post to /authorize
     // Exchange code for token
     // POST to /api/token
-    // Get reponse
-
-    return response;
-}
-
-void Spotify::Auth::requestAuthorisation() {
-    CURL *curl;
-    CURLcode result;
-
-    result = curl_global_init(CURL_GLOBAL_DEFAULT);
-    if (result)
-    {
-        std::cout << result << std::endl;
-        return;
-    }
-
-    auto scope = "user-read-private user-read-email";
-    auto redirect_uri = "http://127.0.0.1:8888/callback";
-    auto state = generateRandomState();
-
-    std::ostringstream oss;
-    oss << "response_type=code"
-    << "&client_id=" << urlEncode(m_keys.client_id)
-    << "&scope=" << urlEncode(scope)
-    << "&redirect_uri=" << urlEncode(redirect_uri)
-    << "&state=" << urlEncode(state);
-
-    std::cout << "Please visit the following url: " << std::endl;
-    std::cout << " https://accounts.spotify.com/authorize?" << oss.str() << std::endl;
+    // Get response
 
     /*
     curl = curl_easy_init();
@@ -61,6 +33,35 @@ void Spotify::Auth::requestAuthorisation() {
     }
     curl_global_cleanup();
     */
+
+    return response;
+}
+
+std::string Spotify::Auth::getAuthURL(
+    const std::string& redirect_uri,
+    const std::vector<std::string>& scopes,
+    const std::optional<std::string> state)
+{
+
+    // Make scopes one string
+    std::ostringstream scope_stream;
+    for (size_t i = 0; i < scopes.size(); ++i) {
+        if (i > 0) scope_stream << " ";
+        scope_stream << scopes[i];
+    }
+
+    auto actual_state = state.value_or(generateRandomState());
+
+    std::ostringstream oss;
+    oss << "response_type=code"
+    << "&client_id=" << urlEncode(m_keys.client_id)
+    << "&scope=" << urlEncode(scope_stream.str())
+    << "&redirect_uri=" << urlEncode(redirect_uri)
+    << "&state=" << urlEncode(actual_state);
+
+    std::string auth_url = " https://accounts.spotify.com/authorize?"+ oss.str();
+
+    return auth_url;
 }
 
 // Helpers
