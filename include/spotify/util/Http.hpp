@@ -10,19 +10,22 @@
 #include <string>
 #include "Types.h"
 
+namespace Spotify {
+    namespace HTTP {
+        struct Result {
+            Spotify::RFC2616_Code code;
+            std::string body;
+        };
 
-namespace HTTP {
-    struct Result {
-        Spotify::RFC2616_Code code;
-        std::string body;
-    };
 
+        Result get(const std::string& url, const std::string& bearer);
+        Result post(const std::string& url, const std::string& bearer, const std::string& body);
+        Result put (const std::string& url, const std::string& bearer, const std::string& body);
+        Result remove(const std::string& url, const std::string& bearer, const std::string& body);
 
-    Result get(const std::string& url, const std::string& bearer);
-    Result post(const std::string& url, const std::string& bearer, const std::string& body);
-    Result put (const std::string& url, const std::string& bearer, const std::string& body);
-
+    }
 }
+
 
 
 

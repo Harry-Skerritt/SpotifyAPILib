@@ -367,10 +367,11 @@ namespace Spotify {
         std::variant<std::shared_ptr<TrackObject>, std::shared_ptr<EpisodeObject>> track;
     };
 
-    using LinkedTracksObject = PagingObject<SimplifiedTrackObject>;
-    using LinkedChaptersObject = PagingObject<SimplifiedChapterObject>;
-    using LinkedEpisodesObject = PagingObject<SimplifiedEpisodeObject>;
-    using LinkedPlaylistTracksObject = PagingObject<PlaylistTrackObject>;
+    using PagedTrackObject = PagingObject<SimplifiedTrackObject>;
+    using PagedChapterObject = PagingObject<SimplifiedChapterObject>;
+    using PagedEpisodeObject = PagingObject<SimplifiedEpisodeObject>;
+    using PagedPlaylistTrackObject = PagingObject<PlaylistTrackObject>;
+    using PagedAlbumObject = PagingObject<SimplifiedAlbumObject>;
 
     // --- 'Main' Response Objects --
     struct AlbumObject {
@@ -388,7 +389,7 @@ namespace Spotify {
         std::string type;
         std::string uri;
         std::vector<SimplifiedArtistObject> artists;
-        LinkedTracksObject tracks;
+        PagedTrackObject tracks;
         std::vector<CopyrightObject> copyrights;
         ExternalID external_ids;
         std::vector<std::string> genres; // dep
@@ -451,7 +452,7 @@ namespace Spotify {
         std::string type;
         std::string uri;
         int total_chapters;
-        LinkedChaptersObject chapters;
+        PagedChapterObject chapters;
     };
 
     struct ChapterObject {
@@ -520,7 +521,7 @@ namespace Spotify {
         std::string type;
         std::string uri;
         int total_episodes;
-        LinkedEpisodesObject episodes;
+        PagedEpisodeObject episodes;
     };
 
     struct PlaybackObject {
@@ -564,7 +565,7 @@ namespace Spotify {
         OwnerObject owner;
         bool is_public;
         std::string snapshot_id;
-        LinkedPlaylistTracksObject tracks;
+        PagedPlaylistTrackObject tracks;
         std::string type;
         std::string uri;
     };
@@ -619,6 +620,10 @@ namespace Spotify {
     // --- List Objects ---
     struct DeviceListObject {
         std::vector<DeviceObject> devices;
+    };
+
+    struct AlbumListObject {
+        std::vector<AlbumObject> albums;
     };
 
 

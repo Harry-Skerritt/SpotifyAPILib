@@ -4,15 +4,23 @@
 
 #include "spotify/core/Client.hpp"
 
+namespace Spotify {
+    Client::Client(Auth& auth) : m_auth(auth) { }
 
-Spotify::Client::Client(Auth& auth) : m_auth(auth) { }
+    std::string Client::getAccessToken() const {
+        return m_auth.getAccessToken();
+    }
 
-std::string Spotify::Client::getAccessToken() const {
-    return m_auth.getAccessToken();
+    // APIs
+    PlayerAPI Client::player() {
+        return PlayerAPI(this);
+    }
+
+    AlbumAPI Client::album() {
+        return AlbumAPI(this);
+    }
 }
 
-// APIs
 
-Spotify::PlayerAPI Spotify::Client::player() {
-    return PlayerAPI(this);
-}
+
+

@@ -8,6 +8,7 @@
 #pragma once
 #include <string>
 #include <optional>
+#include <iostream>
 #include "spotify/util/Types.h"
 #include "spotify/util/JsonMapping.hpp"
 

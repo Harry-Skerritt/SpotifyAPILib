@@ -605,6 +605,11 @@ namespace Spotify {
         dl.devices = j.value("devices", std::vector<DeviceObject>{});
     }
 
+    void from_json(const json &j, AlbumListObject &al) {
+        al.albums = j.value("albums", std::vector<AlbumObject>{});
+    }
+
+
 }
 
 template void Spotify::from_json<Spotify::PlayHistoryObject>(const nlohmann::json& j, Spotify::PagingObject<Spotify::PlayHistoryObject>& p);

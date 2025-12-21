@@ -16,6 +16,7 @@ add_library(SpotifyAPILib STATIC
         src/util/Tools.cpp
         src/util/JsonMapping.cpp
         src/api/PlayerAPI.cpp
+        src/api/AlbumAPI.cpp
 
 )
 
