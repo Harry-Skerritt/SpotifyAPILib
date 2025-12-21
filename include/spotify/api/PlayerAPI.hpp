@@ -29,8 +29,8 @@ namespace Spotify {
         [[nodiscard]] std::optional<QueueObject> getUsersQueue() const;
 
         // POST
-        void skipToNext(std::optional<std::string> device_id = std::nullopt);
-        void skipToPrevious(std::optional<std::string> device_id = std::nullopt);
+        void skipToNext(std::optional<std::string> device_id = std::nullopt) const;
+        void skipToPrevious(std::optional<std::string> device_id = std::nullopt) const;
         void addItemToQueue(std::string uri, std::optional<std::string> device_id = std::nullopt);
 
         // PUT
@@ -51,6 +51,8 @@ namespace Spotify {
 
     private:
         [[nodiscard]] std::string tryGetAccessToken() const;
+
+        void skipHelper(bool is_next, std::optional<std::string> device_id = std::nullopt) const;
 
     // Vars
     public:
