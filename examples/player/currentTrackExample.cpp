@@ -15,43 +15,27 @@ int main () {
     auto auth = Spotify::ExampleUtils::authenticateFromEnv();
     Spotify::Client client(auth);
 
-    auto pb_opt = client.player().getCurrentlyPlayingTrack();
+    auto pb = client.player().getCurrentlyPlayingTrack();
 
 
-    if (!pb_opt.has_value()) {
+    if (!pb.has_value()) {
         std::cout << "Nothing is playing (or private session is active)." << std::endl;
         return 0;
     }
 
-    // Access the underlying object
-    const auto& pb = *pb_opt;
+    if (pb->asTrack() != nullptr) {
+        auto track = pb->asTrack();
+        auto album_cover = track->album.images.at(0);
 
-    if (!pb.is_playing) {
-        std::cout << "Playback is currently paused." << std::endl;
-        return 0;
+        std::cout << "Currently Playing:" << std::endl;
+        std::cout << track->name << " by " << track->artists.at(0).name << std::endl;
+        std::cout << pb->progress_ms << "ms / " << track->duration_ms << "ms" << std::endl;
+        std::cout << "(" << album_cover.height.value_or(0) << "x" << album_cover.width.value_or(0) << "): "
+                    << album_cover.url << std::endl;
     }
 
-    // handle both Track and Episode types
-    std::visit([](auto&& arg) {
-        if (arg) {
-            // Check if the shared_ptr is valid
-            std::cout << "Currently playing: " << arg->name;
 
-            // If it's a TrackObject, it has an 'artists' vector
-            using T = std::decay_t<decltype(*arg)>;
-            if constexpr (std::is_same_v<T, Spotify::TrackObject>) {
-                if (!arg->artists.empty()) {
-                    std::cout << " by " << arg->artists[0].name;
-                }
-            }
-            // If it's an EpisodeObject, it might have a 'show' name
-            else if constexpr (std::is_same_v<T, Spotify::EpisodeObject>) {
-                std::cout << " (Podcast Episode)";
-            }
 
-            std::cout << std::endl;
-        }
-    }, pb.item);
 
     return 0;
 }

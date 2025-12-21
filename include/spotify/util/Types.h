@@ -534,6 +534,22 @@ namespace Spotify {
         std::variant<std::shared_ptr<TrackObject>, std::shared_ptr<EpisodeObject>> item;
         std::string currently_playing_type;
         ActionsObject actions;
+
+        // --- Type Accessors ---
+        [[nodiscard]] std::shared_ptr<TrackObject> asTrack() const {
+            if (auto ptr = std::get_if<std::shared_ptr<TrackObject>>(&item)) {
+                return *ptr;
+            }
+            return nullptr;
+        }
+
+        [[nodiscard]] std::shared_ptr<EpisodeObject> asEpisode() const {
+            if (auto ptr = std::get_if<std::shared_ptr<EpisodeObject>>(&item)) {
+                return *ptr;
+            }
+            return nullptr;
+        }
+
     };
 
 
