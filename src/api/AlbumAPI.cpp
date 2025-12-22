@@ -109,7 +109,7 @@ namespace Spotify {
             return std::nullopt;
         }
 
-        std::string url = BASE_ALBUM_URL + "/contains?ids=" + id_list;
+        std::string url = BASE_ALBUM_USER_URL + "/contains?ids=" + id_list;
 
         return fetchAndParse<std::vector<bool>>(url);
     }

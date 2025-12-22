@@ -5,7 +5,9 @@
 #include "spotify/core/Client.hpp"
 #include "spotify/api/AlbumAPI.hpp"
 #include "spotify/api/ArtistAPI.hpp"
+#include "spotify/api/AudiobookAPI.hpp"
 #include "spotify/api/PlayerAPI.hpp"
+
 
 namespace Spotify {
     Client::Client(Auth& auth) : m_auth(auth) { }
@@ -21,6 +23,10 @@ namespace Spotify {
 
     ArtistAPI Client::artist() {
         return ArtistAPI(this);
+    }
+
+    AudiobookAPI Client::audiobook() {
+        return AudiobookAPI(this);
     }
 
     PlayerAPI Client::player() {
