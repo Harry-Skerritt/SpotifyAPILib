@@ -24,7 +24,7 @@ namespace Spotify {
         // GET
         [[nodiscard]] std::optional<EpisodeObject> getEpisode(const std::string &id, const std::optional<std::string> &market = std::nullopt) const;
         [[nodiscard]] std::optional<EpisodeListObject> getMultipleEpisodes(const std::vector<std::string>& ids, std::optional<std::string> market = std::nullopt) const;
-        [[nodiscard]] std::optional<PagedEpisodeObject> getUsersSavedEpisodes(const std::optional<std::string>& market = std::nullopt,
+        [[nodiscard]] std::optional<PagedSavedEpisodeObject> getUsersSavedEpisodes(const std::optional<std::string>& market = std::nullopt,
             const std::optional<int>& limit = std::nullopt, const std::optional<int>& offset = std::nullopt) const;
         [[nodiscard]] std::optional<std::vector<bool>> checkUsersSavedEpisodes(const std::vector<std::string>& ids) const;
 

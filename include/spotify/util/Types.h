@@ -679,6 +679,15 @@ namespace Spotify {
 
     using PagedSavedAlbumObject = PagingObject<SavedAlbumObject>;
 
+    struct SavedEpisodeObject {
+        std::string added_at;
+        EpisodeObject episode;
+    };
+
+    using PagedSavedEpisodeObject = PagingObject<SavedEpisodeObject>;
+
+
+
 
 
 

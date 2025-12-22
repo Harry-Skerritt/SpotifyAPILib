@@ -156,6 +156,23 @@ target_link_libraries(example_getMultiChapter PRIVATE SpotifyAPILib)
 set_example_output_dir(example_getMultiChapter "chapters")
 
 
+# --- Episode Examples ---
+add_executable(example_getEpisodes examples/episodes/getEpisodeExample.cpp)
+target_link_libraries(example_getEpisodes PRIVATE SpotifyAPILib)
+set_example_output_dir(example_getEpisodes "episodes")
+
+add_executable(example_getUsersEpisodes examples/episodes/getUserEpisodesExample.cpp)
+target_link_libraries(example_getUsersEpisodes PRIVATE SpotifyAPILib)
+set_example_output_dir(example_getUsersEpisodes "episodes")
+
+add_executable(example_saveUserEpisode examples/episodes/saveEpisodeForUserExample.cpp)
+target_link_libraries(example_saveUserEpisode PRIVATE SpotifyAPILib)
+set_example_output_dir(example_saveUserEpisode "episodes")
+
+add_executable(example_deleteUserEpisode examples/episodes/removeEpisodeForUserExample.cpp)
+target_link_libraries(example_deleteUserEpisode PRIVATE SpotifyAPILib)
+set_example_output_dir(example_deleteUserEpisode "episodes")
+
 
 # --- ... ---
 

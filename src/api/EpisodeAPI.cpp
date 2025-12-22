@@ -43,7 +43,7 @@ namespace Spotify {
         return fetchAndParse<EpisodeListObject>(url);
     }
 
-    std::optional<PagedEpisodeObject> EpisodeAPI::getUsersSavedEpisodes(const std::optional<std::string> &market, const std::optional<int> &limit, const std::optional<int> &offset) const {
+    std::optional<PagedSavedEpisodeObject> EpisodeAPI::getUsersSavedEpisodes(const std::optional<std::string> &market, const std::optional<int> &limit, const std::optional<int> &offset) const {
         std::string url = BASE_EPISODE_USER_URL;
 
         std::vector<std::string> params;
@@ -68,7 +68,7 @@ namespace Spotify {
             }
         }
 
-        return fetchAndParse<PagedEpisodeObject>(url);
+        return fetchAndParse<PagedSavedEpisodeObject>(url);
     }
 
     std::optional<std::vector<bool> > EpisodeAPI::checkUsersSavedEpisodes(const std::vector<std::string> &ids) const {

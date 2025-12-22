@@ -642,6 +642,11 @@ namespace Spotify {
         map_object(j, "album", s.album);
     }
 
+    void from_json(const json &j, SavedEpisodeObject &e) {
+        e.added_at = j.value("added_at", "");
+        map_object(j, "episode", e.episode);
+    }
+
 
 
     // --- Explicit Paging Implementation ---
@@ -653,6 +658,7 @@ namespace Spotify {
     template void from_json<SimplifiedTrackObject>(const json& j, PagingObject<SimplifiedTrackObject>& p);
     template void from_json<PlaylistTrackObject>(const json& j, PagingObject<PlaylistTrackObject>& p);
     template void from_json<SavedAlbumObject>(const json& j, PagingObject<SavedAlbumObject>& p);
+    template void from_json<SavedEpisodeObject>(const json& j, PagingObject<SavedEpisodeObject>& p);
     template void from_json<PlayHistoryObject>(const json& j, PagingObject<PlayHistoryObject>& p);
     template void from_json<CategoryObject>(const json& j, PagingObject<CategoryObject>& p);
 
