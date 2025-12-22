@@ -12,12 +12,16 @@ namespace Spotify {
     }
 
     // APIs
-    PlayerAPI Client::player() {
-        return PlayerAPI(this);
-    }
-
     AlbumAPI Client::album() {
         return AlbumAPI(this);
+    }
+
+    ArtistAPI Client::artist() {
+        return ArtistAPI(this);
+    }
+
+    PlayerAPI Client::player() {
+        return PlayerAPI(this);
     }
 }
 

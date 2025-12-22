@@ -626,6 +626,14 @@ namespace Spotify {
         std::vector<AlbumObject> albums;
     };
 
+    struct ArtistListObject {
+        std::vector<ArtistObject> artists;
+    };
+
+    struct TrackListObject {
+        std::vector<TrackObject> tracks;
+    };
+
     struct SavedAlbumObject {
         std::string added_at;
         AlbumObject album;
@@ -654,6 +662,39 @@ namespace Spotify {
         Context,
         Off
     };
+
+
+    // --- Include Groups ---
+    enum IncludeGroups {
+        Album,
+        Single,
+        AppearsOn,
+        Compilation
+    };
+
+    // Todo: Move to tools?
+    inline std::string includeGroupToString(IncludeGroups group) {
+        switch (group) {
+            case IncludeGroups::Album:       return "album";
+            case IncludeGroups::Single:      return "single";
+            case IncludeGroups::AppearsOn:   return "appears_on";
+            case IncludeGroups::Compilation: return "compilation";
+            default: return "";
+        }
+    }
+
+    inline std::string buildIncludeGroupsString(const std::vector<IncludeGroups>& groups) {
+        if (groups.empty()) return "";
+
+        std::string result;
+        for (size_t i = 0; i < groups.size(); ++i) {
+            result += includeGroupToString(groups[i]);
+            if (i < groups.size() - 1) {
+                result += ",";
+            }
+        }
+        return result;
+    }
 
 }
 

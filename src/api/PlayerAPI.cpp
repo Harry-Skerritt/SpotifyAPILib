@@ -206,7 +206,7 @@ namespace Spotify {
         }
     }
 
-    void PlayerAPI::startPlayback(const std::optional<std::string>& device_id, const std::optional<StartPlaybackProperties>& properties) {
+    void PlayerAPI::startPlayback(const std::optional<std::string>& device_id, const std::optional<StartPlaybackProperties>& properties) const {
         if (!m_client) return;
 
         std::string token = tryGetAccessToken();

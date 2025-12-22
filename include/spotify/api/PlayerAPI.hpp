@@ -36,7 +36,7 @@ namespace Spotify {
 
         // PUT
         void transferPlayback(const std::vector<std::string>& device_ids, std::optional<bool> play = std::nullopt) const;
-        void startPlayback(const std::optional<std::string>& device_id = std::nullopt, const std::optional<StartPlaybackProperties>& properties = std::nullopt);
+        void startPlayback(const std::optional<std::string>& device_id = std::nullopt, const std::optional<StartPlaybackProperties>& properties = std::nullopt) const;
         void pausePlayback(const std::optional<std::string> &device_id = std::nullopt) const;
         void seekToPosition(int position_ms, const std::optional<std::string> &device_id = std::nullopt) const;
         void setRepeatMode(RepeatState state, const std::optional<std::string> &device_id = std::nullopt) const;

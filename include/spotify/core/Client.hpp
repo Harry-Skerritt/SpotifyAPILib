@@ -10,6 +10,7 @@
 #include "spotify/auth/Auth.hpp"
 #include "spotify/api/PlayerAPI.hpp"
 #include "spotify/api/AlbumAPI.hpp"
+#include "spotify/api/ArtistAPI.hpp"
 
 
 
@@ -23,7 +24,10 @@ namespace Spotify {
         [[nodiscard]] std::string getAccessToken() const;
 
         AlbumAPI album();
+        ArtistAPI artist();
         PlayerAPI player();
+        
+
 
 
     private:

@@ -26,8 +26,9 @@ namespace Spotify {
         [[nodiscard]] std::optional<AlbumObject> getAlbum(const std::string &id, std::optional<std::string> market = std::nullopt) const;
         [[nodiscard]] std::optional<AlbumListObject> getMultipleAlbums(const std::vector<std::string>& ids, std::optional<std::string> market = std::nullopt) const;
         [[nodiscard]] std::optional<PagedTrackObject> getAlbumTracks(const std::string& id, std::optional<std::string> market = std::nullopt,
-            std::optional<int> limit  = std::nullopt, std::optional<int> offset = std::nullopt) const; // Todo: Check return type
-        [[nodiscard]] std::optional<PagedSavedAlbumObject> getUsersSavedAlbums(std::optional<int> limit = std::nullopt, std::optional<int> offset = std::nullopt, std::optional<std::string> market = std::nullopt) const; // Todo: Check return type
+            std::optional<int> limit  = std::nullopt, std::optional<int> offset = std::nullopt) const;
+        [[nodiscard]] std::optional<PagedSavedAlbumObject> getUsersSavedAlbums(std::optional<int> limit = std::nullopt,
+            std::optional<int> offset = std::nullopt, std::optional<std::string> market = std::nullopt) const;
         [[nodiscard]] std::optional<std::vector<bool>> checkUsersSavedAlbums(std::vector<std::string> ids) const;
         [[nodiscard]] std::optional<PagedAlbumObject> getNewReleases(std::optional<int> limit = std::nullopt, std::optional<int> offset = std::nullopt) const;
 
