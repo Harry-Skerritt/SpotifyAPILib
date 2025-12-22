@@ -11,22 +11,21 @@
 #include <iostream>
 #include "spotify/util/Types.h"
 #include "spotify/util/JsonMapping.hpp"
+#include "spotify/api/BaseAPI.hpp"
 
 namespace Spotify {
 
-    class Client;
-
-    class PlayerAPI {
+    class PlayerAPI : public BaseAPI {
     // Funcs
     public:
 
-        explicit PlayerAPI(Client* client);
+        explicit PlayerAPI(Client* client) : BaseAPI(client) {};
 
         // GET
-        [[nodiscard]] std::optional<PlaybackObject> getPlaybackState() const;
+        [[nodiscard]] std::optional<PlaybackObject> getPlaybackState(const std::optional<std::string> &market = std::nullopt, const std::optional<std::string> &additional_types = std::nullopt) const;
         [[nodiscard]] std::optional<DeviceListObject> getAvailableDevices() const;
-        [[nodiscard]] std::optional<PlaybackObject> getCurrentlyPlayingTrack() const;
-        [[nodiscard]] std::optional<RecentlyPlayedTracksObject> getRecentlyPlayedTracks() const;
+        [[nodiscard]] std::optional<PlaybackObject> getCurrentlyPlayingTrack(const std::optional<std::string> &market = std::nullopt, const std::optional<std::string> &additional_types = std::nullopt) const;
+        [[nodiscard]] std::optional<RecentlyPlayedTracksObject> getRecentlyPlayedTracks(std::optional<int> limit = std::nullopt, std::optional<int64_t> after = std::nullopt,  std::optional<int64_t> before = std::nullopt) const;
         [[nodiscard]] std::optional<QueueObject> getUsersQueue() const;
 
         // POST
@@ -45,15 +44,10 @@ namespace Spotify {
 
 
     private:
-        [[nodiscard]] std::string tryGetAccessToken() const;
-
         void skipHelper(bool is_next, std::optional<std::string> device_id = std::nullopt) const;
 
     // Vars
-    public:
     private:
-        Client* m_client;
-
         const std::string BASE_PLAYER_URL = "https://api.spotify.com/v1/me/player";
 
 

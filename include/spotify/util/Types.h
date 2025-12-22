@@ -595,8 +595,32 @@ namespace Spotify {
     using RecentlyPlayedTracksObject = PagingObject<PlayHistoryObject>;
 
     struct QueueObject {
-        std::variant<std::shared_ptr<TrackObject>, std::shared_ptr<EpisodeObject>> currently_playing;
-        std::vector<std::variant<std::shared_ptr<TrackObject>, std::shared_ptr<EpisodeObject>>> queue;
+
+        struct PlayableItem {
+            std::variant<std::shared_ptr<TrackObject>, std::shared_ptr<EpisodeObject>> data;
+
+            [[nodiscard]] std::shared_ptr<TrackObject> asTrack() const {
+                if (auto ptr = std::get_if<std::shared_ptr<TrackObject>>(&data)) return *ptr;
+                return nullptr;
+            }
+
+            [[nodiscard]] std::shared_ptr<EpisodeObject> asEpisode() const {
+                if (auto ptr = std::get_if<std::shared_ptr<EpisodeObject>>(&data)) return *ptr;
+                return nullptr;
+            }
+
+            [[nodiscard]] std::string name() const {
+                if (auto t = asTrack()) return t->name;
+                if (auto e = asEpisode()) return e->name;
+                return "";
+            }
+        };
+
+        PlayableItem currently_playing;
+        std::vector<PlayableItem> queue;
+
+        [[nodiscard]] std::shared_ptr<TrackObject> asTrack() const { return currently_playing.asTrack(); }
+        [[nodiscard]] std::shared_ptr<EpisodeObject> asEpisode() const { return currently_playing.asEpisode(); }
     };
 
     // --- Search --

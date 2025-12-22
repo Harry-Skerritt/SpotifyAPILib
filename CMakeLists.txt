@@ -71,16 +71,6 @@ configure_file(
 )
 
 
-# --- Player Data Examples ---
-add_executable(example_playerCurrent examples/player/currentTrackExample.cpp)
-target_link_libraries(example_playerCurrent PRIVATE SpotifyAPILib)
-set_example_output_dir(example_playerCurrent "player")
-
-add_executable(example_playback examples/player/playbackExample.cpp)
-target_link_libraries(example_playback PRIVATE SpotifyAPILib)
-set_example_output_dir(example_playback "player")
-
-
 # --- Album Examples ---
 add_executable(example_newReleases examples/albums/newReleaseExample.cpp)
 target_link_libraries(example_newReleases PRIVATE SpotifyAPILib)
@@ -119,3 +109,46 @@ set_example_output_dir(example_getArtistsAlbums "artists")
 add_executable(example_getArtistTopTracks examples/artists/getArtistTopTracksExample.cpp)
 target_link_libraries(example_getArtistTopTracks PRIVATE SpotifyAPILib)
 set_example_output_dir(example_getArtistTopTracks "artists")
+
+# --- ... ---
+
+
+# --- Player Examples ---
+add_executable(example_getPlaybackState examples/player/getPlaybackStateExample.cpp)
+target_link_libraries(example_getPlaybackState PRIVATE SpotifyAPILib)
+set_example_output_dir(example_getPlaybackState "player")
+
+add_executable(example_transferPlayback examples/player/transferPlaybackExample.cpp)
+target_link_libraries(example_transferPlayback PRIVATE SpotifyAPILib)
+set_example_output_dir(example_transferPlayback "player")
+
+add_executable(example_getDevices examples/player/getDevicesExample.cpp)
+target_link_libraries(example_getDevices PRIVATE SpotifyAPILib)
+set_example_output_dir(example_getDevices "player")
+
+add_executable(example_getCurrentlyPlaying examples/player/getCurrentTrackExample.cpp)
+target_link_libraries(example_getCurrentlyPlaying PRIVATE SpotifyAPILib)
+set_example_output_dir(example_getCurrentlyPlaying "player")
+
+add_executable(example_playPause examples/player/playPauseExample.cpp)
+target_link_libraries(example_playPause PRIVATE SpotifyAPILib)
+set_example_output_dir(example_playPause "player")
+
+# Skip track
+# Seek track
+# Repeat Mode
+# Volume
+# Shuffle
+
+add_executable(example_getRecentlyPlayed examples/player/getRecentlyPlayedExample.cpp)
+target_link_libraries(example_getRecentlyPlayed PRIVATE SpotifyAPILib)
+set_example_output_dir(example_getRecentlyPlayed "player")
+
+add_executable(example_getUserQueue examples/player/getUserQueueExample.cpp)
+target_link_libraries(example_getUserQueue PRIVATE SpotifyAPILib)
+set_example_output_dir(example_getUserQueue "player")
+
+add_executable(example_addToQueue examples/player/addToQueueExample.cpp)
+target_link_libraries(example_addToQueue PRIVATE SpotifyAPILib)
+set_example_output_dir(example_addToQueue "player")
+

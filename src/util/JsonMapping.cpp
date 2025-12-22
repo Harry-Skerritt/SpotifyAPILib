@@ -21,16 +21,20 @@ namespace Spotify {
         }
     }
 
-    void map_queue_item(const nlohmann::json& j, std::variant<std::shared_ptr<TrackObject>, std::shared_ptr<EpisodeObject>>& target) {
-        std::string type = j.value("type", "track");
+    void map_queue_item(const nlohmann::json& j, Spotify::QueueObject::PlayableItem& target) {
+        if (j.is_null()) return;
+
+        std::string type = j.value("type", "");
+
         if (type == "track") {
-            auto t = std::make_shared<TrackObject>();
-            j.get_to(*t);
-            target = t;
-        } else if (type == "episode") {
-            auto e = std::make_shared<EpisodeObject>();
-            j.get_to(*e);
-            target = e;
+            auto track = std::make_shared<Spotify::TrackObject>();
+            from_json(j, *track);
+            target.data = track;
+        }
+        else if (type == "episode") {
+            auto ep = std::make_shared<Spotify::EpisodeObject>();
+            from_json(j, *ep);
+            target.data = ep;
         }
     }
 
@@ -578,11 +582,12 @@ namespace Spotify {
         }
 
 
-        if (j.contains("queue") && j["queue"].is_array()) {
-            for (const auto& item : j.at("queue")) {
-                std::variant<std::shared_ptr<TrackObject>, std::shared_ptr<EpisodeObject>> v;
-                map_queue_item(item, v);
-                q.queue.push_back(v);
+        q.queue.clear();
+        if (j.contains("queue") && j.at("queue").is_array()) {
+            for (const auto& item_json : j.at("queue")) {
+                Spotify::QueueObject::PlayableItem item;
+                map_queue_item(item_json, item);
+                q.queue.push_back(item);
             }
         }
     }
