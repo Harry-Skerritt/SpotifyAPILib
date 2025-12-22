@@ -20,6 +20,7 @@ add_library(SpotifyAPILib STATIC
         src/api/ArtistAPI.cpp
         src/api/AudiobookAPI.cpp
         src/api/CategoryAPI.cpp
+        src/api/ChapterAPI.cpp
         src/api/PlayerAPI.cpp
 
 )
@@ -142,6 +143,17 @@ set_example_output_dir(example_getSingleCategory "categories")
 add_executable(example_getMultiCategory examples/categories/getMultipleCategoriesExample.cpp)
 target_link_libraries(example_getMultiCategory PRIVATE SpotifyAPILib)
 set_example_output_dir(example_getMultiCategory "categories")
+
+
+# --- Chapter Examples ---
+add_executable(example_getSingleChapter examples/chapters/getSingleChapterExample.cpp)
+target_link_libraries(example_getSingleChapter PRIVATE SpotifyAPILib)
+set_example_output_dir(example_getSingleChapter "chapters")
+
+add_executable(example_getMultiChapter examples/chapters/getMultipleChaptersExample.cpp)
+target_link_libraries(example_getMultiChapter PRIVATE SpotifyAPILib)
+set_example_output_dir(example_getMultiChapter "chapters")
+
 
 
 # --- ... ---
