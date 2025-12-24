@@ -83,6 +83,10 @@ namespace Spotify {
         std::string spotify;
     };
 
+    struct URIObject {
+        std::string uri;
+    };
+
     struct RestrictionsObject {
         std::string reason;
     };
@@ -371,9 +375,11 @@ namespace Spotify {
     using PagedChapterObject = PagingObject<SimplifiedChapterObject>;
     using PagedEpisodeObject = PagingObject<SimplifiedEpisodeObject>;
     using PagedPlaylistTrackObject = PagingObject<PlaylistTrackObject>;
+    using PagedPlaylistObject = PagingObject<SimplifiedPlaylistObject>;
     using PagedAlbumObject = PagingObject<SimplifiedAlbumObject>;
     using PagedAudiobookObject = PagingObject<SimplifiedAudiobookObject>;
     using PagedCategoryObject = PagingObject<CategoryObject>;
+
 
     // --- 'Main' Response Objects --
     struct AlbumObject {
@@ -792,6 +798,31 @@ namespace Spotify {
         }
         return result;
     }
+
+
+    // --- Playlists ---
+    enum class AdditionalType {
+        Track,
+        Episode,
+        TrackAndEpisode
+    };;
+
+    enum class PlaylistFields {
+        Collaborative,
+        Descriptions,
+        ExternalURLs,
+        Followers,
+        Href,
+        Id,
+        Images,
+        Name,
+        Owner,
+        Public,
+        SnapshotID,
+        Tracks,
+        Type,
+        Uri
+    };
 
 }
 

@@ -60,6 +60,11 @@ namespace Spotify {
         e.spotify = j.value("spotify", "");
     }
 
+    void from_json(const json &j, URIObject &u) {
+        u.uri = j.value("uri", "");
+    }
+
+
     void from_json(const json &j, RestrictionsObject &r) {
         r.reason = j.value("reason", "");
     }
@@ -652,9 +657,6 @@ namespace Spotify {
         map_object(j, "track", t.track);
     }
 
-
-
-
     // --- Explicit Paging Implementation ---
 
     template void from_json<TrackObject>(const json& j, PagingObject<TrackObject>& p);
@@ -663,6 +665,7 @@ namespace Spotify {
     template void from_json<SimplifiedAlbumObject>(const json& j, PagingObject<SimplifiedAlbumObject>& p);
     template void from_json<SimplifiedTrackObject>(const json& j, PagingObject<SimplifiedTrackObject>& p);
     template void from_json<PlaylistTrackObject>(const json& j, PagingObject<PlaylistTrackObject>& p);
+    template void from_json<SimplifiedPlaylistObject>(const json& j, PagingObject<SimplifiedPlaylistObject>& p);
     template void from_json<SavedAlbumObject>(const json& j, PagingObject<SavedAlbumObject>& p);
     template void from_json<SavedEpisodeObject>(const json& j, PagingObject<SavedEpisodeObject>& p);
     template void from_json<SavedTrackObject>(const json& j, PagingObject<SavedTrackObject>& p);

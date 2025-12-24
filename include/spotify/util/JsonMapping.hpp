@@ -26,6 +26,7 @@ namespace Spotify {
     void from_json(const json& j, CursorObject& c);
     void from_json(const json& j, CopyrightObject& c);
     void from_json(const json& j, ExternalURL& e);
+    void from_json(const json& j, URIObject& u);
     void from_json(const json& j, RestrictionsObject& r);
     void from_json(const json& j, ExternalID& e);
     void from_json(const json& j, LinkedFromObject& l);
@@ -96,11 +97,14 @@ namespace Spotify {
     extern template void from_json<SimplifiedAlbumObject>(const json&, PagingObject<SimplifiedAlbumObject>&);
     extern template void from_json<SimplifiedTrackObject>(const json&, PagingObject<SimplifiedTrackObject>&);
     extern template void from_json<PlaylistTrackObject>(const json&, PagingObject<PlaylistTrackObject>&);
+    extern template void from_json<SimplifiedPlaylistObject>(const json&, PagingObject<SimplifiedPlaylistObject>&);
     extern template void from_json<SavedAlbumObject>(const json&, PagingObject<SavedAlbumObject>&);
     extern template void from_json<SavedEpisodeObject>(const json&, PagingObject<SavedEpisodeObject>&);
     extern template void from_json<SavedTrackObject>(const json&, PagingObject<SavedTrackObject>&);
     extern template void from_json<PlayHistoryObject>(const json&, PagingObject<PlayHistoryObject>&);
     extern template void from_json<CategoryObject>(const json&, PagingObject<CategoryObject>&);
+
+
 
 
 }

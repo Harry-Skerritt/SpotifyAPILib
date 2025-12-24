@@ -18,7 +18,9 @@
 #include "spotify/api/ChapterAPI.hpp"
 #include "spotify/api/EpisodeAPI.hpp"
 #include "spotify/api/PlayerAPI.hpp"
+#include "spotify/api/PlaylistAPI.hpp"
 #include "spotify/api/TrackAPI.hpp"
+
 
 // Auth
 #include "spotify/auth/Auth.hpp"
