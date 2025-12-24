@@ -22,15 +22,17 @@ namespace Spotify {
         explicit PlaylistAPI(Client* client) : BaseAPI(client) {}
 
         // GET
-        std::optional<PlaylistObject> getPlaylist(const std::string& playlist_id, const std::optional<std::string>& market = std::nullopt,
-            const std::optional<std::vector<PlaylistFields>>& fields = std::nullopt,  const std::optional<AdditionalType>& additional_types = std::nullopt);
-        std::optional<PagedTrackObject> getPlaylistItems(const std::string& playlist_id, const std::optional<std::string>& market = std::nullopt,
-            const std::optional<std::vector<PlaylistFields>>& fields = std::nullopt, const std::optional<int>& limit = std::nullopt, const std::optional<int>& offset = std::nullopt);
-        std::optional<PagedPlaylistObject> getCurrentUsersPlaylists(const std::optional<int>& limit = std::nullopt, const std::optional<int>& offset = std::nullopt);
-        std::optional<PagedPlaylistObject> getUsersPlaylists(const std::string& user_id, const std::optional<int>& limit = std::nullopt, const std::optional<int>& offset = std::nullopt);
-        std::optional<std::vector<ImageObject>> getPlaylistConverImage(const std::string& playlist_id);
+        [[nodiscard]] std::optional<PlaylistObject> getPlaylist(const std::string& playlist_id, const std::optional<std::string>& market = std::nullopt,
+            const std::optional<std::string>& fields = std::nullopt,  const std::optional<AdditionalType>& additional_types = std::nullopt) const;
+        [[nodiscard]] std::optional<PagedTrackObject> getPlaylistItems(const std::string& playlist_id, const std::optional<std::string>& market = std::nullopt,
+            const std::optional<std::string>& fields = std::nullopt, const std::optional<int>& limit = std::nullopt, const std::optional<int>& offset = std::nullopt,
+            const std::optional<AdditionalType>& additional_types = std::nullopt) const;
+        [[nodiscard]] std::optional<PagedPlaylistObject> getCurrentUsersPlaylists(const std::optional<int>& limit = std::nullopt, const std::optional<int>& offset = std::nullopt) const;
+        [[nodiscard]] std::optional<PagedPlaylistObject> getUsersPlaylists(const std::string& user_id, const std::optional<int>& limit = std::nullopt, const std::optional<int>& offset = std::nullopt) const;
+        [[nodiscard]] std::optional<std::vector<ImageObject>> getPlaylistCoverImage(const std::string& playlist_id) const;
 
         // PUT
+        void changePlaylistDetails(const std::string& playlist_id, const std::optional<std::string>& name = std::nullopt, const std::optional<bool>& is_public = std::nullopt, const std::optional<std::string>& description = std::nullopt,const std::optional<bool>& is_collaborative = std::nullopt);
         void updatePlaylistItems(const std::string& playlist_id, const std::optional<std::vector<std::string>>& uris = std::nullopt, const std::optional<int> range_start& = std::nullopt,
             const std::optional<int> insert_before& = std::nullopt, const std::optional<int>& range_length = std::nullopt);
         void addCustomPlaylistCover(const std::string& playlist_id, const std::string& image);

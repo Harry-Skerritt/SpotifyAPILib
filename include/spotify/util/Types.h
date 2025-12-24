@@ -804,8 +804,17 @@ namespace Spotify {
     enum class AdditionalType {
         Track,
         Episode,
-        TrackAndEpisode
-    };;
+        All
+    };
+
+    inline std::string additionalTypeToString(const AdditionalType type) {
+        switch (type) {
+            case AdditionalType::Track:   return "track";
+            case AdditionalType::Episode: return "episode";
+            case AdditionalType::All:    return "track,episode";
+            default: return "";
+        }
+    }
 
     enum class PlaylistFields {
         Collaborative,

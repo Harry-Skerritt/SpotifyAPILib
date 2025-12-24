@@ -36,7 +36,7 @@ namespace Spotify {
         SOACreatePartner
     };
 
-    inline std::string scopeToString(Scope scope) {
+    inline std::string scopeToString(const Scope scope) {
         switch (scope) {
             case Scope::UGCImageUpload:            return "ugc-image-upload";
             case Scope::UserReadPlaybackState:     return "user-read-playback-state";

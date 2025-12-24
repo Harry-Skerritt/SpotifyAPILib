@@ -9,6 +9,7 @@
 #include <string>
 
 #include "spotify/api/EpisodeAPI.hpp"
+#include "spotify/api/PlaylistAPI.hpp"
 #include "spotify/auth/Auth.hpp"
 
 
@@ -22,6 +23,7 @@ namespace Spotify {
     class ChapterAPI;
     class EpisodeAPI;
     class PlayerAPI;
+    class PlaylistAPI;
     class TrackAPI;
 
     class Client {
@@ -40,6 +42,7 @@ namespace Spotify {
         ChapterAPI chapter();
         EpisodeAPI episode();
         PlayerAPI player();
+        PlaylistAPI playlist();
         TrackAPI track();
 
 

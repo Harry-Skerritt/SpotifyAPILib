@@ -12,6 +12,7 @@
 #include "spotify/api/ChapterAPI.hpp"
 #include "spotify/api/EpisodeAPI.hpp"
 #include "spotify/api/PlayerAPI.hpp"
+#include "spotify/api/PlaylistAPI.hpp"
 #include "spotify/api/TrackAPI.hpp"
 
 
@@ -53,6 +54,10 @@ namespace Spotify {
 
     PlayerAPI Client::player() {
         return PlayerAPI(this);
+    }
+
+    PlaylistAPI Client::playlist() {
+        return PlaylistAPI(this);
     }
 
     TrackAPI Client::track() {

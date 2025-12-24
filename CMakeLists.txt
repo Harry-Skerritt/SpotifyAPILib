@@ -24,6 +24,7 @@ add_library(SpotifyAPILib STATIC
         src/api/ChapterAPI.cpp
         src/api/EpisodeAPI.cpp
         src/api/PlayerAPI.cpp
+        src/api/PlaylistAPI.cpp
         src/api/TrackAPI.cpp
 
 
