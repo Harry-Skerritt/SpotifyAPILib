@@ -181,7 +181,7 @@ namespace Spotify {
         if (is_collaborative.has_value())
             j["collaborative"] = *is_collaborative;
 
-        sendAction("PUT", url, j.dump());
+        (void)sendAction("PUT", url, j.dump());
     }
 
     void PlaylistAPI::replacePlaylistItems(
@@ -199,7 +199,7 @@ namespace Spotify {
         nlohmann::json j;
         j["uris"] = uri_list;
 
-        sendAction("PUT", url, j.dump());
+        (void)sendAction("PUT", url, j.dump());
     }
 
     void PlaylistAPI::reorderPlaylistItems(
@@ -223,7 +223,7 @@ namespace Spotify {
             j["snapshot_id"] = *snapshot_id;
 
 
-        sendAction("PUT", url, j.dump());
+        (void)sendAction("PUT", url, j.dump());
     }
 
     void PlaylistAPI::addCustomPlaylistCover(
@@ -267,7 +267,7 @@ namespace Spotify {
         std::map<std::string, std::string> extra_headers = {{ "Content-Type", "image/jpeg"} };
 
 
-        sendAction("PUT", url, base64_image, extra_headers);
+        (void)sendAction("PUT", url, base64_image, extra_headers);
     }
 
 
@@ -296,7 +296,7 @@ namespace Spotify {
         if (position.has_value())
             j["position"] = *position;
 
-        sendAction("POST", url, j.dump());
+        (void)sendAction("POST", url, j.dump());
     }
 
 
@@ -358,7 +358,7 @@ namespace Spotify {
         if (snapshot_id.has_value() && !snapshot_id->empty())
             j["snapshot_id"] = *snapshot_id;
 
-        sendAction("DELETE", url, j.dump());
+        (void)sendAction("DELETE", url, j.dump());
     }
 
 

@@ -131,7 +131,7 @@ namespace Spotify {
             url += "&device_id=" + *device_id;
         }
 
-        sendAction("POST", url, "");
+        (void)sendAction("POST", url, "");
     }
 
     // --- PUT ---
@@ -149,7 +149,7 @@ namespace Spotify {
             j["play"] = *play;
         }
 
-       sendAction("PUT", BASE_PLAYER_URL, j.dump());
+       (void)sendAction("PUT", BASE_PLAYER_URL, j.dump());
     }
 
     void PlayerAPI::startPlayback(const std::optional<std::string>& device_id, const std::optional<StartPlaybackProperties>& properties) const {
@@ -180,7 +180,7 @@ namespace Spotify {
             body = j.dump();
         }
 
-        sendAction("PUT", url, body);
+        (void)sendAction("PUT", url, body);
     }
 
     void PlayerAPI::pausePlayback(const std::optional<std::string> &device_id) const {
@@ -190,7 +190,7 @@ namespace Spotify {
             url += "?device_id=" + *device_id;
         }
 
-        sendAction("PUT", url, "");
+        (void)sendAction("PUT", url, "");
     }
 
     void PlayerAPI::seekToPosition(int position_ms, const std::optional<std::string> &device_id) const {
@@ -200,7 +200,7 @@ namespace Spotify {
             url += "?device_id=" + *device_id;
         }
 
-        sendAction("PUT", url, "");
+        (void)sendAction("PUT", url, "");
     }
 
     void PlayerAPI::setRepeatMode(RepeatState state, const std::optional<std::string> &device_id) const {
@@ -218,7 +218,7 @@ namespace Spotify {
             url += "?device_id=" + *device_id;
         }
 
-        sendAction("PUT", url, "");
+        (void)sendAction("PUT", url, "");
     }
 
     void PlayerAPI::setPlaybackVolume(int volume_percent, std::optional<std::string> device_id) const {
@@ -229,7 +229,7 @@ namespace Spotify {
             url += "?device_id=" + *device_id;
         }
 
-        sendAction("PUT", url, "");
+        (void)sendAction("PUT", url, "");
     }
 
     void PlayerAPI::togglePlaybackShuffle(bool state, std::optional<std::string> device_id) const {
@@ -240,7 +240,7 @@ namespace Spotify {
             url += "?device_id=" + *device_id;
         }
 
-        sendAction("PUT", url, "");
+        (void)sendAction("PUT", url, "");
     }
 
 
@@ -255,6 +255,6 @@ namespace Spotify {
             url += "?device_id=" + *device_id;
         }
 
-        sendAction("PUT", url, "");
+        (void)sendAction("PUT", url, "");
     }
 }

@@ -94,7 +94,7 @@ namespace Spotify {
         nlohmann::json j;
         j["ids"] = ids;
 
-        sendAction("PUT", BASE_TRACK_USER_URL, j.dump());
+        (void)sendAction("PUT", BASE_TRACK_USER_URL, j.dump());
     }
 
     void TrackAPI::saveTracksForUser(const std::vector<TimestampIDObject> &timestamped_ids) const {
@@ -115,7 +115,7 @@ namespace Spotify {
         }
         j["timestamped_ids"] = ts_array;
 
-        sendAction("PUT", BASE_TRACK_USER_URL, j.dump());
+        (void)sendAction("PUT", BASE_TRACK_USER_URL, j.dump());
     }
 
     // --- DELETE ---
@@ -131,7 +131,7 @@ namespace Spotify {
         nlohmann::json j;
         j["ids"] = id_list;
 
-        sendAction("DELETE", url, j.dump());
+        (void)sendAction("DELETE", url, j.dump());
     }
 
 

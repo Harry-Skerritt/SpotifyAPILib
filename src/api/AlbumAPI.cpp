@@ -150,7 +150,7 @@ namespace Spotify {
 
         std::string url = BASE_ALBUM_USER_URL + "?ids=" + id_list;
 
-        sendAction("PUT", url);
+        (void)sendAction("PUT", url);
     }
 
 
@@ -168,7 +168,7 @@ namespace Spotify {
         nlohmann::json j;
         j["ids"] = id_list;
 
-        sendAction("DELETE", url, j.dump());
+        (void)sendAction("DELETE", url, j.dump());
     }
 
 
