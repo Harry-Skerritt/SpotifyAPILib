@@ -51,7 +51,7 @@ namespace Spotify {
             AuthServer::openBrowser(url);
             std::string code = AuthServer::waitForCode("127.0.0.1", 8888, "index.html");
 
-            if (code.empty() || !auth.exchangeCode(code)) {
+            if (code.empty()) {
                 throw std::runtime_error("Authorization failed!");
             }
 

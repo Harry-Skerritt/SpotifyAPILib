@@ -10,6 +10,7 @@
 #include <string>
 #include <iostream>
 #include "nlohmann/json.hpp"
+#include "spotify/core/Errors.hpp"
 #include "spotify/util/Http.hpp"
 #include "spotify/util/Tools.hpp"
 
@@ -32,14 +33,11 @@ namespace Spotify {
             auto result = HTTP::get(url, token);
 
             // Error Handling
-            if (result.code != RFC2616_Code::OK && result.code != RFC2616_Code::NO_CONTENT) {
-                std::cerr << "API Error [" << (int)result.code << "]: " << result.body << std::endl;
-                return std::nullopt;
+            ErrorHandler::verifyResponse(result);
+
+            if (result.body.empty()) {
+                throw Spotify::ParseException("API returned success (200) but body was empty.", "");
             }
-
-            if (result.body.empty()) return std::nullopt;
-
-            //std::cout << result.body << std::endl;
 
             try {
                 auto data = nlohmann::json::parse(result.body);
@@ -51,8 +49,8 @@ namespace Spotify {
 
                 return data.get<T>();
             } catch (const std::exception& e) {
-                std::cerr << "JSON Mapping Error: " << e.what() << std::endl;
-                return std::nullopt;
+                std::string error_msg = "Failed to parse Spotify response. JSON Error: " + std::string(e.what());
+                throw Spotify::ParseException(error_msg, result.body);
             }
         }
 
@@ -63,22 +61,15 @@ namespace Spotify {
             std::string token = tryGetAccessToken();
             HTTP::Result result = {};
 
-            if (method == "PUT") result = HTTP::put(url, token, body, extra_headers);
+            if (method == "GET") result = HTTP::get(url, token);
+            else if (method == "PUT") result = HTTP::put(url, token, body, extra_headers);
             else if (method == "DELETE") result = HTTP::remove(url, token, body, extra_headers);
             else if (method == "POST") result = HTTP::post(url, token, body, extra_headers);
             else {
-                std::cerr << "Unsupported method: " << method << std::endl;
-                return std::nullopt;
+               throw std::invalid_argument("Unsupported HTTP method: " + method);
             }
 
-            if (result.code != RFC2616_Code::OK &&
-                result.code != RFC2616_Code::CREATED &&
-                result.code != RFC2616_Code::ACCEPTED &&
-                result.code != RFC2616_Code::NO_CONTENT)
-            {
-                std::cerr << method << " Failed [" << (int)result.code << "]: " << result.body << std::endl;
-                return std::nullopt;
-            }
+            ErrorHandler::verifyResponse(result);
 
             return result.body;
         }

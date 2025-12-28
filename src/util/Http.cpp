@@ -2,12 +2,13 @@
 // Created by Harry Skerritt on 21/12/2025.
 //
 
-#include "spotify/util/Http.hpp"
-
 #include <iostream>
 #include <curl/curl.h>
 
+#include "spotify/util/Http.hpp"
 #include "spotify/util/base64.hpp"
+#include "spotify/core/Errors.hpp"
+
 
 namespace Spotify {
     static size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* userp) {
@@ -38,7 +39,9 @@ namespace Spotify {
 
         curl = curl_easy_init();
 
-        if (!curl) return result;
+        if (!curl) {
+            throw Spotify::Exception("Failed to initialize CURL handle (System error).");
+        }
 
         curl_slist *headers = prepareHeaders(bearer, extra_headers);
 
@@ -50,12 +53,15 @@ namespace Spotify {
         auto code = curl_easy_perform(curl);
 
         if (code != CURLE_OK) {
-            result.code = Spotify::RFC2616_Code::NETWORK_ERROR;
-        } else {
-            long status = 0;
-            curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &status);
-            result.code = static_cast<Spotify::RFC2616_Code>(status);
+            std::string err = curl_easy_strerror(code);
+            curl_slist_free_all(headers);
+            curl_easy_cleanup(curl);
+            throw Spotify::NetworkException(err);
         }
+
+        long status = 0;
+        curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &status);
+        result.code = static_cast<Spotify::RFC2616_Code>(status);
 
         curl_slist_free_all(headers);
         curl_easy_cleanup(curl);
@@ -68,7 +74,9 @@ namespace Spotify {
 
         curl = curl_easy_init();
 
-        if (!curl) return result;
+        if (!curl) {
+            throw Spotify::Exception("Failed to initialize CURL handle (System error).");
+        }
 
         curl_slist *headers = prepareHeaders(bearer, extra_headers);
 
@@ -91,12 +99,15 @@ namespace Spotify {
         auto code = curl_easy_perform(curl);
 
         if (code != CURLE_OK) {
-            result.code = Spotify::RFC2616_Code::NETWORK_ERROR;
-        } else {
-            long status = 0;
-            curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &status);
-            result.code = static_cast<Spotify::RFC2616_Code>(status);
+            std::string err = curl_easy_strerror(code);
+            curl_slist_free_all(headers);
+            curl_easy_cleanup(curl);
+            throw Spotify::NetworkException(err);
         }
+
+        long status = 0;
+        curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &status);
+        result.code = static_cast<Spotify::RFC2616_Code>(status);
 
         curl_slist_free_all(headers);
         curl_easy_cleanup(curl);
@@ -109,7 +120,9 @@ namespace Spotify {
 
         curl = curl_easy_init();
 
-        if (!curl) return result;
+        if (!curl) {
+            throw Spotify::Exception("Failed to initialize CURL handle (System error).");
+        }
 
         curl_slist *headers = prepareHeaders(bearer, extra_headers);
 
@@ -133,12 +146,15 @@ namespace Spotify {
         auto code = curl_easy_perform(curl);
 
         if (code != CURLE_OK) {
-            result.code = Spotify::RFC2616_Code::NETWORK_ERROR;
-        } else {
-            long status = 0;
-            curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &status);
-            result.code = static_cast<Spotify::RFC2616_Code>(status);
+            std::string err = curl_easy_strerror(code);
+            curl_slist_free_all(headers);
+            curl_easy_cleanup(curl);
+            throw Spotify::NetworkException(err);
         }
+
+        long status = 0;
+        curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &status);
+        result.code = static_cast<Spotify::RFC2616_Code>(status);
 
         curl_slist_free_all(headers);
         curl_easy_cleanup(curl);
@@ -151,11 +167,13 @@ namespace Spotify {
 
         curl = curl_easy_init();
 
-        if (!curl) return result;
+        if (!curl) {
+            throw Spotify::Exception("Failed to initialize CURL handle (System error).");
+        }
 
         curl_slist *headers = prepareHeaders(bearer, extra_headers);
 
-        if (!body.empty()) {
+        if (!body.empty() && extra_headers.find("Content-Type") == extra_headers.end()) {
             headers = curl_slist_append(headers, "Content-Type: application/json");
         }
 
@@ -175,12 +193,15 @@ namespace Spotify {
         auto code = curl_easy_perform(curl);
 
         if (code != CURLE_OK) {
-            result.code = Spotify::RFC2616_Code::NETWORK_ERROR;
-        } else {
-            long status = 0;
-            curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &status);
-            result.code = static_cast<Spotify::RFC2616_Code>(status);
+            std::string err = curl_easy_strerror(code);
+            curl_slist_free_all(headers);
+            curl_easy_cleanup(curl);
+            throw Spotify::NetworkException(err);
         }
+
+        long status = 0;
+        curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &status);
+        result.code = static_cast<Spotify::RFC2616_Code>(status);
 
         curl_slist_free_all(headers);
         curl_easy_cleanup(curl);
@@ -194,7 +215,9 @@ namespace Spotify {
 
         curl = curl_easy_init();
 
-        if (!curl) return result;
+        if (!curl) {
+            throw Spotify::Exception("Failed to initialize CURL handle (System error).");
+        }
 
         curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
@@ -203,12 +226,14 @@ namespace Spotify {
         auto code = curl_easy_perform(curl);
 
         if (code != CURLE_OK) {
-            result.code = Spotify::RFC2616_Code::NETWORK_ERROR;
-        } else {
-            long status = 0;
-            curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &status);
-            result.code = static_cast<Spotify::RFC2616_Code>(status);
+            std::string err = curl_easy_strerror(code);
+            curl_easy_cleanup(curl);
+            throw Spotify::NetworkException(err);
         }
+
+        long status = 0;
+        curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &status);
+        result.code = static_cast<Spotify::RFC2616_Code>(status);
 
         curl_easy_cleanup(curl);
         return result;

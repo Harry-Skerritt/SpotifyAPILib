@@ -6,6 +6,8 @@
 
 #include "spotify/auth/AuthServer.hpp"
 
+#include "spotify/core/Errors.hpp"
+
 namespace Spotify {
     void AuthServer::openBrowser(const std::string &url) {
 #if defined(_WIN32)
@@ -15,7 +17,10 @@ namespace Spotify {
 #else
         std::string command = "xdg-open \"" + url + "\"";
 #endif
-        std::system(command.c_str());
+        int result = std::system(command.c_str());
+        if (result != 0) {
+            throw Spotify::Exception("AuthServer: Failed to execute browser open command");
+        }
     }
 
     std::string AuthServer::waitForCode(const std::string &auth_url, int port, const std::optional<std::filesystem::path> &html_file_path) {
@@ -28,11 +33,13 @@ namespace Spotify {
 
         if (html_file_path.has_value()) {
             std::ifstream file(html_file_path.value());
-            if (file.is_open()) {
-                std::stringstream buffer;
-                buffer << file.rdbuf();
-                response_html = buffer.str();
+            if (!file.is_open()) {
+                std::string error_msg = "AuthServer: Failed to open custom HTML file at " + html_file_path.value().string();
+                throw Spotify::LogicException(error_msg);
             }
+            std::stringstream buffer;
+            buffer << file.rdbuf();
+            response_html = buffer.str();
         }
 
         // Setup server
@@ -45,8 +52,14 @@ namespace Spotify {
         });
 
         std::cout << "Waiting for response on " << auth_url << ":" << port << "..." << std::endl;
-        server.listen(auth_url, port);
+        if (!server.listen(auth_url, port)) {
+            throw Spotify::NetworkException("AuthServer failed to bind to port " + std::to_string(port) +
+                                      ". Is the port already in use?");
+        }
 
+        if (captured_code.empty()) {
+            throw Spotify::Exception("AuthServer: Server stopped without capturing an authorization code.");
+        }
         return captured_code;
     }
 }

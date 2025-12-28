@@ -18,6 +18,7 @@ namespace Spotify {
         std::string client_secret;
     };
 
+    /*
     enum ResponseCode {
         SUCCESS,
         NETWORK_ERROR,
@@ -26,15 +27,7 @@ namespace Spotify {
         VALUE_ERROR,
         UNKNOWN_ERROR
     };
-
-    struct AuthResponse {
-        std::string access_token;
-        std::string token_type;
-        std::string scope;
-        std::chrono::time_point<std::chrono::system_clock> expire_time;
-        std::string refresh_token;
-        ResponseCode response_code;
-    };
+    */
 
     enum class RFC2616_Code {
         OK = 200,
@@ -51,8 +44,16 @@ namespace Spotify {
         NOT_IMPLEMENTED = 501,
         BAD_GATEWAY = 502,
         SERVICE_UNAVAILABLE = 503,
-        NETWORK_ERROR = -1,
         UNKNOWN_ERROR = -2,
+    };
+
+    struct AuthResponse {
+        std::string access_token;
+        std::string token_type;
+        std::string scope;
+        std::chrono::time_point<std::chrono::system_clock> expire_time;
+        std::string refresh_token;
+        RFC2616_Code response_code;
     };
 
 

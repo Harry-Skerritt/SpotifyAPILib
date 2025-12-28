@@ -27,7 +27,6 @@ namespace Spotify::WebTools {
 
 namespace Spotify::Tools {
     void loadEnv(const std::string& filename = ".env");
-    std::string stringifyResponse(ResponseCode code);
 
 
     bool inRange(int test_case, int low, int high);

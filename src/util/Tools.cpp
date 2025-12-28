@@ -1,10 +1,11 @@
 //
 // Created by Harry Skerritt on 20/12/2025.
 //
+#include <algorithm>
+#include "nlohmann/json.hpp"
 
 #include "spotify/util/Tools.hpp"
-
-#include <algorithm>
+#include "spotify/core/Errors.hpp"
 
 namespace Spotify {
     // --- WEB TOOLS ---
@@ -37,25 +38,53 @@ namespace Spotify {
     }
 
     std::string WebTools::extractValue(const std::string &json, const std::string &key) {
+
+        try {
+            auto data = nlohmann::json::parse(json);
+            return data.at(key).get<std::string>();
+
+        } catch (const nlohmann::json::exception& e) {
+            throw Spotify::ParseException("Failed to extract string key '" + key + "': " + std::string(e.what()), json);
+        }
+
+        /*
         std::string searchKey = "\"" + key + "\":\"";
         size_t start = json.find(searchKey);
-        if (start == std::string::npos) return "";
+
+        if (start == std::string::npos) {
+            throw Spotify::ParseException("Key '" + key + "' not found in JSON string.", json);
+        }
 
         start += searchKey.length();
         size_t end = json.find("\"", start);
         return json.substr(start, end - start);
+        */
     }
 
     int WebTools::extractIntValue(const std::string &json, const std::string &key) {
+        try {
+            auto data = nlohmann::json::parse(json);
+            return data.at(key).get<int>();
+        } catch (const nlohmann::json::exception& e) {
+            throw Spotify::ParseException("JSON Library Error: " + std::string(e.what()), json);
+        }
+
+        /*
         std::string searchKey = "\"" + key + "\"";
         size_t keyPos = json.find(searchKey);
-        if (keyPos == std::string::npos) return 0;
+        if (keyPos == std::string::npos) {
+            throw Spotify::ParseException("Key '" + key + "' not found in JSON string.", json);
+        }
 
         size_t colonPos = json.find(":", keyPos + searchKey.length());
-        if (colonPos == std::string::npos) return 0;
+        if (colonPos == std::string::npos) {
+            throw Spotify::ParseException("Invalid JSON format: Colon missing after key '" + key + "'.", json);
+        }
 
         size_t start = json.find_first_of("-0123456789", colonPos);
-        if (start == std::string::npos) return 0;
+        if (start == std::string::npos) {
+            throw Spotify::ParseException("Value for key '" + key + "' is not an integer.", json);
+        }
 
         size_t end = json.find_first_not_of("0123456789", start);
 
@@ -63,8 +92,9 @@ namespace Spotify {
         try {
             return std::stoi(valStr);
         } catch (...) {
-            return 0;
+            throw Spotify::ParseException("Failed to convert value '" + valStr + "' to integer for key '" + key + "'.", json);
         }
+        */
     }
 
     std::string WebTools::getHttpStatusText(int code)
@@ -114,11 +144,8 @@ namespace Spotify {
             case(RFC2616_Code::NOT_IMPLEMENTED):
                 return "Not Implemented";
 
-            case (RFC2616_Code::NETWORK_ERROR):
-                return "Network Error";
-
             default:
-                return "Unknown Status (" + std::to_string(code) + ")";
+                throw Spotify::Exception("Unrecognized HTTP Status Code: " + std::to_string(code));
 
         }
     }
@@ -126,7 +153,9 @@ namespace Spotify {
     // --- TOOLS ---
     void Tools::loadEnv(const std::string& filename) {
         std::ifstream file(filename);
-        if (!file.is_open()) return;
+        if (!file.is_open()) {
+            throw Spotify::Exception("Failed to load environment file: " + filename);
+        }
 
         std::string line;
         while (std::getline(file, line)) {
@@ -141,20 +170,6 @@ namespace Spotify {
         }
     }
 
-    std::string Tools::stringifyResponse(ResponseCode code) {
-        switch(code) {
-            case(SUCCESS):
-                return "SUCCESS";
-            case(NETWORK_ERROR):
-                return "NETWORK_ERROR";
-            case(AUTH_ERROR):
-                return "AUTH_ERROR";
-            case(PARSE_ERROR):
-                return "PARSE_ERROR";
-            default:
-                return "UNKNOWN";
-        }
-    }
 
     bool Tools::inRange(int test_case, int low, int high) {
         return (low <= test_case && test_case <= high);
@@ -164,7 +179,9 @@ namespace Spotify {
     std::string Tools::toCSV(std::vector<std::string> ids, int min_qty, int max_qty) {
         int size = ids.size();
         if (size > max_qty || size <= min_qty) {
-           return "size-error";
+            throw Spotify::LogicException("CSV generation failed: size " + std::to_string(size) +
+                                      " is outside allowed range [" + std::to_string(min_qty) +
+                                      "..." + std::to_string(max_qty) + "]");
         }
 
         std::string csv = std::accumulate(std::next(ids.begin()), ids.end(), ids[0], [](std::string a, std::string b) {

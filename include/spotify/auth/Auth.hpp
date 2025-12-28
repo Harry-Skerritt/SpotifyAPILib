@@ -34,14 +34,13 @@ namespace Spotify {
             const std::vector<Scope> &scopes,
             const std::optional<std::string>& state = std::nullopt);
 
-        bool exchangeCode(const std::string &code);
-        bool refreshAccessToken(const std::optional<std::string>& refresh_token = std::nullopt);
+        void exchangeCode(const std::string &code);
+        void refreshAccessToken(const std::optional<std::string>& refresh_token = std::nullopt);
 
 
         // Getters
         std::string getAccessToken();
         [[nodiscard]] AuthResponse getAuthResponse() const;
-        [[nodiscard]] ResponseCode getError() const;
 
         private:
         AuthResponse buildAuthResponse(const std::string& json);
