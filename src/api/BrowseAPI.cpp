@@ -7,6 +7,7 @@
 
 #include "nlohmann/json.hpp"
 #include "spotify/core/Client.hpp"
+#include "spotify/core/Endpoints.hpp"
 #include "spotify/util/Http.hpp"
 #include "spotify/util/Tools.hpp"
 
@@ -14,7 +15,7 @@ namespace Spotify {
 
     // --- Market ---
     std::optional<std::vector<std::string>> BrowseAPI::getAvailableMarkets() const {
-        std::string url = BASE_BROWSE_URL + "markets";
+        std::string url = Endpoints::API_V1 + "/markets";
 
         return fetchAndParse<std::vector<std::string>>(url, "markets");
     }
@@ -23,7 +24,7 @@ namespace Spotify {
     // --- Search ---
     std::optional<SearchObject> BrowseAPI::searchForItem(std::string &q, const std::vector<SearchType> &type, const std::optional<std::string> &market, const std::optional<int> &limit, const std::optional<int> &offset, const std::optional<std::string> &include_external) const {
 
-        std::string url = BASE_BROWSE_URL + "search?q=" + WebTools::urlEncode(q);
+        std::string url = Endpoints::API_V1 + "/search?q=" + WebTools::urlEncode(q);
 
         std::string type_str = buildSearchTypeString(type);
         url += "&type=" + WebTools::urlEncode(type_str);

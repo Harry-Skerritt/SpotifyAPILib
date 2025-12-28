@@ -30,9 +30,6 @@ namespace Spotify {
             std::optional<int> limit = std::nullopt, std::optional<int> offset = std::nullopt) const;
         [[nodiscard]] std::optional<TrackListObject> getArtistTopTracks(const std::string &id, std::optional<std::string> market = std::nullopt) const;
 
-    // Vars
-    private:
-        const std::string BASE_ARTIST_URL = "https://api.spotify.com/v1/artists";
     };
 }
 

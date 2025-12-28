@@ -8,6 +8,7 @@
 
 #include "nlohmann/json.hpp"
 #include "spotify/core/Client.hpp"
+#include "spotify/core/Endpoints.hpp"
 #include "spotify/util/Http.hpp"
 #include "spotify/util/Tools.hpp"
 
@@ -16,7 +17,7 @@ namespace Spotify {
     // --- GET ---
     std::optional<EpisodeObject> EpisodeAPI::getEpisode(const std::string &id, const std::optional<std::string> &market) const {
 
-        std::string url = BASE_EPISODE_URL + "/" + WebTools::urlEncode(id);
+        std::string url = Endpoints::EPISODES + "/" + WebTools::urlEncode(id);
 
         if (market.has_value() && !market->empty() && Tools::isValidMarket(*market)) {
             url += "?market=" + WebTools::urlEncode(*market);
@@ -30,7 +31,7 @@ namespace Spotify {
         std::string id_list = Tools::toCSV(ids, 0, 50);
 
 
-        std::string url = BASE_EPISODE_URL + "?ids=" + id_list;
+        std::string url = Endpoints::EPISODES + "?ids=" + id_list;
 
         if (market.has_value() && !market->empty() && Tools::isValidMarket(*market)) {
             url += "?market=" + WebTools::urlEncode(*market);
@@ -40,7 +41,7 @@ namespace Spotify {
     }
 
     std::optional<PagedSavedEpisodeObject> EpisodeAPI::getUsersSavedEpisodes(const std::optional<std::string> &market, const std::optional<int> &limit, const std::optional<int> &offset) const {
-        std::string url = BASE_EPISODE_USER_URL;
+        std::string url = Endpoints::MY_EPISODES;
 
         std::vector<std::string> params;
 
@@ -70,7 +71,7 @@ namespace Spotify {
     std::optional<std::vector<bool> > EpisodeAPI::checkUsersSavedEpisodes(const std::vector<std::string> &ids) const {
         std::string id_list = Tools::toCSV(ids, 0, 20);
 
-        std::string url = BASE_EPISODE_USER_URL + "/contains?ids=" + id_list;
+        std::string url = Endpoints::MY_EPISODES + "/contains?ids=" + id_list;
 
         return fetchAndParse<std::vector<bool>>(url);
     }
@@ -80,7 +81,7 @@ namespace Spotify {
 
         std::string id_list = Tools::toCSV(ids, 0, 50);
 
-        std::string url = BASE_EPISODE_USER_URL + "?ids=" + id_list;
+        std::string url = Endpoints::MY_EPISODES + "?ids=" + id_list;
 
         (void)sendAction("PUT", url);
     }
@@ -90,7 +91,7 @@ namespace Spotify {
 
         std::string id_list = Tools::toCSV(ids, 0, 50);
 
-        std::string url = BASE_EPISODE_USER_URL + "?ids=" + id_list;
+        std::string url = Endpoints::MY_EPISODES + "?ids=" + id_list;
 
         nlohmann::json j;
         j["ids"] = id_list;

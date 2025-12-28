@@ -28,11 +28,6 @@ namespace Spotify {
         std::optional<SearchObject> searchForItem(std::string& q, const std::vector<SearchType>& type,
             const std::optional<std::string>& market = std::nullopt, const std::optional<int>& limit = std::nullopt,
             const std::optional<int>& offset = std::nullopt, const std::optional<std::string>& include_external = std::nullopt) const;
-
-
-    // Vars
-    private:
-        const std::string BASE_BROWSE_URL = "https://api.spotify.com/v1/";
     };
 
 }

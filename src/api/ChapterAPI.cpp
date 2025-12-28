@@ -6,7 +6,7 @@
 
 #include "nlohmann/json.hpp"
 #include "spotify/core/Client.hpp"
-#include "spotify/util/Http.hpp"
+#include "spotify/core/Endpoints.hpp"
 #include "spotify/util/Tools.hpp"
 
 
@@ -15,7 +15,7 @@ namespace Spotify {
     // --- GET ---
     std::optional<ChapterObject> ChapterAPI::getChapter(const std::string &id, const std::optional<std::string> &market) const {
 
-        std::string url = BASE_CHAPTER_URL + "/" + WebTools::urlEncode(id);
+        std::string url = Endpoints::CHAPTERS + "/" + WebTools::urlEncode(id);
 
         if (market.has_value() && !market->empty()) {
             url += "?market=" +  WebTools::urlEncode(*market);
@@ -28,7 +28,7 @@ namespace Spotify {
 
         std::string id_list = Tools::toCSV(ids, 0, 50);
 
-        std::string url = BASE_CHAPTER_URL + "?ids=" + id_list;
+        std::string url = Endpoints::CHAPTERS + "?ids=" + id_list;
 
         if (market.has_value() && !market->empty() && Tools::isValidMarket(*market)) {
             url += "?market=" + WebTools::urlEncode(*market);

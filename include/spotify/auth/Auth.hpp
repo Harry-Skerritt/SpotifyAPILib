@@ -49,10 +49,6 @@ namespace Spotify {
 
         // Vars
         private:
-
-        const std::string TOKEN_URL = "https://accounts.spotify.com/api/token";
-        const std::string AUTH_URL = "https://accounts.spotify.com/authorize";
-
         ClientCredentials m_credentials;
         std::string m_redirectUri;
         AuthResponse m_authResponse;

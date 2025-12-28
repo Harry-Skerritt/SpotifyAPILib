@@ -5,6 +5,7 @@
 #include "spotify/auth/Auth.hpp"
 
 #include "spotify/core/Errors.hpp"
+#include "spotify/core/Endpoints.hpp"
 
 
 namespace Spotify {
@@ -34,7 +35,7 @@ namespace Spotify {
         << "&redirect_uri=" << WebTools::urlEncode(redirect_uri)
         << "&state=" << WebTools::urlEncode(actual_state);
 
-        return AUTH_URL + oss.str();
+        return Endpoints::AUTHORISE + oss.str();
     }
 
     void Auth::exchangeCode(const std::string &code) {
@@ -49,7 +50,7 @@ namespace Spotify {
         headers["Content-Type"] = "application/x-www-form-urlencoded";
         headers["Authorization"] = "Basic " + encodeClientCredentials();
 
-        auto result = HTTP::post(TOKEN_URL, "", post_fields.str(), headers, true);
+        auto result = HTTP::post(Endpoints::TOKEN, "", post_fields.str(), headers, true);
         ErrorHandler::verifyResponse(result);
 
         buildAuthResponse(result.body);
@@ -66,7 +67,7 @@ namespace Spotify {
         headers["Authorization"] = "Basic " + encodeClientCredentials();
 
 
-        auto result = HTTP::post(TOKEN_URL, "", body, headers);
+        auto result = HTTP::post(Endpoints::TOKEN, "", body, headers);
         ErrorHandler::verifyResponse(result);
 
         buildAuthResponse(result.body);

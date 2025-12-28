@@ -6,6 +6,7 @@
 
 #include "nlohmann/json.hpp"
 #include "spotify/core/Client.hpp"
+#include "spotify/core/Endpoints.hpp"
 #include "spotify/util/Http.hpp"
 #include "spotify/util/Tools.hpp"
 
@@ -14,7 +15,7 @@ namespace Spotify {
     // --- GET ---
     std::optional<ArtistObject> ArtistAPI::getArtist(const std::string &id) const {
 
-        std::string url = BASE_ARTIST_URL + "/" + WebTools::urlEncode(id);
+        std::string url = Endpoints::ARTISTS + "/" + WebTools::urlEncode(id);
 
         return fetchAndParse<ArtistObject>(url);
     }
@@ -24,14 +25,14 @@ namespace Spotify {
         std::string id_list = Tools::toCSV(ids, 0, 20);
 
 
-        std::string url = BASE_ARTIST_URL + "?ids=" + id_list;
+        std::string url = Endpoints::ARTISTS  + "?ids=" + id_list;
 
        return fetchAndParse<ArtistListObject>(url);
     }
 
     std::optional<PagedAlbumObject> ArtistAPI::getArtistsAlbums(const std::string &id, std::optional<std::vector<IncludeGroups> > include_groups, std::optional<std::string> market, std::optional<int> limit, std::optional<int> offset) const {
 
-        std::string url = BASE_ARTIST_URL + "/" + WebTools::urlEncode(id) + "/albums";
+        std::string url = Endpoints::ARTISTS  + "/" + WebTools::urlEncode(id) + "/albums";
 
         std::vector<std::string> params;
 
@@ -65,7 +66,7 @@ namespace Spotify {
 
     std::optional<TrackListObject> ArtistAPI::getArtistTopTracks(const std::string &id, std::optional<std::string> market) const {
 
-        std::string url = BASE_ARTIST_URL + "/" + WebTools::urlEncode(id) + "/top-tracks";
+        std::string url = Endpoints::ARTISTS  + "/" + WebTools::urlEncode(id) + "/top-tracks";
 
         if (market.has_value() && !market->empty() && Tools::isValidMarket(*market)) {
             url += "?market=" + WebTools::urlEncode(*market);

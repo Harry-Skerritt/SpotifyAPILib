@@ -43,14 +43,6 @@ namespace Spotify {
 
         // DELETE
         void removePlaylistItems(const std::string& playlist_id, const std::vector<URIObject>& tracks, const std::optional<std::string>& snapshot_id = std::nullopt) const;
-
-    // Vars
-    private:
-        const std::string BASE_PLAYLIST_URL = "https://api.spotify.com/v1/playlists";
-        const std::string BASE_PLAYLIST_USER_URL = "https://api.spotify.com/v1/me/playlists";
-        const std::string BASE_USER_URL = "https://api.spotify.com/v1/users";
-
-
     };
 }
 

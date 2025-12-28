@@ -8,6 +8,7 @@
 
 #include "nlohmann/json.hpp"
 #include "spotify/core/Client.hpp"
+#include "spotify/core/Endpoints.hpp"
 #include "spotify/util/Http.hpp"
 
 namespace Spotify {
@@ -15,7 +16,7 @@ namespace Spotify {
     // --- GET ---
     std::optional<PlaybackObject> PlayerAPI::getPlaybackState(const std::optional<std::string> &market, const std::optional<std::string> &additional_types ) const {
 
-        std::string url = BASE_PLAYER_URL;
+        std::string url = Endpoints::PLAYER;
 
         std::vector<std::string> params;
 
@@ -43,14 +44,14 @@ namespace Spotify {
 
     std::optional<DeviceListObject> PlayerAPI::getAvailableDevices() const {
 
-        std::string url = BASE_PLAYER_URL + "/devices";
+        std::string url = Endpoints::PLAYER + "/devices";
 
         return fetchAndParse<DeviceListObject>(url);
     }
 
     std::optional<PlaybackObject> PlayerAPI::getCurrentlyPlayingTrack(const std::optional<std::string> &market, const std::optional<std::string> &additional_types) const {
 
-        std::string url = BASE_PLAYER_URL + "/currently-playing";
+        std::string url = Endpoints::PLAYER + "/currently-playing";
 
         std::vector<std::string> params;
 
@@ -78,7 +79,7 @@ namespace Spotify {
 
     std::optional<RecentlyPlayedTracksObject> PlayerAPI::getRecentlyPlayedTracks(const std::optional<int> limit, const std::optional<int64_t> after, const std::optional<int64_t> before) const {
 
-        std::string url = BASE_PLAYER_URL + "/recently-played";
+        std::string url = Endpoints::PLAYER + "/recently-played";
 
         std::vector<std::string> params;
 
@@ -109,7 +110,7 @@ namespace Spotify {
     }
 
     std::optional<QueueObject> PlayerAPI::getUsersQueue() const {
-        std::string url = BASE_PLAYER_URL + "/queue";
+        std::string url = Endpoints::PLAYER + "/queue";
 
        return fetchAndParse<QueueObject>(url);
     }
@@ -125,7 +126,7 @@ namespace Spotify {
 
     void PlayerAPI::addItemToQueue(const std::string& uri, const std::optional<std::string> &device_id) const {
 
-        std::string url = BASE_PLAYER_URL + "/queue?uri=" + WebTools::urlEncode(uri);
+        std::string url = Endpoints::PLAYER + "/queue?uri=" + WebTools::urlEncode(uri);
 
         if (device_id.has_value() && !device_id->empty()) {
             url += "&device_id=" + *device_id;
@@ -149,12 +150,12 @@ namespace Spotify {
             j["play"] = *play;
         }
 
-       (void)sendAction("PUT", BASE_PLAYER_URL, j.dump());
+       (void)sendAction("PUT", Endpoints::PLAYER, j.dump());
     }
 
     void PlayerAPI::startPlayback(const std::optional<std::string>& device_id, const std::optional<StartPlaybackProperties>& properties) const {
 
-        std::string url = BASE_PLAYER_URL + "/play";
+        std::string url = Endpoints::PLAYER + "/play";
         if (device_id.has_value() && !device_id->empty()) {
             url += "?device_id=" + *device_id;
         }
@@ -185,7 +186,7 @@ namespace Spotify {
 
     void PlayerAPI::pausePlayback(const std::optional<std::string> &device_id) const {
 
-        std::string url = BASE_PLAYER_URL + "/pause";
+        std::string url = Endpoints::PLAYER + "/pause";
         if (device_id.has_value() && !device_id->empty()) {
             url += "?device_id=" + *device_id;
         }
@@ -195,7 +196,7 @@ namespace Spotify {
 
     void PlayerAPI::seekToPosition(int position_ms, const std::optional<std::string> &device_id) const {
 
-        std::string url = BASE_PLAYER_URL + "/seek?position_ms=" + WebTools::urlEncode(std::to_string(position_ms));
+        std::string url = Endpoints::PLAYER + "/seek?position_ms=" + WebTools::urlEncode(std::to_string(position_ms));
         if (device_id.has_value() && !device_id->empty()) {
             url += "?device_id=" + *device_id;
         }
@@ -213,7 +214,7 @@ namespace Spotify {
 
         }
 
-        std::string url = BASE_PLAYER_URL + "/repeat?state=" + WebTools::urlEncode(repeat_state);
+        std::string url = Endpoints::PLAYER + "/repeat?state=" + WebTools::urlEncode(repeat_state);
         if (device_id.has_value() && !device_id->empty()) {
             url += "?device_id=" + *device_id;
         }
@@ -223,8 +224,7 @@ namespace Spotify {
 
     void PlayerAPI::setPlaybackVolume(int volume_percent, std::optional<std::string> device_id) const {
 
-
-        std::string url = BASE_PLAYER_URL + "/volume?volume_percent=" + WebTools::urlEncode(std::to_string(volume_percent));
+        std::string url = Endpoints::PLAYER + "/volume?volume_percent=" + WebTools::urlEncode(std::to_string(volume_percent));
         if (device_id.has_value() && !device_id->empty()) {
             url += "?device_id=" + *device_id;
         }
@@ -234,7 +234,7 @@ namespace Spotify {
 
     void PlayerAPI::togglePlaybackShuffle(bool state, std::optional<std::string> device_id) const {
 
-        std::string url = BASE_PLAYER_URL + "/shuffle?state=" + (state ? "true" : "false");;
+        std::string url = Endpoints::PLAYER + "/shuffle?state=" + (state ? "true" : "false");;
 
         if (device_id.has_value() && !device_id->empty()) {
             url += "?device_id=" + *device_id;
@@ -247,9 +247,9 @@ namespace Spotify {
     // --- PRIVATE ---
     void PlayerAPI::skipHelper(bool is_next, std::optional<std::string> device_id) const {
 
-        std::string url = BASE_PLAYER_URL + "/previous";
+        std::string url = Endpoints::PLAYER + "/previous";
         if (is_next)
-            url = BASE_PLAYER_URL + "/next";
+            url = Endpoints::PLAYER + "/next";
 
         if (device_id.has_value() && !device_id->empty()) {
             url += "?device_id=" + *device_id;

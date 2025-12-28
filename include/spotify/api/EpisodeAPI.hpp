@@ -33,12 +33,6 @@ namespace Spotify {
 
         // Delete
         void removeUserSavedEpisodes(std::vector<std::string>& ids) const;
-
-    // Vars
-    private:
-        const std::string BASE_EPISODE_URL = "https://api.spotify.com/v1/episodes";
-        const std::string BASE_EPISODE_USER_URL = "https://api.spotify.com/v1/me/episodes";
-
     };
 }
 

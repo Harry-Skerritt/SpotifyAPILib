@@ -8,6 +8,7 @@
 
 #include "nlohmann/json.hpp"
 #include "spotify/core/Client.hpp"
+#include "spotify/core/Endpoints.hpp"
 #include "spotify/util/Http.hpp"
 #include "spotify/util/Tools.hpp"
 
@@ -21,7 +22,7 @@ namespace Spotify {
         const std::optional<AdditionalType> &additional_types) const
     {
 
-        std::string url = BASE_PLAYLIST_URL + "/" + playlist_id;
+        std::string url = Endpoints::PLAYLISTS + "/" + playlist_id;
 
         std::vector<std::string> params;
 
@@ -57,7 +58,7 @@ namespace Spotify {
         const std::optional<AdditionalType>& additional_types) const
     {
 
-        std::string url = BASE_PLAYLIST_URL + "/" + playlist_id + "/tracks";
+        std::string url = Endpoints::PLAYLISTS + "/" + playlist_id + "/tracks";
 
         std::vector<std::string> params;
 
@@ -96,7 +97,7 @@ namespace Spotify {
         const std::optional<int> &limit,
         const std::optional<int> &offset) const {
 
-        std::string url = BASE_PLAYLIST_USER_URL;
+        std::string url = Endpoints::MY_PLAYLISTS;
 
         std::vector<std::string> params;
 
@@ -124,7 +125,7 @@ namespace Spotify {
         const std::optional<int> &limit,
         const std::optional<int> &offset) const {
 
-        std::string url = BASE_USER_URL + "/" + user_id + "/playlists";
+        std::string url = Endpoints::USERS + "/" + user_id + "/playlists";
 
         std::vector<std::string> params;
 
@@ -149,7 +150,7 @@ namespace Spotify {
 
     std::optional<std::vector<ImageObject> > PlaylistAPI::getPlaylistCoverImage(const std::string &playlist_id) const {
 
-        std::string url = BASE_PLAYLIST_URL + "/" + playlist_id + "/images";
+        std::string url = Endpoints::PLAYLISTS + "/" + playlist_id + "/images";
 
         return fetchAndParse<std::vector<ImageObject> >(url);
     }
@@ -164,7 +165,7 @@ namespace Spotify {
         const std::optional<std::string> &description,
         const std::optional<bool> &is_collaborative) const
     {
-        std::string url = BASE_PLAYLIST_URL + "/" + playlist_id;
+        std::string url = Endpoints::PLAYLISTS + "/" + playlist_id;
 
 
         nlohmann::json j;
@@ -188,7 +189,7 @@ namespace Spotify {
         const std::string &playlist_id,
         const std::vector<std::string> &uris) const {
 
-        std::string url = BASE_PLAYLIST_URL + "/" + playlist_id + "/tracks";
+        std::string url = Endpoints::PLAYLISTS + "/" + playlist_id + "/tracks";
 
         std::string uri_list = Tools::toCSV(uris, 1, 100);
 
@@ -205,7 +206,7 @@ namespace Spotify {
         const std::optional<int> &range_length,
         const std::optional<std::string> &snapshot_id) const {
 
-        std::string url = BASE_PLAYLIST_URL + "/" + playlist_id + "/tracks";
+        std::string url = Endpoints::PLAYLISTS + "/" + playlist_id + "/tracks";
 
         nlohmann::json j;
 
@@ -254,7 +255,7 @@ namespace Spotify {
         }
         std::string base64_image = base64_encode(raw_image_data);
 
-        std::string url = BASE_PLAYLIST_URL + "/" + playlist_id + "/images";
+        std::string url = Endpoints::PLAYLISTS + "/" + playlist_id + "/images";
 
         std::map<std::string, std::string> extra_headers = {{ "Content-Type", "image/jpeg"} };
 
@@ -268,8 +269,9 @@ namespace Spotify {
     void PlaylistAPI::addItemsToPlaylist(
         const std::string &playlist_id,
         const std::vector<std::string> &uris,
-        const std::optional<int> &position) const {
-        std::string url = BASE_PLAYLIST_URL + "/" + playlist_id + "/tracks";
+        const std::optional<int> &position) const
+    {
+        std::string url = Endpoints::PLAYLISTS + "/" + playlist_id + "/tracks";
 
         if (uris.empty() || uris.size() > 100) {
             throw LogicException("You must provide between 1 and 100 URIs.");
@@ -298,7 +300,7 @@ namespace Spotify {
         const std::optional<bool> &is_collaborative,
         const std::optional<std::string> &description) const
     {
-        std::string url = BASE_USER_URL + "/" + user_id + "/playlists";
+        std::string url = Endpoints::USERS + "/" + user_id + "/playlists";
 
         nlohmann::json j;
         j["name"] = name;
@@ -335,7 +337,7 @@ namespace Spotify {
         const std::vector<URIObject> &tracks,
         const std::optional<std::string> &snapshot_id) const
     {
-        std::string url = BASE_PLAYLIST_URL + "/" + playlist_id + "/tracks";
+        std::string url = Endpoints::PLAYLISTS + "/" + playlist_id + "/tracks";
 
         nlohmann::json j;
 

@@ -45,13 +45,6 @@ namespace Spotify {
 
     private:
         void skipHelper(bool is_next, std::optional<std::string> device_id = std::nullopt) const;
-
-    // Vars
-    private:
-        const std::string BASE_PLAYER_URL = "https://api.spotify.com/v1/me/player";
-
-
-
     };
 
 }

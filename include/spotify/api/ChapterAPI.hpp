@@ -23,10 +23,6 @@ namespace Spotify {
         // GET
         [[nodiscard]] std::optional<ChapterObject> getChapter(const std::string& id, const std::optional<std::string>& market = std::nullopt) const;
         [[nodiscard]] std::optional<ChapterListObject> getMultipleChapters(const std::vector<std::string>& ids, const std::optional<std::string>& market = std::nullopt) const;
-
-    // Vars
-    private:
-        const std::string BASE_CHAPTER_URL = "https://api.spotify.com/v1/chapters";
     };
 }
 

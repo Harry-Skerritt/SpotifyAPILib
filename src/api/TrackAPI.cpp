@@ -9,6 +9,7 @@
 
 #include "nlohmann/json.hpp"
 #include "spotify/core/Client.hpp"
+#include "spotify/core/Endpoints.hpp"
 #include "spotify/util/Http.hpp"
 #include "spotify/util/Tools.hpp"
 
@@ -16,7 +17,7 @@ namespace Spotify {
 
     // --- GET ---
     std::optional<TrackObject> TrackAPI::getTrack(const std::string &id, const std::optional<std::string> &market) const {
-        std::string url = BASE_TRACK_URL + "/" + WebTools::urlEncode(id);
+        std::string url = Endpoints::TRACKS + "/" + WebTools::urlEncode(id);
 
         if (market.has_value() && !market->empty() && Tools::isValidMarket(*market)) {
             url += "?market=" + WebTools::urlEncode(*market);
@@ -28,7 +29,7 @@ namespace Spotify {
     std::optional<TrackListObject> TrackAPI::getTracks(const std::vector<std::string> &ids, const std::optional<std::string> &market) const {
         std::string id_list = Tools::toCSV(ids, 0, 50);
 
-        std::string url = BASE_TRACK_URL + "?ids=" + id_list;
+        std::string url = Endpoints::TRACKS + "?ids=" + id_list;
 
         if (market.has_value() && !market->empty() && Tools::isValidMarket(*market)) {
             url += "?market=" + WebTools::urlEncode(*market);
@@ -38,7 +39,7 @@ namespace Spotify {
     }
 
     std::optional<PagedSavedTrackObject> TrackAPI::getUserSavedTracks(const std::optional<std::string> &market, const std::optional<int> &limit, const std::optional<int> &offset) const {
-        std::string url = BASE_TRACK_USER_URL;
+        std::string url = Endpoints::MY_TRACKS;
 
         std::vector<std::string> params;
 
@@ -68,7 +69,7 @@ namespace Spotify {
     std::optional<std::vector<bool> > TrackAPI::checkUsersSavedTracks(const std::vector<std::string> &ids) const {
         std::string id_list = Tools::toCSV(ids, 0, 50);
 
-        std::string url = BASE_TRACK_USER_URL + "/contains?ids=" + id_list;
+        std::string url = Endpoints::MY_TRACKS + "/contains?ids=" + id_list;
 
         return fetchAndParse<std::vector<bool>>(url);
     }
@@ -81,7 +82,7 @@ namespace Spotify {
         nlohmann::json j;
         j["ids"] = ids;
 
-        (void)sendAction("PUT", BASE_TRACK_USER_URL, j.dump());
+        (void)sendAction("PUT", Endpoints::MY_TRACKS, j.dump());
     }
 
     void TrackAPI::saveTracksForUser(const std::vector<TimestampIDObject> &timestamped_ids) const {
@@ -101,14 +102,14 @@ namespace Spotify {
         }
         j["timestamped_ids"] = ts_array;
 
-        (void)sendAction("PUT", BASE_TRACK_USER_URL, j.dump());
+        (void)sendAction("PUT", Endpoints::MY_TRACKS, j.dump());
     }
 
     // --- DELETE ---
     void TrackAPI::removeUsersSavedTracks(std::vector<std::string> ids) const {
         std::string id_list = Tools::toCSV(ids, 0, 20);
 
-        std::string url = BASE_TRACK_USER_URL + "?ids=" + id_list;
+        std::string url = Endpoints::MY_TRACKS + "?ids=" + id_list;
 
         nlohmann::json j;
         j["ids"] = id_list;

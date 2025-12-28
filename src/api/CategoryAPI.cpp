@@ -5,7 +5,7 @@
 
 #include "nlohmann/json.hpp"
 #include "spotify/core/Client.hpp"
-#include "spotify/util/Http.hpp"
+#include "spotify/core/Endpoints.hpp"
 #include "spotify/util/Tools.hpp"
 
 
@@ -14,7 +14,7 @@ namespace Spotify {
     // --- GET ---
     std::optional<CategoryObject> CategoryAPI::getBrowseCategory(const std::string& category_id, const std::optional<std::string> &locale) const {
 
-        std::string url = BASE_CATEGORY_URL + "/" + WebTools::urlEncode(category_id);
+        std::string url = Endpoints::CATEGORIES + "/" + WebTools::urlEncode(category_id);
 
         if (locale.has_value() && !locale->empty()) {
             url += "?locale=" +  WebTools::urlEncode(*locale);
@@ -26,7 +26,7 @@ namespace Spotify {
 
     std::optional<PagedCategoryObject> CategoryAPI::getMultipleBrowseCategories(const std::optional<std::string> &locale, const std::optional<int> limit, const std::optional<int> offset) const {
 
-        std::string url = BASE_CATEGORY_URL;
+        std::string url = Endpoints::CATEGORIES;
 
         std::vector<std::string> params;
 

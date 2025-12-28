@@ -36,14 +36,6 @@ namespace Spotify {
 
         // DELETE
         void removeUsersSavedAudiobooks(std::vector<std::string> ids) const;
-
-
-    // Vars
-    private:
-        const std::string BASE_AUDIOBOOK_URL = "https://api.spotify.com/v1/audiobooks";
-        const std::string BASE_AUDIOBOOK_USER_URL = "https://api.spotify.com/v1/me/audiobooks";
-
-
     };
 
 }
