@@ -276,3 +276,21 @@ set_example_output_dir(example_saveUserTracks "tracks")
 add_executable(example_deleteUserTracks examples/tracks/removeTrackForUserExample.cpp)
 target_link_libraries(example_deleteUserTracks PRIVATE SpotifyAPILib)
 set_example_output_dir(example_deleteUserTracks "tracks")
+
+# --- Users Examples ---
+add_executable(example_getCurrentUser examples/users/getCurrentUserExample.cpp)
+target_link_libraries(example_getCurrentUser PRIVATE SpotifyAPILib)
+set_example_output_dir(example_getCurrentUser "users")
+
+add_executable(example_getUsersTopItems examples/users/getUsersTopItemsExample.cpp)
+target_link_libraries(example_getUsersTopItems PRIVATE SpotifyAPILib)
+set_example_output_dir(example_getUsersTopItems "users")
+
+add_executable(example_followUnfollowArtistsAndUsers examples/users/followArtistsAndUsersExample.cpp)
+target_link_libraries(example_followUnfollowArtistsAndUsers PRIVATE SpotifyAPILib)
+set_example_output_dir(example_followUnfollowArtistsAndUsers "users")
+
+add_executable(example_getFollowedArtists examples/users/getFollowedArtistExample.cpp)
+target_link_libraries(example_getFollowedArtists PRIVATE SpotifyAPILib)
+set_example_output_dir(example_getFollowedArtists "users")
+

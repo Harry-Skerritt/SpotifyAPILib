@@ -30,10 +30,10 @@ namespace Spotify {
             const std::optional<int>& limit = std::nullopt, const std::optional<int>& offset = std::nullopt) const;
         std::optional<UserObject> getUsersProfile(const std::string& user_id) const;
         std::optional<PagedArtistObject> getFollowedArtists(const std::string& type = "artist",
-            const std::optional<std::string>& after = std::nullopt, const std::optional<int>& limit = std::nullopt);
+            const std::optional<std::string>& after = std::nullopt, const std::optional<int>& limit = std::nullopt) const;
         std::optional<std::vector<bool>> checkUserFollowsArtists(const std::vector<std::string>& ids) const;
-        std::optional<std::vector<bool>> checkUserFollowsUsers(const std::vector<std::string>& ids);
-        std::optional<std::vector<bool>> checkUserFollowsPlaylist(const std::string& playlist_id, const std::optional<std::string>& id);
+        std::optional<std::vector<bool>> checkUserFollowsUsers(const std::vector<std::string>& ids) const;
+        std::optional<std::vector<bool>> checkUserFollowsPlaylist(const std::string& playlist_id, const std::optional<std::string>& id) const;
 
         // PUT
         void followPlaylist(const std::string& playlist_id, const std::optional<bool>& is_public = std::nullopt) const;

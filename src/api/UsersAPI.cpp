@@ -108,14 +108,16 @@ namespace Spotify {
     std::optional<PagedArtistObject> UsersAPI::getFollowedArtists(
         const std::string &type,
         const std::optional<std::string> &after,
-        const std::optional<int> &limit)
-    {
+        const std::optional<int> &limit) const {
+
         std::string url = Endpoints::ME + "/following";
 
         std::vector<std::string> params;
 
         if (type != "artist")
             throw Spotify::LogicException("Type is not valid! - Must be 'artist'");
+
+        params.push_back("type=" + WebTools::urlEncode(type));
 
         if (after.has_value() && !after->empty()) {
             params.push_back("after=" + WebTools::urlEncode(*after));
@@ -132,7 +134,7 @@ namespace Spotify {
             }
         }
 
-        return fetchAndParse<PagedArtistObject>(url);
+        return fetchAndParse<PagedArtistObject>(url, "artists");
     }
 
     std::optional<std::vector<bool> > UsersAPI::checkUserFollowsArtists(const std::vector<std::string> &ids) const {
@@ -141,13 +143,16 @@ namespace Spotify {
         return fetchAndParse<std::vector<bool>>(url);
     }
 
-    std::optional<std::vector<bool> > UsersAPI::checkUserFollowsUsers(const std::vector<std::string> &ids) {
+    std::optional<std::vector<bool> > UsersAPI::checkUserFollowsUsers(const std::vector<std::string> &ids) const {
         std::string id_list = Tools::toCSV(ids, 0, 50);
         std::string url = Endpoints::ME + "/following/contains/?type=user&ids=" + id_list;
         return fetchAndParse<std::vector<bool>>(url);
     }
 
-    std::optional<std::vector<bool> > UsersAPI::checkUserFollowsPlaylist(const std::string &playlist_id, const std::optional<std::string> &id) {
+    std::optional<std::vector<bool> > UsersAPI::checkUserFollowsPlaylist(
+        const std::string &playlist_id,
+        const std::optional<std::string> &id) const
+    {
         std::string url = Endpoints::PLAYLISTS + "/" + playlist_id + "/followers/contains";
 
         if (id.has_value() && !id->empty()) {
@@ -158,7 +163,10 @@ namespace Spotify {
     }
 
     // --- PUT ---
-    void UsersAPI::followPlaylist(const std::string &playlist_id, const std::optional<bool> &is_public) const {
+    void UsersAPI::followPlaylist(
+        const std::string &playlist_id,
+        const std::optional<bool> &is_public) const
+    {
         std::string url = Endpoints::PLAYLISTS + "/" + playlist_id + "/followers";
 
         std::string body;
@@ -172,23 +180,15 @@ namespace Spotify {
     void UsersAPI::followArtist(const std::vector<std::string> &ids) const {
         std::string id_list = Tools::toCSV(ids, 0, 50);
 
-        std::string url = Endpoints::ME + "/following?type=artist";
-
-        nlohmann::json j;
-        j["ids"] = id_list;
-
-        (void)sendAction("PUT", url, j.dump());
+        std::string url = Endpoints::ME + "/following?type=artist&ids=" + WebTools::urlEncode(id_list);
+        (void)sendAction("PUT", url, "");
     }
 
     void UsersAPI::followUser(const std::vector<std::string> &ids) const {
         std::string id_list = Tools::toCSV(ids, 0, 50);
 
-        std::string url = Endpoints::ME + "/following?type=user";
-
-        nlohmann::json j;
-        j["ids"] = id_list;
-
-        (void)sendAction("PUT", url, j.dump());
+        std::string url = Endpoints::ME + "/following?type=user&ids=" + WebTools::urlEncode(id_list);
+        (void)sendAction("PUT", url, "");
     }
 
 
@@ -201,23 +201,16 @@ namespace Spotify {
     void UsersAPI::unfollowArtist(const std::vector<std::string> &ids) const {
         std::string id_list = Tools::toCSV(ids, 0, 50);
 
-        std::string url = Endpoints::ME + "/following?type=artist";
-
-        nlohmann::json j;
-        j["ids"] = id_list;
-
-        (void)sendAction("DELETE", url, j.dump());
+        const std::string url = Endpoints::ME + "/following?type=artist&ids=" + WebTools::urlEncode(id_list);
+        (void)sendAction("DELETE", url, "");
     }
 
     void UsersAPI::unfollowUser(const std::vector<std::string> &ids) const {
         std::string id_list = Tools::toCSV(ids, 0, 50);
 
-        std::string url = Endpoints::ME + "/following?type=user";
+        const std::string url = Endpoints::ME + "/following?type=user&ids=" + WebTools::urlEncode(id_list);
 
-        nlohmann::json j;
-        j["ids"] = id_list;
-
-        (void)sendAction("DELETE", url, j.dump());
+        (void)sendAction("DELETE", url, "");
     }
 
 

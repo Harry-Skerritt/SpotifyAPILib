@@ -14,6 +14,7 @@
 #include "spotify/api/PlayerAPI.hpp"
 #include "spotify/api/PlaylistAPI.hpp"
 #include "spotify/api/TrackAPI.hpp"
+#include "spotify/api/UsersAPI.hpp"
 
 
 namespace Spotify {
@@ -62,6 +63,10 @@ namespace Spotify {
 
     TrackAPI Client::track() {
         return TrackAPI(this);
+    }
+
+    UsersAPI Client::users() {
+        return UsersAPI(this);
     }
 }
 

@@ -8,14 +8,17 @@
 int main () {
 
     // This will create a playlist, add items to it, change the title and then remove everything - tests multiple endpoints
+    // Also tests the Users unfollow (and in turn follow) endpoints
 
     auto auth = Spotify::ExampleUtils::authenticateFromEnv();
     Spotify::Client client(auth);
 
     // Creating the playlist
-    // Todo: Make it get the users id once that API is implenented
+    auto current_user = client.users().getCurrentUserProfile();
+    auto current_user_id = current_user.has_value() ? current_user->id : throw Spotify::Exception("No user id");
+
     auto new_playlist = client.playlist().createPlaylist(
-        "discodudde","Test Playlist", true, false, "A test playlist made with SpotifyAPILib");
+        current_user_id,"Test Playlist", true, false, "A test playlist made with SpotifyAPILib");
 
     std::string playlist_id;
     if (new_playlist.has_value()) {
@@ -76,8 +79,8 @@ int main () {
         return 0;
     }
 
-    // Todo: From the user api so add when relevant
-    std::cout << "Todo: From the user api so add when relevant" << std::endl;
+    client.users().unfollowPlaylist(playlist_id);
+    std::cout << "Playlist removed!" << std::endl;
 
     return 0;
 }
