@@ -34,7 +34,7 @@ namespace Spotify {
             // 3. Handshake
             auto url = auth.createAuthoriseURL("http://127.0.0.1:8888/callback",
                 {
-                    Spotify::Scope::UserReadPrivate,
+                    Scope::UserReadPrivate,
                     Scope::UserReadPlaybackState,
                     Scope::UserReadCurrentlyPlaying,
                     Scope::UserReadRecentlyPlayed,

@@ -1,7 +1,6 @@
 //
 // Created by Harry Skerritt on 22/12/2025.
 //
-#pragma once
 
 #include <utility>
 #include "spotify/api/BrowseAPI.hpp"

@@ -26,6 +26,8 @@ int main () {
     }
 
     // Change Cover Image
+    std::string image_url = "https://raw.githubusercontent.com/Harry-Skerritt/files/refs/heads/main/SM%20100x100.jpg";
+    client.playlist().addCustomPlaylistCover(playlist_id, image_url);
 
     // Add items
     std::vector<std::string> uris_to_add ={

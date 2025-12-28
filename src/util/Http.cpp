@@ -4,6 +4,7 @@
 
 #include "spotify/util/Http.hpp"
 
+#include <iostream>
 #include <curl/curl.h>
 
 #include "spotify/util/base64.hpp"
@@ -185,4 +186,32 @@ namespace Spotify {
         curl_easy_cleanup(curl);
         return result;
     }
+
+    // Other
+    HTTP::Result HTTP::getImage(const std::string &url) {
+        CURL *curl;
+        HTTP:Result result { Spotify::RFC2616_Code::NOT_IMPLEMENTED, "" };
+
+        curl = curl_easy_init();
+
+        if (!curl) return result;
+
+        curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &result.body);
+
+        auto code = curl_easy_perform(curl);
+
+        if (code != CURLE_OK) {
+            result.code = Spotify::RFC2616_Code::NETWORK_ERROR;
+        } else {
+            long status = 0;
+            curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &status);
+            result.code = static_cast<Spotify::RFC2616_Code>(status);
+        }
+
+        curl_easy_cleanup(curl);
+        return result;
+    }
+
 }

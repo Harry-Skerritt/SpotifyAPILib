@@ -28,6 +28,9 @@
         Result put (const std::string& url, const std::string& bearer, const std::string& body, const HeaderMap &extra_headers = {});
         Result remove(const std::string& url, const std::string& bearer, const std::string& body,const HeaderMap &extra_headers = {});
 
+        // Other
+        Result getImage(const std::string& url);
+
     }
 
 

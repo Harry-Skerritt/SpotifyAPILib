@@ -235,12 +235,12 @@ namespace Spotify {
 
         if (is_url) {
             // Is URL
-            auto res = HTTP::get(image_path, "");
+            auto result = HTTP::getImage(image_path);
 
-            if (res.code == RFC2616_Code::OK) {
-                raw_image_data = res.body;
+            if (result.code == RFC2616_Code::OK) {
+                raw_image_data = result.body;
             } else {
-                std::cerr << "Failed to download image from URL." << std::endl;
+                std::cerr << "Failed to download image from URL." << result.body << std::endl;
                 return;
             }
         } else {
@@ -264,13 +264,10 @@ namespace Spotify {
 
         std::string url = BASE_PLAYLIST_URL + "/" + playlist_id + "/images";
 
-        std::map<std::string, std::string> extra_headers = {{ "Content-Type:", "image/jpeg"} };
-
-        nlohmann::json j;
-        j["image"] = base64_encode(base64_image);
+        std::map<std::string, std::string> extra_headers = {{ "Content-Type", "image/jpeg"} };
 
 
-        sendAction("PUT", url, j.dump(), extra_headers);
+        sendAction("PUT", url, base64_image, extra_headers);
     }
 
 
@@ -299,12 +296,7 @@ namespace Spotify {
         if (position.has_value())
             j["position"] = *position;
 
-        std::cout << j.dump() << std::endl;
-
-        auto body = sendAction("POST", url, j.dump());
-        if (body.has_value()) {
-            std::cout << body.value() << std::endl;
-        }
+        sendAction("POST", url, j.dump());
     }
 
 

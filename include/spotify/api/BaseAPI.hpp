@@ -72,8 +72,9 @@ namespace Spotify {
             }
 
             if (result.code != RFC2616_Code::OK &&
-                result.code != RFC2616_Code::NO_CONTENT &&
-                result.code != RFC2616_Code::CREATED)
+                result.code != RFC2616_Code::CREATED &&
+                result.code != RFC2616_Code::ACCEPTED &&
+                result.code != RFC2616_Code::NO_CONTENT)
             {
                 std::cerr << method << " Failed [" << (int)result.code << "]: " << result.body << std::endl;
                 return std::nullopt;
