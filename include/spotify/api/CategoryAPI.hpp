@@ -21,8 +21,16 @@ namespace Spotify {
         explicit CategoryAPI(Client* client) : BaseAPI(client) {}
 
         // GET
-        [[nodiscard]] std::optional<PagedCategoryObject> getMultipleBrowseCategories(const std::optional<std::string> &locale = std::nullopt, std::optional<int> limit = std::nullopt, std::optional<int> offset = std::nullopt) const;
-        [[nodiscard]] std::optional<CategoryObject> getBrowseCategory(const std::string& category_id, const std::optional<std::string> &locale = std::nullopt) const;
+        [[nodiscard]] PagedCategoryObject getMultipleBrowseCategories(
+            const std::optional<std::string>& locale = std::nullopt,
+            const std::optional<int>& limit = std::nullopt,
+            const std::optional<int>& offset = std::nullopt
+        ) const;
+
+        [[nodiscard]] CategoryObject getBrowseCategory(
+            const std::string& category_id,
+            const std::optional<std::string>& locale = std::nullopt
+        ) const;
     };
 }
 

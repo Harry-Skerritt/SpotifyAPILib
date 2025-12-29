@@ -10,7 +10,6 @@
 #include <optional>
 #include <iostream>
 #include "spotify/util/Types.h"
-#include "spotify/util/JsonMapping.hpp"
 #include "spotify/api/BaseAPI.hpp"
 
 namespace Spotify {
@@ -22,18 +21,38 @@ namespace Spotify {
         explicit ShowsAPI(Client* client) : BaseAPI(client) {};
 
         // GET
-        std::optional<ShowObject> getShow(const std::string& id, const std::optional<std::string>& market = std::nullopt) const;
-        std::optional<ShowListObject> getShows(const std::vector<std::string>& ids, const std::optional<std::string>& market = std::nullopt) const;
-        std::optional<PagedEpisodeObject> getShowEpisodes(const std::string& id, const std::optional<std::string>& market = std::nullopt,
-            const std::optional<int>& limit = std::nullopt, const std::optional<int>& offset = std::nullopt) const;
-        std::optional<PagedSavedShowObject> getUserSavedShows(const std::optional<int>& limit = std::nullopt, const std::optional<int>& offset = std::nullopt) const;
-        std::optional<std::vector<bool>> checkUsersSavedShows(const std::vector<std::string>& ids) const;
+        [[nodiscard]] ShowObject getShow(
+            const std::string& id,
+            const std::optional<std::string>& market = std::nullopt
+        ) const;
+
+        [[nodiscard]] ShowListObject getShows(
+            const std::vector<std::string>& ids,
+            const std::optional<std::string>& market = std::nullopt
+        ) const;
+
+        [[nodiscard]] PagedEpisodeObject getShowEpisodes(
+            const std::string& id,
+            const std::optional<std::string>& market = std::nullopt,
+            const std::optional<int>& limit = std::nullopt,
+            const std::optional<int>& offset = std::nullopt
+        ) const;
+
+        [[nodiscard]] PagedSavedShowObject getUserSavedShows(
+            const std::optional<int>& limit = std::nullopt,
+            const std::optional<int>& offset = std::nullopt
+        ) const;
+
+        [[nodiscard]] std::vector<bool> checkUsersSavedShows(const std::vector<std::string>& ids) const;
 
         // PUT
         void saveShowsForUser(const std::vector<std::string>& ids) const;
 
         // DELETE
-        void removeShowsForUser(const std::vector<std::string>& ids, const std::optional<std::string>& market = std::nullopt) const;
+        void removeShowsForUser(
+            const std::vector<std::string>& ids,
+            const std::optional<std::string>& market = std::nullopt
+        ) const;
 
     };
 

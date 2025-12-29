@@ -2,20 +2,20 @@
 // Created by Harry Skerritt on 22/12/2025.
 //
 
-#include <utility>
-
 #include "spotify/api/EpisodeAPI.hpp"
+#include "spotify/core/Endpoints.hpp"
+#include "spotify/util/Tools.hpp"
 
 #include "nlohmann/json.hpp"
-#include "spotify/core/Client.hpp"
-#include "spotify/core/Endpoints.hpp"
-#include "spotify/util/Http.hpp"
-#include "spotify/util/Tools.hpp"
+
 
 namespace Spotify {
 
     // --- GET ---
-    std::optional<EpisodeObject> EpisodeAPI::getEpisode(const std::string &id, const std::optional<std::string> &market) const {
+    EpisodeObject EpisodeAPI::getEpisode(
+        const std::string &id,
+        const std::optional<std::string> &market) const
+    {
 
         std::string url = Endpoints::EPISODES + "/" + WebTools::urlEncode(id);
 
@@ -26,10 +26,12 @@ namespace Spotify {
         return fetchAndParse<EpisodeObject>(url);
     }
 
-    std::optional<EpisodeListObject> EpisodeAPI::getMultipleEpisodes(const std::vector<std::string> &ids, std::optional<std::string> market) const {
+    EpisodeListObject EpisodeAPI::getMultipleEpisodes(
+        const std::vector<std::string> &ids,
+        const std::optional<std::string>& market) const
+    {
 
         std::string id_list = Tools::toCSV(ids, 0, 50);
-
 
         std::string url = Endpoints::EPISODES + "?ids=" + id_list;
 
@@ -40,7 +42,11 @@ namespace Spotify {
         return fetchAndParse<EpisodeListObject>(url);
     }
 
-    std::optional<PagedSavedEpisodeObject> EpisodeAPI::getUsersSavedEpisodes(const std::optional<std::string> &market, const std::optional<int> &limit, const std::optional<int> &offset) const {
+    PagedSavedEpisodeObject EpisodeAPI::getUsersSavedEpisodes(
+        const std::optional<std::string> &market,
+        const std::optional<int> &limit,
+        const std::optional<int> &offset) const
+    {
         std::string url = Endpoints::MY_EPISODES;
 
         std::vector<std::string> params;
@@ -68,7 +74,7 @@ namespace Spotify {
         return fetchAndParse<PagedSavedEpisodeObject>(url);
     }
 
-    std::optional<std::vector<bool> > EpisodeAPI::checkUsersSavedEpisodes(const std::vector<std::string> &ids) const {
+    std::vector<bool> EpisodeAPI::checkUsersSavedEpisodes(const std::vector<std::string> &ids) const {
         std::string id_list = Tools::toCSV(ids, 0, 20);
 
         std::string url = Endpoints::MY_EPISODES + "/contains?ids=" + id_list;
@@ -77,7 +83,7 @@ namespace Spotify {
     }
 
     // --- PUT ---
-    void EpisodeAPI::saveEpisodeForUser(std::vector<std::string> &ids) const {
+    void EpisodeAPI::saveEpisodeForUser(const std::vector<std::string>& &ids) const {
 
         std::string id_list = Tools::toCSV(ids, 0, 50);
 
@@ -87,7 +93,7 @@ namespace Spotify {
     }
 
     // --- DELETE --
-    void EpisodeAPI::removeUserSavedEpisodes(std::vector<std::string> &ids) const {
+    void EpisodeAPI::removeUserSavedEpisodes(const std::vector<std::string>& &ids) const {
 
         std::string id_list = Tools::toCSV(ids, 0, 50);
 

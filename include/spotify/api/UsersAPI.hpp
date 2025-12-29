@@ -10,7 +10,6 @@
 #include <optional>
 #include <iostream>
 #include "spotify/util/Types.h"
-#include "spotify/util/JsonMapping.hpp"
 #include "spotify/api/BaseAPI.hpp"
 
 namespace Spotify {
@@ -23,27 +22,53 @@ namespace Spotify {
 
         // GET
 
-        [[nodiscard]] std::optional<UserObject> getCurrentUserProfile() const;
-        [[nodiscard]] std::optional<PagedArtistObject> getUsersTopArtists(const std::optional<std::string>& time_range = std::nullopt,
-            const std::optional<int>& limit = std::nullopt, const std::optional<int>& offset = std::nullopt) const;
-        [[nodiscard]] std::optional<PagedTrackObject> getUsersTopTracks(const std::optional<std::string>& time_range = std::nullopt,
-            const std::optional<int>& limit = std::nullopt, const std::optional<int>& offset = std::nullopt) const;
-        [[nodiscard]] std::optional<UserObject> getUsersProfile(const std::string& user_id) const;
-        [[nodiscard]] std::optional<PagedArtistObject> getFollowedArtists(const std::string& type = "artist",
-            const std::optional<std::string>& after = std::nullopt, const std::optional<int>& limit = std::nullopt) const;
-        [[nodiscard]] std::optional<std::vector<bool>> checkUserFollowsArtists(const std::vector<std::string>& ids) const;
-        [[nodiscard]] std::optional<std::vector<bool>> checkUserFollowsUsers(const std::vector<std::string>& ids) const;
-        [[nodiscard]] std::optional<std::vector<bool>> checkUserFollowsPlaylist(const std::string& playlist_id, const std::optional<std::string>& id) const;
+        [[nodiscard]] UserObject getCurrentUserProfile() const;
+
+        [[nodiscard]] PagedArtistObject getUsersTopArtists(
+            const std::optional<std::string>& time_range = std::nullopt,
+            const std::optional<int>& limit = std::nullopt,
+            const std::optional<int>& offset = std::nullopt
+        ) const;
+
+        [[nodiscard]] PagedTrackObject getUsersTopTracks(
+            const std::optional<std::string>& time_range = std::nullopt,
+            const std::optional<int>& limit = std::nullopt,
+            const std::optional<int>& offset = std::nullopt
+        ) const;
+
+        [[nodiscard]] UserObject getUsersProfile(const std::string& user_id) const;
+
+        [[nodiscard]] PagedArtistObject getFollowedArtists(
+            const std::string& type = "artist",
+            const std::optional<std::string>& after = std::nullopt,
+            const std::optional<int>& limit = std::nullopt
+        ) const;
+
+        [[nodiscard]] std::vector<bool> checkUserFollowsArtists(const std::vector<std::string>& ids) const;
+
+        [[nodiscard]] std::vector<bool> checkUserFollowsUsers(const std::vector<std::string>& ids) const;
+
+        [[nodiscard]] std::vector<bool> checkUserFollowsPlaylist(
+            const std::string& playlist_id,
+            const std::optional<std::string>& id
+        ) const;
 
         // PUT
-        void followPlaylist(const std::string& playlist_id, const std::optional<bool>& is_public = std::nullopt) const;
+        void followPlaylist(
+            const std::string& playlist_id,
+            const std::optional<bool>& is_public = std::nullopt
+        ) const;
+
         void followArtist( const std::vector<std::string>& ids) const;
+
         void followUser(const std::vector<std::string>& ids) const;
 
 
         // DELETE
         void unfollowPlaylist(const std::string& playlist_id) const;
+
         void unfollowArtist(const std::vector<std::string>& ids) const;
+
         void unfollowUser(const std::vector<std::string>& ids) const;
 
     };

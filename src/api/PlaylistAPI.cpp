@@ -6,22 +6,24 @@
 
 #include "spotify/api/PlaylistAPI.hpp"
 
-#include "nlohmann/json.hpp"
+
 #include "spotify/core/Client.hpp"
 #include "spotify/core/Endpoints.hpp"
 #include "spotify/util/Http.hpp"
+#include "spotify/util/JsonMapping.hpp"
 #include "spotify/util/Tools.hpp"
+
+#include "nlohmann/json.hpp"
 
 namespace Spotify {
 
     // --- GET ---
-    std::optional<PlaylistObject> PlaylistAPI::getPlaylist(
+    PlaylistObject PlaylistAPI::getPlaylist(
         const std::string &playlist_id,
         const std::optional<std::string> &market,
         const std::optional<std::string> &fields,
         const std::optional<AdditionalType> &additional_types) const
     {
-
         std::string url = Endpoints::PLAYLISTS + "/" + playlist_id;
 
         std::vector<std::string> params;
@@ -49,7 +51,7 @@ namespace Spotify {
         return fetchAndParse<PlaylistObject>(url);
     }
 
-    std::optional<PagedPlaylistTrackObject> PlaylistAPI::getPlaylistItems(
+    PagedPlaylistTrackObject PlaylistAPI::getPlaylistItems(
         const std::string &playlist_id,
         const std::optional<std::string> &market,
         const std::optional<std::string>& fields,
@@ -57,7 +59,6 @@ namespace Spotify {
         const std::optional<int> &offset,
         const std::optional<AdditionalType>& additional_types) const
     {
-
         std::string url = Endpoints::PLAYLISTS + "/" + playlist_id + "/tracks";
 
         std::vector<std::string> params;
@@ -93,10 +94,10 @@ namespace Spotify {
         return fetchAndParse<PagedPlaylistTrackObject>(url);
     }
 
-    std::optional<PagedPlaylistObject> PlaylistAPI::getCurrentUsersPlaylists(
+    PagedPlaylistObject PlaylistAPI::getCurrentUsersPlaylists(
         const std::optional<int> &limit,
-        const std::optional<int> &offset) const {
-
+        const std::optional<int> &offset) const
+    {
         std::string url = Endpoints::MY_PLAYLISTS;
 
         std::vector<std::string> params;
@@ -120,11 +121,11 @@ namespace Spotify {
         return fetchAndParse<PagedPlaylistObject>(url);
     }
 
-    std::optional<PagedPlaylistObject> PlaylistAPI::getUsersPlaylists(
+    PagedPlaylistObject PlaylistAPI::getUsersPlaylists(
         const std::string &user_id,
         const std::optional<int> &limit,
-        const std::optional<int> &offset) const {
-
+        const std::optional<int> &offset) const
+    {
         std::string url = Endpoints::USERS + "/" + user_id + "/playlists";
 
         std::vector<std::string> params;
@@ -148,7 +149,7 @@ namespace Spotify {
         return fetchAndParse<PagedPlaylistObject>(url);
     }
 
-    std::optional<std::vector<ImageObject> > PlaylistAPI::getPlaylistCoverImage(const std::string &playlist_id) const {
+    std::vector<ImageObject> PlaylistAPI::getPlaylistCoverImage(const std::string &playlist_id) const {
 
         std::string url = Endpoints::PLAYLISTS + "/" + playlist_id + "/images";
 
@@ -166,7 +167,6 @@ namespace Spotify {
         const std::optional<bool> &is_collaborative) const
     {
         std::string url = Endpoints::PLAYLISTS + "/" + playlist_id;
-
 
         nlohmann::json j;
 
@@ -187,8 +187,8 @@ namespace Spotify {
 
     void PlaylistAPI::replacePlaylistItems(
         const std::string &playlist_id,
-        const std::vector<std::string> &uris) const {
-
+        const std::vector<std::string> &uris) const
+    {
         std::string url = Endpoints::PLAYLISTS + "/" + playlist_id + "/tracks";
 
         std::string uri_list = Tools::toCSV(uris, 1, 100);
@@ -204,8 +204,8 @@ namespace Spotify {
         const int &range_start,
         const int &insert_before,
         const std::optional<int> &range_length,
-        const std::optional<std::string> &snapshot_id) const {
-
+        const std::optional<std::string> &snapshot_id) const
+    {
         std::string url = Endpoints::PLAYLISTS + "/" + playlist_id + "/tracks";
 
         nlohmann::json j;

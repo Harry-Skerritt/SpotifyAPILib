@@ -10,7 +10,6 @@
 #include <optional>
 #include <iostream>
 #include "spotify/util/Types.h"
-#include "spotify/util/JsonMapping.hpp"
 #include "spotify/api/BaseAPI.hpp"
 
 namespace Spotify {
@@ -22,13 +21,22 @@ namespace Spotify {
         explicit ArtistAPI(Client* client) : BaseAPI(client) {};
 
         // GET
-        [[nodiscard]] std::optional<ArtistObject> getArtist(const std::string &id) const;
-        [[nodiscard]] std::optional<ArtistListObject> getMultipleArtists(const std::vector<std::string>& ids) const;
-        [[nodiscard]] std::optional<PagedAlbumObject> getArtistsAlbums(const std::string &id,
-            std::optional<std::vector<IncludeGroups>> include_groups = std::nullopt,
-            std::optional<std::string> market = std::nullopt,
-            std::optional<int> limit = std::nullopt, std::optional<int> offset = std::nullopt) const;
-        [[nodiscard]] std::optional<TrackListObject> getArtistTopTracks(const std::string &id, std::optional<std::string> market = std::nullopt) const;
+        [[nodiscard]] ArtistObject getArtist(const std::string &id) const;
+
+        [[nodiscard]] ArtistListObject getMultipleArtists(const std::vector<std::string>& ids) const;
+
+        [[nodiscard]] PagedAlbumObject getArtistsAlbums(
+            const std::string &id,
+            const std::optional<std::vector<IncludeGroups>>& include_groups = std::nullopt,
+            const std::optional<std::string>& market = std::nullopt,
+            const std::optional<int>& limit = std::nullopt,
+            const std::optional<int>& offset = std::nullopt
+        ) const;
+
+        [[nodiscard]] TrackListObject getArtistTopTracks(
+            const std::string &id,
+            const std::optional<std::string>& market = std::nullopt
+        ) const;
 
     };
 }

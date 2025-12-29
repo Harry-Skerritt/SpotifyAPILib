@@ -5,15 +5,20 @@
 #include <utility>
 
 #include "spotify/api/AudiobookAPI.hpp"
+#include "spotify/core/Endpoints.hpp"
+#include "spotify/util/Tools.hpp"
 
 #include "nlohmann/json.hpp"
-#include "spotify/util/Tools.hpp"
-#include "spotify/core/Endpoints.hpp"
+
+
 
 namespace Spotify {
 
     // --- GET ---
-    std::optional<AudiobookObject> AudiobookAPI::getAudiobook(const std::string &id, std::optional<std::string> market) const {
+    AudiobookObject AudiobookAPI::getAudiobook(
+        const std::string &id,
+        const std::optional<std::string>& market) const
+    {
 
         std::string url = Endpoints::AUDIOBOOKS + "/" + WebTools::urlEncode(id);
 
@@ -24,16 +29,28 @@ namespace Spotify {
        return fetchAndParse<AudiobookObject>(url);
     }
 
-    std::optional<AudiobookListObject> AudiobookAPI::getMultipleAudiobooks(const std::vector<std::string> &ids, std::optional<std::string> market) const {
+    AudiobookListObject AudiobookAPI::getMultipleAudiobooks(
+        const std::vector<std::string> &ids,
+        const std::optional<std::string>& market) const
+    {
 
         std::string id_list = Tools::toCSV(ids, 0, 20);
 
         std::string url = Endpoints::AUDIOBOOKS + "?ids=" + id_list;
 
+        if (market.has_value() && !market->empty() && Tools::isValidMarket(*market)) {
+            url += "?market=" + WebTools::urlEncode(*market);
+        }
+
         return fetchAndParse<AudiobookListObject>(url);
     }
 
-    std::optional<PagedChapterObject> AudiobookAPI::getAudiobookChapters(const std::string &id, std::optional<std::string> market, std::optional<int> limit, std::optional<int> offset) const {
+    PagedChapterObject AudiobookAPI::getAudiobookChapters(
+        const std::string &id,
+        const std::optional<std::string>& market,
+        const std::optional<int>& limit,
+        const std::optional<int>& offset) const
+    {
 
         std::string url = Endpoints::AUDIOBOOKS + "/" + WebTools::urlEncode(id) + "/chapters";
 
@@ -63,7 +80,10 @@ namespace Spotify {
 
     }
 
-    std::optional<PagedAudiobookObject> AudiobookAPI::getUsersSavedAudiobooks(std::optional<int> limit, std::optional<int> offset) const {
+    PagedAudiobookObject AudiobookAPI::getUsersSavedAudiobooks(
+        const std::optional<int>& limit,
+        const std::optional<int>& offset) const
+    {
 
         std::string url = Endpoints::MY_AUDIOBOOKS;
 
@@ -89,7 +109,7 @@ namespace Spotify {
 
     }
 
-    std::optional<std::vector<bool> > AudiobookAPI::checkUsersSavedAudiobooks(std::vector<std::string> ids) const {
+    std::vector<bool> AudiobookAPI::checkUsersSavedAudiobooks(const std::vector<std::string>& ids) const {
         std::string id_list = Tools::toCSV(ids, 0, 20);
 
         std::string url = Endpoints::MY_AUDIOBOOKS + "/contains?ids=" + id_list;
@@ -98,7 +118,7 @@ namespace Spotify {
     }
 
     // --- PUT ---
-    void AudiobookAPI::saveAudiobookForUser(std::vector<std::string> ids) const {
+    void AudiobookAPI::saveAudiobookForUser(const std::vector<std::string>& ids) const {
         std::string id_list = Tools::toCSV(ids, 0, 50);
 
         std::string url = Endpoints::MY_AUDIOBOOKS + "?ids=" + id_list;
@@ -107,7 +127,7 @@ namespace Spotify {
     }
 
     // --- DELETE ---
-    void AudiobookAPI::removeUsersSavedAudiobooks(std::vector<std::string> ids) const {
+    void AudiobookAPI::removeUsersSavedAudiobooks(const std::vector<std::string>& ids) const {
         std::string id_list = Tools::toCSV(ids, 0, 50);
 
 

@@ -3,24 +3,22 @@
 //
 
 #include "spotify/api/ArtistAPI.hpp"
+#include "spotify/core/Endpoints.hpp"
+#include "spotify/util/Tools.hpp"
 
 #include "nlohmann/json.hpp"
-#include "spotify/core/Client.hpp"
-#include "spotify/core/Endpoints.hpp"
-#include "spotify/util/Http.hpp"
-#include "spotify/util/Tools.hpp"
 
 namespace Spotify {
 
     // --- GET ---
-    std::optional<ArtistObject> ArtistAPI::getArtist(const std::string &id) const {
+    ArtistObject ArtistAPI::getArtist(const std::string &id) const {
 
         std::string url = Endpoints::ARTISTS + "/" + WebTools::urlEncode(id);
 
         return fetchAndParse<ArtistObject>(url);
     }
 
-    std::optional<ArtistListObject> ArtistAPI::getMultipleArtists(const std::vector<std::string> &ids) const {
+   ArtistListObject ArtistAPI::getMultipleArtists(const std::vector<std::string> &ids) const {
 
         std::string id_list = Tools::toCSV(ids, 0, 20);
 
@@ -30,8 +28,13 @@ namespace Spotify {
        return fetchAndParse<ArtistListObject>(url);
     }
 
-    std::optional<PagedAlbumObject> ArtistAPI::getArtistsAlbums(const std::string &id, std::optional<std::vector<IncludeGroups> > include_groups, std::optional<std::string> market, std::optional<int> limit, std::optional<int> offset) const {
-
+    PagedAlbumObject ArtistAPI::getArtistsAlbums(
+        const std::string &id,
+        const std::optional<std::vector<IncludeGroups>>& include_groups,
+        const std::optional<std::string>& market,
+        const std::optional<int>& limit,
+        const std::optional<int>& offset) const
+    {
         std::string url = Endpoints::ARTISTS  + "/" + WebTools::urlEncode(id) + "/albums";
 
         std::vector<std::string> params;
@@ -64,7 +67,10 @@ namespace Spotify {
         return fetchAndParse<PagedAlbumObject>(url);
     }
 
-    std::optional<TrackListObject> ArtistAPI::getArtistTopTracks(const std::string &id, std::optional<std::string> market) const {
+    TrackListObject ArtistAPI::getArtistTopTracks(
+        const std::string &id,
+        const std::optional<std::string>& market) const
+    {
 
         std::string url = Endpoints::ARTISTS  + "/" + WebTools::urlEncode(id) + "/top-tracks";
 

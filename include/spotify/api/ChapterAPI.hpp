@@ -10,7 +10,6 @@
 #include <optional>
 #include <iostream>
 #include "spotify/util/Types.h"
-#include "spotify/util/JsonMapping.hpp"
 #include "spotify/api/BaseAPI.hpp"
 
 namespace Spotify {
@@ -21,8 +20,15 @@ namespace Spotify {
         explicit ChapterAPI(Client* client) : BaseAPI(client) {}
 
         // GET
-        [[nodiscard]] std::optional<ChapterObject> getChapter(const std::string& id, const std::optional<std::string>& market = std::nullopt) const;
-        [[nodiscard]] std::optional<ChapterListObject> getMultipleChapters(const std::vector<std::string>& ids, const std::optional<std::string>& market = std::nullopt) const;
+        [[nodiscard]] ChapterObject getChapter(
+            const std::string& id,
+            const std::optional<std::string>& market = std::nullopt
+        ) const;
+
+        [[nodiscard]] ChapterListObject getMultipleChapters(
+            const std::vector<std::string>& ids,
+            const std::optional<std::string>& market = std::nullopt
+        ) const;
     };
 }
 

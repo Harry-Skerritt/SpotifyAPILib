@@ -2,21 +2,19 @@
 // Created by Harry Skerritt on 21/12/2025.
 //
 
-#include <utility>
-
 #include "spotify/api/AlbumAPI.hpp"
+#include "spotify/core/Endpoints.hpp"
+#include "spotify/util/Tools.hpp"
 
 #include "nlohmann/json.hpp"
-#include "spotify/core/Client.hpp"
-#include "spotify/util/Http.hpp"
-#include "spotify/util/Tools.hpp"
-#include "spotify/core/Endpoints.hpp"
 
 namespace Spotify {
 
     // --- GET ---
-    std::optional<AlbumObject> AlbumAPI::getAlbum(const std::string &id, std::optional<std::string> market) const {
-
+   AlbumObject AlbumAPI::getAlbum(
+       const std::string &id,
+       const std::optional<std::string>& market) const
+    {
         std::string url = Endpoints::ALBUMS + "/" + WebTools::urlEncode(id);
 
         if (market.has_value() && !market->empty() && Tools::isValidMarket(*market)) {
@@ -26,8 +24,10 @@ namespace Spotify {
         return fetchAndParse<AlbumObject>(url);
     }
 
-    std::optional<AlbumListObject> AlbumAPI::getMultipleAlbums(const std::vector<std::string>& ids, std::optional<std::string> market) const {
-
+    AlbumListObject AlbumAPI::getMultipleAlbums(
+        const std::vector<std::string>& ids,
+        const std::optional<std::string>& market) const
+    {
         std::string id_list = Tools::toCSV(ids, 0, 20);
 
         std::string url = Endpoints::ALBUMS + "?ids=" + id_list;
@@ -39,8 +39,12 @@ namespace Spotify {
         return fetchAndParse<AlbumListObject>(url);
     }
 
-    std::optional<PagedTrackObject> AlbumAPI::getAlbumTracks(const std::string &id, std::optional<std::string> market, std::optional<int> limit, std::optional<int> offset) const {
-
+    PagedTrackObject AlbumAPI::getAlbumTracks(
+        const std::string &id,
+        const std::optional<std::string>& market,
+        const std::optional<int>& limit,
+        const std::optional<int>& offset) const
+    {
         std::string url = Endpoints::ALBUMS + "/" + WebTools::urlEncode(id) + "/tracks";
 
         std::vector<std::string> params;
@@ -68,8 +72,11 @@ namespace Spotify {
         return fetchAndParse<PagedTrackObject>(url);
     }
 
-    std::optional<PagedSavedAlbumObject> AlbumAPI::getUsersSavedAlbums(std::optional<int> limit, std::optional<int> offset, std::optional<std::string> market) const {
-
+    PagedSavedAlbumObject AlbumAPI::getUsersSavedAlbums(
+        const std::optional<int>& limit,
+        const std::optional<int>& offset,
+        const std::optional<std::string>& market) const
+    {
         std::string url = Endpoints::MY_ALBUMS;
 
         std::vector<std::string> params;
@@ -97,7 +104,7 @@ namespace Spotify {
         return fetchAndParse<PagedSavedAlbumObject>(url);
     }
 
-    std::optional<std::vector<bool> > AlbumAPI::checkUsersSavedAlbums(std::vector<std::string> ids) const {
+    std::vector<bool> AlbumAPI::checkUsersSavedAlbums(const std::vector<std::string>& ids) const {
 
         std::string id_list = Tools::toCSV(ids, 0, 20);
 
@@ -106,7 +113,10 @@ namespace Spotify {
         return fetchAndParse<std::vector<bool>>(url);
     }
 
-    std::optional<PagedAlbumObject> AlbumAPI::getNewReleases(std::optional<int> limit, std::optional<int> offset) const {
+    PagedAlbumObject AlbumAPI::getNewReleases(
+        const std::optional<int>& limit,
+        const std::optional<int>& offset) const
+    {
         std::string url = Endpoints::BROWSE + "/new-releases";
 
         std::vector<std::string> params;
@@ -132,7 +142,7 @@ namespace Spotify {
 
 
     // --- PUT ---
-    void AlbumAPI::saveAlbumsForUser(std::vector<std::string> ids) const {
+    void AlbumAPI::saveAlbumsForUser(const std::vector<std::string>& ids) const {
 
         std::string id_list = Tools::toCSV(ids, 0, 20);
 
@@ -143,7 +153,7 @@ namespace Spotify {
 
 
     // --- DELETE ---
-    void AlbumAPI::removeUsersSavedAlbums(std::vector<std::string> ids) const {
+    void AlbumAPI::removeUsersSavedAlbums(const std::vector<std::string>& ids) const {
 
         std::string id_list = Tools::toCSV(ids, 0, 20);
 

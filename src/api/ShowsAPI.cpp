@@ -2,21 +2,16 @@
 // Created by Harry Skerritt on 28/12/2025.
 //
 
-
-#include <utility>
-
 #include "spotify/api/ShowsAPI.hpp"
+#include "spotify/core/Endpoints.hpp"
+#include "spotify/util/Tools.hpp"
 
 #include "nlohmann/json.hpp"
-#include "spotify/core/Client.hpp"
-#include "spotify/core/Endpoints.hpp"
-#include "spotify/util/Http.hpp"
-#include "spotify/util/Tools.hpp"
 
 namespace Spotify {
 
     // --- GET ---
-    std::optional<ShowObject> ShowsAPI::getShow(
+    ShowObject ShowsAPI::getShow(
         const std::string &id,
         const std::optional<std::string> &market) const
     {
@@ -29,7 +24,7 @@ namespace Spotify {
         return fetchAndParse<ShowObject>(url);
     }
 
-    std::optional<ShowListObject> ShowsAPI::getShows(
+    ShowListObject ShowsAPI::getShows(
         const std::vector<std::string> &ids,
         const std::optional<std::string> &market) const
     {
@@ -44,7 +39,7 @@ namespace Spotify {
         return fetchAndParse<ShowListObject>(url);
     }
 
-    std::optional<PagedEpisodeObject> ShowsAPI::getShowEpisodes(
+    PagedEpisodeObject ShowsAPI::getShowEpisodes(
         const std::string &id,
         const std::optional<std::string> &market,
         const std::optional<int> &limit,
@@ -78,7 +73,7 @@ namespace Spotify {
         return fetchAndParse<PagedEpisodeObject>(url);
     }
 
-    std::optional<PagedSavedShowObject> ShowsAPI::getUserSavedShows(
+    PagedSavedShowObject ShowsAPI::getUserSavedShows(
         const std::optional<int> &limit,
         const std::optional<int> &offset) const
     {
@@ -106,7 +101,7 @@ namespace Spotify {
         return fetchAndParse<PagedSavedShowObject>(url);
     }
 
-    std::optional<std::vector<bool> > ShowsAPI::checkUsersSavedShows(const std::vector<std::string> &ids) const {
+   std::vector<bool> ShowsAPI::checkUsersSavedShows(const std::vector<std::string> &ids) const {
         std::string id_list = Tools::toCSV(ids, 0, 50);
 
         std::string url = Endpoints::MY_SHOWS + "/contains?ids=" + id_list;
@@ -140,12 +135,5 @@ namespace Spotify {
 
         (void)sendAction("DELETE", url, "");
     }
-
-
-
-
-
-
-
 
 }

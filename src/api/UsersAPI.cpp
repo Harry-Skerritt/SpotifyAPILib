@@ -1,25 +1,22 @@
 //
 // Created by Harry Skerritt on 28/12/2025.
 //
-#include <utility>
 
 #include "spotify/api/UsersAPI.hpp"
-
-#include "nlohmann/json.hpp"
-#include "spotify/core/Client.hpp"
-#include "spotify/util/Http.hpp"
 #include "spotify/util/Tools.hpp"
 #include "spotify/core/Endpoints.hpp"
+
+#include "nlohmann/json.hpp"
 
 namespace Spotify {
 
     // --- GET ---
-    std::optional<UserObject> UsersAPI::getCurrentUserProfile() const {
+    UserObject UsersAPI::getCurrentUserProfile() const {
         const std::string url = Endpoints::ME;
         return fetchAndParse<UserObject>(url);
     }
 
-    std::optional<PagedArtistObject> UsersAPI::getUsersTopArtists(
+    PagedArtistObject UsersAPI::getUsersTopArtists(
         const std::optional<std::string> &time_range,
         const std::optional<int> &limit,
         const std::optional<int> &offset) const
@@ -59,7 +56,7 @@ namespace Spotify {
         return fetchAndParse<PagedArtistObject>(url);
     }
 
-    std::optional<PagedTrackObject> UsersAPI::getUsersTopTracks(
+    PagedTrackObject UsersAPI::getUsersTopTracks(
         const std::optional<std::string> &time_range,
         const std::optional<int> &limit,
         const std::optional<int> &offset) const
@@ -99,16 +96,17 @@ namespace Spotify {
         return fetchAndParse<PagedTrackObject>(url);
     }
 
-    std::optional<UserObject> UsersAPI::getUsersProfile(const std::string &user_id) const {
+    UserObject UsersAPI::getUsersProfile(const std::string &user_id) const {
 
         std::string url = Endpoints::USERS + "/" + user_id;
         return fetchAndParse<UserObject>(url);
     }
 
-    std::optional<PagedArtistObject> UsersAPI::getFollowedArtists(
+    PagedArtistObject UsersAPI::getFollowedArtists(
         const std::string &type,
         const std::optional<std::string> &after,
-        const std::optional<int> &limit) const {
+        const std::optional<int> &limit) const
+    {
 
         std::string url = Endpoints::ME + "/following";
 
@@ -137,19 +135,19 @@ namespace Spotify {
         return fetchAndParse<PagedArtistObject>(url, "artists");
     }
 
-    std::optional<std::vector<bool> > UsersAPI::checkUserFollowsArtists(const std::vector<std::string> &ids) const {
+    std::vector<bool> UsersAPI::checkUserFollowsArtists(const std::vector<std::string> &ids) const {
         std::string id_list = Tools::toCSV(ids, 0, 50);
         std::string url = Endpoints::ME + "/following/contains/?type=artist&ids=" + id_list;
         return fetchAndParse<std::vector<bool>>(url);
     }
 
-    std::optional<std::vector<bool> > UsersAPI::checkUserFollowsUsers(const std::vector<std::string> &ids) const {
+    std::vector<bool> UsersAPI::checkUserFollowsUsers(const std::vector<std::string> &ids) const {
         std::string id_list = Tools::toCSV(ids, 0, 50);
         std::string url = Endpoints::ME + "/following/contains/?type=user&ids=" + id_list;
         return fetchAndParse<std::vector<bool>>(url);
     }
 
-    std::optional<std::vector<bool> > UsersAPI::checkUserFollowsPlaylist(
+    std::vector<bool> UsersAPI::checkUserFollowsPlaylist(
         const std::string &playlist_id,
         const std::optional<std::string> &id) const
     {

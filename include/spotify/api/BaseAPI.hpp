@@ -27,7 +27,7 @@ namespace Spotify {
         // --- GET + Parse Helper ---
         // Todo: Stop this returning an optional and change ALL apis
         template <typename T>
-        std::optional<T> fetchAndParse(const std::string& url, const std::string& wrapperKey = "") const {
+        T fetchAndParse(const std::string& url, const std::string& wrapperKey = "") const {
             if (!m_client) return std::nullopt;
 
             std::string token = tryGetAccessToken();

@@ -10,7 +10,6 @@
 #include <optional>
 #include <iostream>
 #include "spotify/util/Types.h"
-#include "spotify/util/JsonMapping.hpp"
 #include "spotify/api/BaseAPI.hpp"
 
 
@@ -23,19 +22,36 @@ namespace Spotify {
         explicit AudiobookAPI(Client* client) : BaseAPI(client) {};
 
         // GET
-        [[nodiscard]] std::optional<AudiobookObject> getAudiobook(const std::string &id, std::optional<std::string> market = std::nullopt) const;
-        [[nodiscard]] std::optional<AudiobookListObject> getMultipleAudiobooks(const std::vector<std::string>& ids, std::optional<std::string> market = std::nullopt) const;
-        [[nodiscard]] std::optional<PagedChapterObject> getAudiobookChapters(const std::string &id, std::optional<std::string> market = std::nullopt,
-            std::optional<int> limit = std::nullopt, std::optional<int> offset = std::nullopt) const;
-        [[nodiscard]] std::optional<PagedAudiobookObject> getUsersSavedAudiobooks(std::optional<int> limit = std::nullopt,std::optional<int> offset = std::nullopt) const;
-        [[nodiscard]] std::optional<std::vector<bool>> checkUsersSavedAudiobooks(std::vector<std::string> ids) const;
+        [[nodiscard]] AudiobookObject getAudiobook(
+            const std::string &id,
+            const std::optional<std::string>& market = std::nullopt
+        ) const;
+
+        [[nodiscard]] AudiobookListObject getMultipleAudiobooks(
+            const std::vector<std::string>& ids,
+            const std::optional<std::string>& market = std::nullopt
+        ) const;
+
+        [[nodiscard]] PagedChapterObject getAudiobookChapters(
+            const std::string &id,
+            const std::optional<std::string>& market = std::nullopt,
+            const std::optional<int>& limit = std::nullopt,
+            const std::optional<int>& offset = std::nullopt
+        ) const;
+
+        [[nodiscard]] PagedAudiobookObject getUsersSavedAudiobooks(
+            const std::optional<int>& limit = std::nullopt,
+            const std::optional<int>& offset = std::nullopt
+        ) const;
+
+        [[nodiscard]] std::vector<bool> checkUsersSavedAudiobooks(const std::vector<std::string>& ids) const;
 
 
         // PUT
-        void saveAudiobookForUser(std::vector<std::string> ids) const;
+        void saveAudiobookForUser(const std::vector<std::string>& ids) const;
 
         // DELETE
-        void removeUsersSavedAudiobooks(std::vector<std::string> ids) const;
+        void removeUsersSavedAudiobooks(const std::vector<std::string>& ids) const;
     };
 
 }

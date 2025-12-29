@@ -2,21 +2,19 @@
 // Created by Harry Skerritt on 23/12/2025.
 //
 
-
-#include <utility>
-
 #include "spotify/api/TrackAPI.hpp"
+#include "spotify/core/Endpoints.hpp"
+#include "spotify/util/Tools.hpp"
 
 #include "nlohmann/json.hpp"
-#include "spotify/core/Client.hpp"
-#include "spotify/core/Endpoints.hpp"
-#include "spotify/util/Http.hpp"
-#include "spotify/util/Tools.hpp"
 
 namespace Spotify {
 
     // --- GET ---
-    std::optional<TrackObject> TrackAPI::getTrack(const std::string &id, const std::optional<std::string> &market) const {
+    TrackObject TrackAPI::getTrack(
+        const std::string &id,
+        const std::optional<std::string> &market) const
+    {
         std::string url = Endpoints::TRACKS + "/" + WebTools::urlEncode(id);
 
         if (market.has_value() && !market->empty() && Tools::isValidMarket(*market)) {
@@ -26,7 +24,10 @@ namespace Spotify {
         return fetchAndParse<TrackObject>(url);
     }
 
-    std::optional<TrackListObject> TrackAPI::getTracks(const std::vector<std::string> &ids, const std::optional<std::string> &market) const {
+    TrackListObject TrackAPI::getTracks(
+        const std::vector<std::string> &ids,
+        const std::optional<std::string> &market) const
+    {
         std::string id_list = Tools::toCSV(ids, 0, 50);
 
         std::string url = Endpoints::TRACKS + "?ids=" + id_list;
@@ -38,7 +39,11 @@ namespace Spotify {
         return fetchAndParse<TrackListObject>(url);
     }
 
-    std::optional<PagedSavedTrackObject> TrackAPI::getUserSavedTracks(const std::optional<std::string> &market, const std::optional<int> &limit, const std::optional<int> &offset) const {
+    PagedSavedTrackObject TrackAPI::getUserSavedTracks(
+        const std::optional<std::string> &market,
+        const std::optional<int> &limit,
+        const std::optional<int> &offset) const
+    {
         std::string url = Endpoints::MY_TRACKS;
 
         std::vector<std::string> params;
@@ -66,7 +71,7 @@ namespace Spotify {
         return fetchAndParse<PagedSavedTrackObject>(url);
     }
 
-    std::optional<std::vector<bool> > TrackAPI::checkUsersSavedTracks(const std::vector<std::string> &ids) const {
+    std::vector<bool> TrackAPI::checkUsersSavedTracks(const std::vector<std::string> &ids) const {
         std::string id_list = Tools::toCSV(ids, 0, 50);
 
         std::string url = Endpoints::MY_TRACKS + "/contains?ids=" + id_list;
@@ -116,11 +121,5 @@ namespace Spotify {
 
         (void)sendAction("DELETE", url, j.dump());
     }
-
-
-
-
-
-
 
 }
