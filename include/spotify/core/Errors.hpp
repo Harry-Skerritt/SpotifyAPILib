@@ -107,8 +107,17 @@ namespace Spotify {
     };
 
 
+    class InvalidIDException : public std::invalid_argument {
+    public:
+        explicit InvalidIDException(const std::string& msg)
+            : std::invalid_argument("Invalid ID: " + msg) {}
+    };
 
-
+    class InvalidResourceException : public std::invalid_argument {
+    public:
+        explicit InvalidResourceException(const std::string& msg)
+            : std::invalid_argument("Invalid Resource: " + msg) {}
+    };
     // Todo: Add more
 
 

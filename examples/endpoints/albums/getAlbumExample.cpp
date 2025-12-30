@@ -3,6 +3,7 @@
 //
 #include <spotify/spotify.hpp>
 #include "../ExampleUtils.hpp"
+#include "spotify/util/SpotifyParser.hpp"
 
 int main () {
 
@@ -12,8 +13,10 @@ int main () {
     Spotify::Client client(auth);
 
     // Single Album
-    std::string album_id = "1U3qu4gDfohAqFrmpLT11l";
+    std::string album_id = Spotify::Parse::extractID("https://open.spotify.com/album/1U3qu4gDfohAqFrmpLT11l?si=8ac7b2848a1c4e5e");
     auto single_album = client.album().getAlbum(album_id);
+
+
 
     std::cout << "     * Single Album *      " << std::endl;
     std::cout << "---------------------------" << std::endl;
