@@ -3,7 +3,7 @@
 //
 #include "spotify/api/CategoryAPI.hpp"
 #include "spotify/core/Endpoints.hpp"
-#include "spotify/util/Tools.hpp"
+#include "../../include/spotify/util/common/Tools.hpp"
 
 #include "nlohmann/json.hpp"
 
@@ -16,10 +16,10 @@ namespace Spotify {
         const std::optional<std::string> &locale) const
     {
 
-        std::string url = Endpoints::CATEGORIES + "/" + WebTools::urlEncode(category_id);
+        std::string url = Endpoints::CATEGORIES + "/" + detail::urlEncode(category_id);
 
         if (locale.has_value() && !locale->empty()) {
-            url += "?locale=" +  WebTools::urlEncode(*locale);
+            url += "?locale=" +  detail::urlEncode(*locale);
         }
 
         return fetchAndParse<CategoryObject>(url);
@@ -37,10 +37,10 @@ namespace Spotify {
         std::vector<std::string> params;
 
         if (locale.has_value() && !locale->empty()) {
-            params.push_back("locale=" + WebTools::urlEncode(*locale));
+            params.push_back("locale=" + detail::urlEncode(*locale));
         }
 
-        if (limit && Tools::inRange(*limit, 1, 50)) {
+        if (limit && detail::inRange(*limit, 1, 50)) {
             params.push_back("limit=" + std::to_string(*limit));
         }
 

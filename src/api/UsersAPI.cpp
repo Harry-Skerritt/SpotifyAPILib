@@ -3,7 +3,7 @@
 //
 
 #include "spotify/api/UsersAPI.hpp"
-#include "spotify/util/Tools.hpp"
+#include "../../include/spotify/util/common/Tools.hpp"
 #include "spotify/core/Endpoints.hpp"
 
 #include "nlohmann/json.hpp"
@@ -31,13 +31,13 @@ namespace Spotify {
                 *time_range == "medium_term" ||
                 *time_range == "short_term")
             {
-                params.push_back("time_range=" + WebTools::urlEncode(*time_range));
+                params.push_back("time_range=" + detail::urlEncode(*time_range));
             } else {
                 throw Spotify::LogicException("Time Range is not valid!");
             }
         }
 
-        if (limit && Tools::inRange(*limit, 1, 50)) {
+        if (limit && detail::inRange(*limit, 1, 50)) {
             params.push_back("limit=" + std::to_string(*limit));
         }
 
@@ -71,13 +71,13 @@ namespace Spotify {
                 *time_range == "medium_term" ||
                 *time_range == "short_term")
             {
-                params.push_back("time_range=" + WebTools::urlEncode(*time_range));
+                params.push_back("time_range=" + detail::urlEncode(*time_range));
             } else {
                 throw Spotify::LogicException("Time Range is not valid!");
             }
         }
 
-        if (limit && Tools::inRange(*limit, 1, 50)) {
+        if (limit && detail::inRange(*limit, 1, 50)) {
             params.push_back("limit=" + std::to_string(*limit));
         }
 
@@ -115,12 +115,12 @@ namespace Spotify {
         if (type != "artist")
             throw Spotify::LogicException("Type is not valid! - Must be 'artist'");
 
-        params.push_back("type=" + WebTools::urlEncode(type));
+        params.push_back("type=" + detail::urlEncode(type));
 
         if (after.has_value() && !after->empty()) {
-            params.push_back("after=" + WebTools::urlEncode(*after));
+            params.push_back("after=" + detail::urlEncode(*after));
         }
-        if (limit && Tools::inRange(*limit, 1, 50)) {
+        if (limit && detail::inRange(*limit, 1, 50)) {
             params.push_back("limit=" + std::to_string(*limit));
         }
 
@@ -136,13 +136,13 @@ namespace Spotify {
     }
 
     std::vector<bool> UsersAPI::checkUserFollowsArtists(const std::vector<std::string> &ids) const {
-        std::string id_list = Tools::toCSV(ids, 0, 50);
+        std::string id_list = detail::toCSV(ids, 0, 50);
         std::string url = Endpoints::ME + "/following/contains/?type=artist&ids=" + id_list;
         return fetchAndParse<std::vector<bool>>(url);
     }
 
     std::vector<bool> UsersAPI::checkUserFollowsUsers(const std::vector<std::string> &ids) const {
-        std::string id_list = Tools::toCSV(ids, 0, 50);
+        std::string id_list = detail::toCSV(ids, 0, 50);
         std::string url = Endpoints::ME + "/following/contains/?type=user&ids=" + id_list;
         return fetchAndParse<std::vector<bool>>(url);
     }
@@ -154,7 +154,7 @@ namespace Spotify {
         std::string url = Endpoints::PLAYLISTS + "/" + playlist_id + "/followers/contains";
 
         if (id.has_value() && !id->empty()) {
-            url += "?ids=" + WebTools::urlEncode(*id);
+            url += "?ids=" + detail::urlEncode(*id);
         }
 
         return fetchAndParse<std::vector<bool>>(url);
@@ -176,16 +176,16 @@ namespace Spotify {
     }
 
     void UsersAPI::followArtist(const std::vector<std::string> &ids) const {
-        std::string id_list = Tools::toCSV(ids, 0, 50);
+        std::string id_list = detail::toCSV(ids, 0, 50);
 
-        std::string url = Endpoints::ME + "/following?type=artist&ids=" + WebTools::urlEncode(id_list);
+        std::string url = Endpoints::ME + "/following?type=artist&ids=" + detail::urlEncode(id_list);
         (void)sendAction("PUT", url, "");
     }
 
     void UsersAPI::followUser(const std::vector<std::string> &ids) const {
-        std::string id_list = Tools::toCSV(ids, 0, 50);
+        std::string id_list = detail::toCSV(ids, 0, 50);
 
-        std::string url = Endpoints::ME + "/following?type=user&ids=" + WebTools::urlEncode(id_list);
+        std::string url = Endpoints::ME + "/following?type=user&ids=" + detail::urlEncode(id_list);
         (void)sendAction("PUT", url, "");
     }
 
@@ -197,16 +197,16 @@ namespace Spotify {
     }
 
     void UsersAPI::unfollowArtist(const std::vector<std::string> &ids) const {
-        std::string id_list = Tools::toCSV(ids, 0, 50);
+        std::string id_list = detail::toCSV(ids, 0, 50);
 
-        const std::string url = Endpoints::ME + "/following?type=artist&ids=" + WebTools::urlEncode(id_list);
+        const std::string url = Endpoints::ME + "/following?type=artist&ids=" + detail::urlEncode(id_list);
         (void)sendAction("DELETE", url, "");
     }
 
     void UsersAPI::unfollowUser(const std::vector<std::string> &ids) const {
-        std::string id_list = Tools::toCSV(ids, 0, 50);
+        std::string id_list = detail::toCSV(ids, 0, 50);
 
-        const std::string url = Endpoints::ME + "/following?type=user&ids=" + WebTools::urlEncode(id_list);
+        const std::string url = Endpoints::ME + "/following?type=user&ids=" + detail::urlEncode(id_list);
 
         (void)sendAction("DELETE", url, "");
     }

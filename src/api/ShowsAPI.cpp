@@ -4,7 +4,7 @@
 
 #include "spotify/api/ShowsAPI.hpp"
 #include "spotify/core/Endpoints.hpp"
-#include "spotify/util/Tools.hpp"
+#include "../../include/spotify/util/common/Tools.hpp"
 
 #include "nlohmann/json.hpp"
 
@@ -15,10 +15,10 @@ namespace Spotify {
         const std::string &id,
         const std::optional<std::string> &market) const
     {
-        std::string url = Endpoints::SHOWS + "/" + WebTools::urlEncode(id);
+        std::string url = Endpoints::SHOWS + "/" + detail::urlEncode(id);
 
         if (market.has_value() && !market->empty() && Tools::isValidMarket(*market)) {
-            url += "?market=" + WebTools::urlEncode(*market);
+            url += "?market=" + detail::urlEncode(*market);
         }
 
         return fetchAndParse<ShowObject>(url);
@@ -28,12 +28,12 @@ namespace Spotify {
         const std::vector<std::string> &ids,
         const std::optional<std::string> &market) const
     {
-        std::string id_list = Tools::toCSV(ids, 0, 50);
+        std::string id_list = detail::toCSV(ids, 0, 50);
 
-        std::string url = Endpoints::SHOWS + "?ids=" + WebTools::urlEncode(id_list);
+        std::string url = Endpoints::SHOWS + "?ids=" + detail::urlEncode(id_list);
 
         if (market.has_value() && !market->empty() && Tools::isValidMarket(*market)) {
-            url += "?market=" + WebTools::urlEncode(*market);
+            url += "?market=" + detail::urlEncode(*market);
         }
 
         return fetchAndParse<ShowListObject>(url);
@@ -46,15 +46,15 @@ namespace Spotify {
         const std::optional<int> &offset) const
     {
 
-        std::string url = Endpoints::SHOWS + "/" + WebTools::urlEncode(id) + "/episodes";
+        std::string url = Endpoints::SHOWS + "/" + detail::urlEncode(id) + "/episodes";
 
         std::vector<std::string> params;
 
         if (market &&  !market->empty() && Tools::isValidMarket(*market)) {
-            params.push_back("market=" + WebTools::urlEncode(*market));
+            params.push_back("market=" + detail::urlEncode(*market));
         }
 
-        if (limit && Tools::inRange(*limit, 1, 50)) {
+        if (limit && detail::inRange(*limit, 1, 50)) {
             params.push_back("limit=" + std::to_string(*limit));
         }
 
@@ -82,7 +82,7 @@ namespace Spotify {
         std::vector<std::string> params;
 
 
-        if (limit && Tools::inRange(*limit, 1, 50)) {
+        if (limit && detail::inRange(*limit, 1, 50)) {
             params.push_back("limit=" + std::to_string(*limit));
         }
 
@@ -102,7 +102,7 @@ namespace Spotify {
     }
 
    std::vector<bool> ShowsAPI::checkUsersSavedShows(const std::vector<std::string> &ids) const {
-        std::string id_list = Tools::toCSV(ids, 0, 50);
+        std::string id_list = detail::toCSV(ids, 0, 50);
 
         std::string url = Endpoints::MY_SHOWS + "/contains?ids=" + id_list;
 
@@ -113,8 +113,8 @@ namespace Spotify {
     void ShowsAPI::saveShowsForUser(const std::vector<std::string> &ids) const {
         if (ids.empty()) throw Spotify::LogicException("IDs cannot be empty");
 
-        std::string id_list = Tools::toCSV(ids, 0, 50);
-        std::string url = Endpoints::MY_SHOWS + "?ids" = WebTools::urlEncode(id_list);
+        std::string id_list = detail::toCSV(ids, 0, 50);
+        std::string url = Endpoints::MY_SHOWS + "?ids" = detail::urlEncode(id_list);
 
         (void)sendAction("PUT", url, "");
     }
@@ -126,11 +126,11 @@ namespace Spotify {
     {
         if (ids.empty()) throw Spotify::LogicException("IDs cannot be empty");
 
-        std::string id_list = Tools::toCSV(ids, 0, 50);
-        std::string url = Endpoints::MY_SHOWS + "?ids" = WebTools::urlEncode(id_list);
+        std::string id_list = detail::toCSV(ids, 0, 50);
+        std::string url = Endpoints::MY_SHOWS + "?ids" = detail::urlEncode(id_list);
 
         if (market.has_value() && !market->empty() && Tools::isValidMarket(*market)) {
-            url += "?market=" + WebTools::urlEncode(*market);
+            url += "?market=" + detail::urlEncode(*market);
         }
 
         (void)sendAction("DELETE", url, "");

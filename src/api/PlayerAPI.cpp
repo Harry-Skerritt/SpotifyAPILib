@@ -22,13 +22,13 @@ namespace Spotify {
         std::vector<std::string> params;
 
         if (market.has_value() &&  !market->empty() && Tools::isValidMarket(*market)) {
-            params.push_back("market=" + WebTools::urlEncode(*market));
+            params.push_back("market=" + detail::urlEncode(*market));
         }
 
         if (additional_types.has_value()
             && (additional_types == "track" || additional_types == "episode"))
         {
-            params.push_back("additional_types=" + WebTools::urlEncode(*additional_types));
+            params.push_back("additional_types=" + detail::urlEncode(*additional_types));
         }
 
         if (!params.empty()) {
@@ -59,13 +59,13 @@ namespace Spotify {
         std::vector<std::string> params;
 
         if (market.has_value() &&  !market->empty() && Tools::isValidMarket(*market)) {
-            params.push_back("market=" + WebTools::urlEncode(*market));
+            params.push_back("market=" + detail::urlEncode(*market));
         }
 
         if (additional_types.has_value()
             && (additional_types == "track" || additional_types == "episode"))
         {
-            params.push_back("additional_types=" + WebTools::urlEncode(*additional_types));
+            params.push_back("additional_types=" + detail::urlEncode(*additional_types));
         }
 
         if (!params.empty()) {
@@ -89,7 +89,7 @@ namespace Spotify {
 
         std::vector<std::string> params;
 
-        if (limit.has_value() && Tools::inRange(*limit, 0, 50)) {
+        if (limit.has_value() && detail::inRange(*limit, 0, 50)) {
             params.push_back("limit=" + std::to_string(*limit));
         }
 
@@ -134,7 +134,7 @@ namespace Spotify {
         const std::string& uri,
         const std::optional<std::string> &device_id) const
     {
-        std::string url = Endpoints::PLAYER + "/queue?uri=" + WebTools::urlEncode(uri);
+        std::string url = Endpoints::PLAYER + "/queue?uri=" + detail::urlEncode(uri);
 
         if (device_id.has_value() && !device_id->empty()) {
             url += "&device_id=" + *device_id;
@@ -209,7 +209,7 @@ namespace Spotify {
         const int& position_ms,
         const std::optional<std::string>& device_id) const
     {
-        std::string url = Endpoints::PLAYER + "/seek?position_ms=" + WebTools::urlEncode(std::to_string(position_ms));
+        std::string url = Endpoints::PLAYER + "/seek?position_ms=" + detail::urlEncode(std::to_string(position_ms));
         if (device_id.has_value() && !device_id->empty()) {
             url += "?device_id=" + *device_id;
         }
@@ -230,7 +230,7 @@ namespace Spotify {
 
         }
 
-        std::string url = Endpoints::PLAYER + "/repeat?state=" + WebTools::urlEncode(repeat_state);
+        std::string url = Endpoints::PLAYER + "/repeat?state=" + detail::urlEncode(repeat_state);
         if (device_id.has_value() && !device_id->empty()) {
             url += "?device_id=" + *device_id;
         }
@@ -242,7 +242,7 @@ namespace Spotify {
         const int& volume_percent,
         const std::optional<std::string>& device_id) const
     {
-        std::string url = Endpoints::PLAYER + "/volume?volume_percent=" + WebTools::urlEncode(std::to_string(volume_percent));
+        std::string url = Endpoints::PLAYER + "/volume?volume_percent=" + detail::urlEncode(std::to_string(volume_percent));
         if (device_id.has_value() && !device_id->empty()) {
             url += "?device_id=" + *device_id;
         }

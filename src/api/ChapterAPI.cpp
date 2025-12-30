@@ -4,7 +4,7 @@
 
 #include "spotify/api/ChapterAPI.hpp"
 #include "spotify/core/Endpoints.hpp"
-#include "spotify/util/Tools.hpp"
+#include "../../include/spotify/util/common/Tools.hpp"
 
 #include "nlohmann/json.hpp"
 
@@ -18,10 +18,10 @@ namespace Spotify {
         const std::optional<std::string> &market) const
     {
 
-        std::string url = Endpoints::CHAPTERS + "/" + WebTools::urlEncode(id);
+        std::string url = Endpoints::CHAPTERS + "/" + detail::urlEncode(id);
 
         if (market.has_value() && !market->empty()) {
-            url += "?market=" +  WebTools::urlEncode(*market);
+            url += "?market=" +  detail::urlEncode(*market);
         }
 
         return fetchAndParse<ChapterObject>(url);
@@ -32,12 +32,12 @@ namespace Spotify {
         const std::optional<std::string> &market) const
     {
 
-        std::string id_list = Tools::toCSV(ids, 0, 50);
+        std::string id_list = detail::toCSV(ids, 0, 50);
 
         std::string url = Endpoints::CHAPTERS + "?ids=" + id_list;
 
         if (market.has_value() && !market->empty() && Tools::isValidMarket(*market)) {
-            url += "?market=" + WebTools::urlEncode(*market);
+            url += "?market=" + detail::urlEncode(*market);
         }
 
         return fetchAndParse<ChapterListObject>(url);

@@ -16,10 +16,9 @@
 
 #include <curl/curl.h>
 
-#include "spotify/util/Tools.hpp"
-#include "spotify/models/Types.hpp"
-#include "spotify/util/base64.hpp"
-#include "../models/Scopes.hpp"
+#include "spotify/models/Scopes.hpp"
+#include "spotify/internal.hpp"
+
 
 
 namespace Spotify {

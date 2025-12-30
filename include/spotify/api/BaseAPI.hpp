@@ -11,9 +11,9 @@
 #include <iostream>
 
 #include "spotify/core/Errors.hpp"
-#include "spotify/util/Http.hpp"
-#include "spotify/util/Tools.hpp"
-#include "spotify/util/JsonMapping.hpp"
+#include "../util/web/Http.hpp"
+#include "../util/common/Tools.hpp"
+#include "../util/parse/JsonMapping.hpp"
 
 #include "nlohmann/json.hpp"
 

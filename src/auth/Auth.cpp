@@ -25,15 +25,15 @@ namespace Spotify {
         if (redirect_uri.empty()) throw LogicException("Redirect URI cannot be empty.");
 
         std::string scope_str = buildScopeString(scopes);
-        auto actual_state = state.value_or(WebTools::generateRandomState());
+        auto actual_state = state.value_or(detail::generateRandomState());
         m_redirectUri = redirect_uri;
 
         std::ostringstream oss;
         oss << "?response_type=code"
-        << "&client_id=" << WebTools::urlEncode(m_credentials.client_id)
-        << "&scope=" << WebTools::urlEncode(scope_str)
-        << "&redirect_uri=" << WebTools::urlEncode(redirect_uri)
-        << "&state=" << WebTools::urlEncode(actual_state);
+        << "&client_id=" << detail::urlEncode(m_credentials.client_id)
+        << "&scope=" << detail::urlEncode(scope_str)
+        << "&redirect_uri=" << detail::urlEncode(redirect_uri)
+        << "&state=" << detail::urlEncode(actual_state);
 
         return Endpoints::AUTHORISE + oss.str();
     }
@@ -42,8 +42,8 @@ namespace Spotify {
         if (code.empty()) throw LogicException("Authorization Code cannot be empty.");
 
         std::ostringstream post_fields;
-        post_fields << "code=" << WebTools::urlEncode(code)
-                    << "&redirect_uri=" << WebTools::urlEncode(m_redirectUri)
+        post_fields << "code=" << detail::urlEncode(code)
+                    << "&redirect_uri=" << detail::urlEncode(m_redirectUri)
                     << "&grant_type=authorization_code";
 
         HTTP::HeaderMap headers;
@@ -60,7 +60,7 @@ namespace Spotify {
         std::string token = refresh_token.value_or(m_refresh_token);
         if (token.empty()) throw LogicException("No refresh token available");
 
-        std::string body = "grant_type=refresh_token&refresh_token=" + WebTools::urlEncode(token);
+        std::string body = "grant_type=refresh_token&refresh_token=" + detail::urlEncode(token);
 
         HTTP::HeaderMap headers;
         headers["Content-Type"] = "application/x-www-form-urlencoded";

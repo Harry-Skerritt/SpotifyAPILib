@@ -5,8 +5,8 @@
 #include <iostream>
 #include <curl/curl.h>
 
-#include "spotify/util/Http.hpp"
-#include "spotify/util/base64.hpp"
+#include "../../include/spotify/util/web/Http.hpp"
+#include "../../include/spotify/util/web/base64.hpp"
 #include "spotify/core/Errors.hpp"
 
 

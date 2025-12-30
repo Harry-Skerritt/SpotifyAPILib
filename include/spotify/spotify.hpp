@@ -19,10 +19,9 @@
 #include "spotify/api/EpisodeAPI.hpp"
 #include "spotify/api/PlayerAPI.hpp"
 #include "spotify/api/PlaylistAPI.hpp"
-#include "spotify//api/ShowsAPI.hpp"
+#include "spotify/api/ShowsAPI.hpp"
 #include "spotify/api/TrackAPI.hpp"
 #include "spotify/api/UsersAPI.hpp"
-
 
 // Auth
 #include "spotify/auth/Auth.hpp"
@@ -34,15 +33,9 @@
 
 
 // Utils
+#include "util/common/Tools.hpp"
+#include "util/parse/SpotifyParser.hpp"
 #include "models/Scopes.hpp"
 #include "spotify/models/Types.hpp"
-
-/*
- * Internal Utils
-#include "spotify/util/base64.hpp"
-#include "spotify/util/Http.hpp"
-#include "spotify/util/JsonMapping.hpp"
-#include "spotify/util/Tools.hpp"
-*/
 
 #endif //SPOTIFY_HPP

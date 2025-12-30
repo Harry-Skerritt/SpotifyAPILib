@@ -4,7 +4,7 @@
 
 #include "spotify/api/BrowseAPI.hpp"
 #include "spotify/core/Endpoints.hpp"
-#include "spotify/util/Tools.hpp"
+#include "../../include/spotify/util/common/Tools.hpp"
 
 #include "nlohmann/json.hpp"
 
@@ -29,16 +29,16 @@ namespace Spotify {
         const std::optional<std::string> &include_external) const
     {
 
-        std::string url = Endpoints::API_V1 + "/search?q=" + WebTools::urlEncode(q);
+        std::string url = Endpoints::API_V1 + "/search?q=" + detail::urlEncode(q);
 
         std::string type_str = buildSearchTypeString(type);
-        url += "&type=" + WebTools::urlEncode(type_str);
+        url += "&type=" + detail::urlEncode(type_str);
 
         if (market &&  !market->empty() && Tools::isValidMarket(*market)) {
-            url += "&market=" + WebTools::urlEncode(*market);
+            url += "&market=" + detail::urlEncode(*market);
         }
 
-        if (limit && Tools::inRange(*limit, 1, 50)) {
+        if (limit && detail::inRange(*limit, 1, 50)) {
             url += "&limit=" + std::to_string(*limit);
         }
 

@@ -10,8 +10,8 @@
 #include <map>
 #include <string>
 #include <vector>
-#include "../models/Types.hpp"
 
+#include "spotify/models/Types.hpp"
 
 namespace Spotify::HTTP {
         struct Result {

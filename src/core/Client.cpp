@@ -4,6 +4,8 @@
 
 #include "spotify/core/Client.hpp"
 
+#include "spotify/auth/Auth.hpp"
+
 #include "spotify/api/AlbumAPI.hpp"
 #include "spotify/api/ArtistAPI.hpp"
 #include "spotify/api/AudiobookAPI.hpp"

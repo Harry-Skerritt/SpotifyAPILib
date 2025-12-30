@@ -9,8 +9,8 @@
 #include <string>
 #include <optional>
 #include <iostream>
-#include "spotify/models/Types.hpp"
-#include "spotify/api/BaseAPI.hpp"
+
+#include "spotify/internal.hpp"
 
 
 namespace Spotify {

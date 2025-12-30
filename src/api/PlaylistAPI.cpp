@@ -9,9 +9,9 @@
 
 #include "spotify/core/Client.hpp"
 #include "spotify/core/Endpoints.hpp"
-#include "spotify/util/Http.hpp"
-#include "spotify/util/JsonMapping.hpp"
-#include "spotify/util/Tools.hpp"
+#include "../../include/spotify/util/web/Http.hpp"
+#include "../../include/spotify/util/parse/JsonMapping.hpp"
+#include "../../include/spotify/util/common/Tools.hpp"
 
 #include "nlohmann/json.hpp"
 
@@ -29,15 +29,15 @@ namespace Spotify {
         std::vector<std::string> params;
 
         if (market.has_value() &&  !market->empty() && Tools::isValidMarket(*market)) {
-            params.push_back("market=" + WebTools::urlEncode(*market));
+            params.push_back("market=" + detail::urlEncode(*market));
         }
 
         if (fields.has_value() && !fields->empty()) {
-            params.push_back("fields=" + WebTools::urlEncode(*fields));
+            params.push_back("fields=" + detail::urlEncode(*fields));
         }
 
         if (additional_types.has_value()) {
-            params.push_back("additional_types=" + WebTools::urlEncode(additionalTypeToString(*additional_types)));
+            params.push_back("additional_types=" + detail::urlEncode(additionalTypeToString(*additional_types)));
         }
 
         if (!params.empty()) {
@@ -64,14 +64,14 @@ namespace Spotify {
         std::vector<std::string> params;
 
         if (market.has_value() &&  !market->empty() && Tools::isValidMarket(*market)) {
-            params.push_back("market=" + WebTools::urlEncode(*market));
+            params.push_back("market=" + detail::urlEncode(*market));
         }
 
         if (fields.has_value() && !fields->empty()) {
-            params.push_back("fields=" + WebTools::urlEncode(*fields));
+            params.push_back("fields=" + detail::urlEncode(*fields));
         }
 
-        if (limit && Tools::inRange(*limit, 1, 50)) {
+        if (limit && detail::inRange(*limit, 1, 50)) {
             params.push_back("limit=" + std::to_string(*limit));
         }
 
@@ -80,7 +80,7 @@ namespace Spotify {
         }
 
         if (additional_types.has_value()) {
-            params.push_back("additional_types=" + WebTools::urlEncode(additionalTypeToString(*additional_types)));
+            params.push_back("additional_types=" + detail::urlEncode(additionalTypeToString(*additional_types)));
         }
 
         if (!params.empty()) {
@@ -102,7 +102,7 @@ namespace Spotify {
 
         std::vector<std::string> params;
 
-        if (limit && Tools::inRange(*limit, 1, 50)) {
+        if (limit && detail::inRange(*limit, 1, 50)) {
             params.push_back("limit=" + std::to_string(*limit));
         }
 
@@ -130,7 +130,7 @@ namespace Spotify {
 
         std::vector<std::string> params;
 
-        if (limit && Tools::inRange(*limit, 1, 50)) {
+        if (limit && detail::inRange(*limit, 1, 50)) {
             params.push_back("limit=" + std::to_string(*limit));
         }
 
@@ -191,7 +191,7 @@ namespace Spotify {
     {
         std::string url = Endpoints::PLAYLISTS + "/" + playlist_id + "/tracks";
 
-        std::string uri_list = Tools::toCSV(uris, 1, 100);
+        std::string uri_list = detail::toCSV(uris, 1, 100);
 
         nlohmann::json j;
         j["uris"] = uri_list;

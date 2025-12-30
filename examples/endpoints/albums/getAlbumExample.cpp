@@ -3,7 +3,7 @@
 //
 #include <spotify/spotify.hpp>
 #include "../ExampleUtils.hpp"
-#include "spotify/util/SpotifyParser.hpp"
+#include "../../../include/spotify/util/parse/SpotifyParser.hpp"
 
 int main () {
 

@@ -2,7 +2,7 @@
 // Created by Harry Skerritt on 21/12/2025.
 //
 
-#include "spotify/util/JsonMapping.hpp"
+#include "../../include/spotify/util/parse/JsonMapping.hpp"
 
 namespace Spotify {
     template<typename T>

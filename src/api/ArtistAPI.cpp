@@ -4,7 +4,7 @@
 
 #include "spotify/api/ArtistAPI.hpp"
 #include "spotify/core/Endpoints.hpp"
-#include "spotify/util/Tools.hpp"
+#include "../../include/spotify/util/common/Tools.hpp"
 
 #include "nlohmann/json.hpp"
 
@@ -13,14 +13,14 @@ namespace Spotify {
     // --- GET ---
     ArtistObject ArtistAPI::getArtist(const std::string &id) const {
 
-        std::string url = Endpoints::ARTISTS + "/" + WebTools::urlEncode(id);
+        std::string url = Endpoints::ARTISTS + "/" + detail::urlEncode(id);
 
         return fetchAndParse<ArtistObject>(url);
     }
 
    ArtistListObject ArtistAPI::getMultipleArtists(const std::vector<std::string> &ids) const {
 
-        std::string id_list = Tools::toCSV(ids, 0, 20);
+        std::string id_list = detail::toCSV(ids, 0, 20);
 
 
         std::string url = Endpoints::ARTISTS  + "?ids=" + id_list;
@@ -35,20 +35,20 @@ namespace Spotify {
         const std::optional<int>& limit,
         const std::optional<int>& offset) const
     {
-        std::string url = Endpoints::ARTISTS  + "/" + WebTools::urlEncode(id) + "/albums";
+        std::string url = Endpoints::ARTISTS  + "/" + detail::urlEncode(id) + "/albums";
 
         std::vector<std::string> params;
 
         if (include_groups.has_value() && !include_groups->empty() && include_groups->size() <= 4) {
             std::string group_str = buildIncludeGroupsString(*include_groups);
-            params.push_back("include_groups=" + WebTools::urlEncode(group_str));
+            params.push_back("include_groups=" + detail::urlEncode(group_str));
         }
 
         if (market &&  !market->empty() && Tools::isValidMarket(*market)) {
-            params.push_back("market=" + WebTools::urlEncode(*market));
+            params.push_back("market=" + detail::urlEncode(*market));
         }
 
-        if (limit && Tools::inRange(*limit, 1, 50)) {
+        if (limit && detail::inRange(*limit, 1, 50)) {
             params.push_back("limit=" + std::to_string(*limit));
         }
 
@@ -72,10 +72,10 @@ namespace Spotify {
         const std::optional<std::string>& market) const
     {
 
-        std::string url = Endpoints::ARTISTS  + "/" + WebTools::urlEncode(id) + "/top-tracks";
+        std::string url = Endpoints::ARTISTS  + "/" + detail::urlEncode(id) + "/top-tracks";
 
         if (market.has_value() && !market->empty() && Tools::isValidMarket(*market)) {
-            url += "?market=" + WebTools::urlEncode(*market);
+            url += "?market=" + detail::urlEncode(*market);
         }
 
         return fetchAndParse<TrackListObject>(url);

@@ -2,94 +2,14 @@
 // Created by Harry Skerritt on 20/12/2025.
 //
 #include <algorithm>
-#include "nlohmann/json.hpp"
 
-#include "spotify/util/Tools.hpp"
+#include "../../include/spotify/util/common/Tools.hpp"
 #include "spotify/core/Errors.hpp"
 
+#include "nlohmann/json.hpp"
+
+
 namespace Spotify {
-    // --- WEB TOOLS ---
-    std::string WebTools::generateRandomState(size_t length) {
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        std::uniform_int_distribution<> dis(0, 255);
-
-        std::ostringstream oss;
-        for (size_t i = 0; i < length; ++i) {
-            oss << std::hex << std::setw(2) << std::setfill('0') << dis(gen);
-        }
-        return oss.str();
-    }
-
-    std::string WebTools::urlEncode(const std::string &value) {
-        std::ostringstream escaped;
-        escaped.fill('0');
-        escaped << std::hex;
-
-        for (char c : value) {
-            if (isalnum((unsigned char)c) || c == '-' || c == '_' || c == '.' || c == '~') {
-                escaped << c;
-            } else {
-                escaped << '%' << std::uppercase << std::setw(2) << int((unsigned char)c) << std::nouppercase;
-            }
-        }
-
-        return escaped.str();
-    }
-
-
-    std::string WebTools::getHttpStatusText(int code)
-    {
-        RFC2616_Code response_code = static_cast<RFC2616_Code>(code);
-
-        switch (response_code) {
-            case (RFC2616_Code::OK):
-                return "OK";
-
-            case (RFC2616_Code::CREATED):
-                return "Created";
-
-            case (RFC2616_Code::ACCEPTED):
-                return "Accepted";
-
-            case (RFC2616_Code::NO_CONTENT):
-                return "No Content";
-
-            case (RFC2616_Code::NOT_MODIFIED):
-                return "Not Modified";
-
-            case (RFC2616_Code::BAD_REQUEST):
-                return "Bad Request";
-
-            case (RFC2616_Code::UNAUTHORIZED):
-                return "Unauthorized";
-
-            case (RFC2616_Code::FORBIDDEN):
-                return "Forbidden";
-
-            case (RFC2616_Code::NOT_FOUND):
-                return "Not Found";
-
-            case (RFC2616_Code::TOO_MANY_REQUESTS):
-                return "Too Many Requests";
-
-            case (RFC2616_Code::INTERNAL_SERVER_ERROR):
-                return "Internal Server Error";
-
-            case (RFC2616_Code::BAD_GATEWAY):
-                return "Bad Gateway";
-
-            case (RFC2616_Code::SERVICE_UNAVAILABLE):
-                return "Service Unavailable";
-
-            case(RFC2616_Code::NOT_IMPLEMENTED):
-                return "Not Implemented";
-
-            default:
-                throw Spotify::Exception("Unrecognized HTTP Status Code: " + std::to_string(code));
-
-        }
-    }
 
     // --- TOOLS ---
     void Tools::loadEnv(const std::string& filename) {
@@ -112,27 +32,29 @@ namespace Spotify {
     }
 
 
-    bool Tools::inRange(int test_case, int low, int high) {
-        return (low <= test_case && test_case <= high);
-    }
+    static const std::string valid_markets[185] = {
+        "AD","AE","AG","AL","AM","AO","AR","AT","AU","AZ",
+        "BA","BB","BD","BE","BF","BG","BH","BI","BJ","BN",
+        "BO","BR","BS","BT","BW","BY","BZ","CA","CD","CG",
+        "CH","CI","CL","CM","CO","CR","CV","CW","CY","CZ",
+        "DE","DJ","DK","DM","DO","DZ","EC","EE","EG","ES",
+        "ET","FI","FJ","FM","FR","GA","GB","GD","GE","GH",
+        "GM","GN","GQ","GR","GT","GW","GY","HK","HN","HR",
+        "HT","HU","ID","IE","IL","IN","IQ","IS","IT","JM",
+        "JO","JP","KE","KG","KH","KI","KM","KN","KR","KW",
+        "KZ","LA","LB","LC","LI","LK","LR","LS","LT","LU",
+        "LV","LY","MA","MC","MD","ME","MG","MH","MK","ML",
+        "MN","MO","MR","MT","MU","MV","MW","MX","MY","MZ",
+        "NA","NE","NG","NI","NL","NO","NP","NR","NZ","OM",
+        "PA","PE","PG","PH","PK","PL","PR","PS","PT","PW",
+        "PY","QA","RO","RS","RW","SA","SB","SC","SE","SG",
+        "SI","SK","SL","SM","SN","SR","ST","SV","SZ","TD",
+        "TG","TH","TJ","TL","TN","TO","TR","TT","TV","TW",
+        "TZ","UA","UG","US","UY","UZ","VC","VE","VN","VU",
+        "WS","XK","ZA","ZM","ZW"
+    };
 
-
-    std::string Tools::toCSV(std::vector<std::string> ids, int min_qty, int max_qty) {
-        int size = ids.size();
-        if (size > max_qty || size <= min_qty) {
-            throw Spotify::LogicException("CSV generation failed: size " + std::to_string(size) +
-                                      " is outside allowed range [" + std::to_string(min_qty) +
-                                      "..." + std::to_string(max_qty) + "]");
-        }
-
-        std::string csv = std::accumulate(std::next(ids.begin()), ids.end(), ids[0], [](std::string a, std::string b) {
-            return std::move(a) + "," + b;
-        });
-
-        return csv;
-    }
-
-    bool Tools::isValidMarket(std::string market) {
+    bool Tools::isValidMarket(const std::string& market) {
         if (market.length() != 2) return false;
 
         std::string upper = market;
@@ -145,7 +67,6 @@ namespace Spotify {
 
         return std::format("{:%FT%TZ}", std::chrono::floor<std::chrono::seconds>(now));
     }
-
 
     std::string Tools::formatMs(long long ms) {
         auto dur = std::chrono::milliseconds(ms);

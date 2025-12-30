@@ -12,7 +12,8 @@
 #include <optional>
 
 #include "nlohmann/json.hpp"
-#include "spotify/util/Http.hpp"
+#include "spotify/models/AuthModels.hpp"
+#include "../util/web/Http.hpp"
 
 // Note: Briefs are AI generated - Replace before deployment
 

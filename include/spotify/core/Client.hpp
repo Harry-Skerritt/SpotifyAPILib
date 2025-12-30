@@ -8,12 +8,9 @@
 #pragma once
 #include <string>
 
-#include "spotify/api/EpisodeAPI.hpp"
-#include "spotify/api/PlaylistAPI.hpp"
-#include "spotify/auth/Auth.hpp"
-
-
 namespace Spotify {
+
+    class Auth;
 
     class AlbumAPI;
     class ArtistAPI;
