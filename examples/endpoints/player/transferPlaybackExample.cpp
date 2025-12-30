@@ -18,16 +18,19 @@ int main () {
     // Output Current Devices
     auto devices = client.player().getAvailableDevices();
 
+    // Todo: Add this back
+    /*
     if (!devices.has_value()) {
         std::cerr << "No player found!" << std::endl;
         return 1;
     }
+    */
 
-    std::cout << "   * " << devices->devices.size() << " Available Devices *   " << std::endl;
+    std::cout << "   * " << devices.devices.size() << " Available Devices *   " << std::endl;
     std::cout << "-----------------------------" << std::endl;
 
     int i = 1;
-    for (const auto& device : devices->devices) {
+    for (const auto& device : devices.devices) {
         std::cout << i << ": " << device.name << std::endl;
         i++;
     }
@@ -39,7 +42,7 @@ int main () {
 
     // Get the id of the device
     int device_number = std::stoi(entered_device) - 1;
-    auto device_id = devices->devices.at(device_number).id;
+    auto device_id = devices.devices.at(device_number).id;
 
     std::vector id_to_send = {device_id.value_or("")};
 

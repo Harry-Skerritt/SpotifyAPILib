@@ -32,15 +32,13 @@ int main () {
     auto check = client.track().checkUsersSavedTracks(check_ids);
 
     int i = 1;
-    if (check.has_value()) {
-        for (auto c : check.value()) {
-            if (c) {
-                std::cout << "Track " << i << " present!" << std::endl;
-            } else {
-                std::cout << "Track " << i << " not present!" << std::endl;
-            }
-            i++;
+    for (auto c : check) {
+        if (c) {
+            std::cout << "Track " << i << " present!" << std::endl;
+        } else {
+            std::cout << "Track " << i << " not present!" << std::endl;
         }
+        i++;
     }
 
     return 0;

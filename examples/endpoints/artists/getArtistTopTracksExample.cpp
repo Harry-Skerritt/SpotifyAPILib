@@ -18,26 +18,21 @@ int main () {
 
     // Get artist name:
     std::string artist_name;
-    auto artist = client.artist().getArtist(artist_id);
-    if (artist.has_value()) artist_name = artist->name;
+    auto artist = client.artist().getArtist(artist_id).name;
 
 
-    if (top_tracks.has_value()) {
+    std::cout << "\n\n" << artist_name << " - Top Tracks" << std::endl;
+    std::cout << "----------------------------" << std::endl;
 
-        std::cout << "\n\n" << artist_name << " - Top Tracks" << std::endl;
-        std::cout << "----------------------------" << std::endl;
-
-
-        int i = 1;
-        for (const auto& track : top_tracks->tracks) {
-            std::cout << "\n\n Track: " << i << "/" << top_tracks->tracks.size() << std::endl;
-            std::cout << "---------------------------" << std::endl;
-            std::cout << "Track Name: " << track.name << std::endl;
-            std::cout << "Track Album: " << track.album.name << std::endl;
-            std::cout << "Track Length: " << track.duration_ms << "ms" << std::endl;
-            std::cout << "Is Explicit? " << (track.is_explicit ? "Yes" : "No") << std::endl;
-            i++;
-        }
+    int i = 1;
+    for (const auto& track : top_tracks.tracks) {
+        std::cout << "\n\n Track: " << i << "/" << top_tracks.tracks.size() << std::endl;
+        std::cout << "---------------------------" << std::endl;
+        std::cout << "Track Name: " << track.name << std::endl;
+        std::cout << "Track Album: " << track.album.name << std::endl;
+        std::cout << "Track Length: " << track.duration_ms << "ms" << std::endl;
+        std::cout << "Is Explicit? " << (track.is_explicit ? "Yes" : "No") << std::endl;
+        i++;
     }
 
     return 0;

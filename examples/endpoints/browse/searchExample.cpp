@@ -19,51 +19,48 @@ int main () {
     auto search = client.browse().searchForItem(search_query, search_types, "GB");
 
 
-    if (search.has_value()) {
-        if (search->artists.has_value()) {
-            auto artists = search->artists.value();
-            std::cout << "\n\n * Search Results: Artists * " << std::endl;
-            std::cout << "---- Found: " << artists.items.size() << " results ----" << std::endl;
+    if (search.artists.has_value()) {
+        auto artists = search.artists.value();
+        std::cout << "\n\n * Search Results: Artists * " << std::endl;
+        std::cout << "---- Found: " << artists.items.size() << " results ----" << std::endl;
 
-            int i = 0;
-            for (auto& a : artists.items) {
-                std::cout << i++ << ". Artist Name: " << a.name << std::endl;
-            }
-        } else {
-            std::cout << "\n\nNo artists found!" << std::endl;
+        int i = 0;
+        for (auto& a : artists.items) {
+            std::cout << i++ << ". Artist Name: " << a.name << std::endl;
         }
-
-        if (search->albums.has_value()) {
-            auto albums = search->albums.value();
-            std::cout << "\n\n * Search Results: Albums * " << std::endl;
-            std::cout << "---- Found: " << albums.items.size() << " results ----" << std::endl;
-
-            int i = 0;
-            for (auto& a : albums.items) {
-                std::cout << i++ << ". Album Title: " << a.name << std::endl;
-            }
-        } else {
-            std::cout << "\n\nNo albums found!" << std::endl;
-        }
-
-        if (search->tracks.has_value()) {
-            auto tracks = search->tracks.value();
-            std::cout << "\n\n * Search Results: Tracks * " << std::endl;
-            std::cout << "---- Found: " << tracks.items.size() << " results ----" << std::endl;
-
-            int i = 0;
-            for (auto& t : tracks.items) {
-                std::cout << i++ << ". Track Title: " << t.name << std::endl;
-            }
-        } else {
-            std::cout << "\n\nNo tracks found!" << std::endl;
-        }
-
-        if (!search->playlists.has_value()) {
-            std::cout << "\n\nNo playlists found!" << std::endl;
-        }
+    } else {
+        std::cout << "\n\nNo artists found!" << std::endl;
     }
 
+    if (search.albums.has_value()) {
+        auto albums = search.albums.value();
+        std::cout << "\n\n * Search Results: Albums * " << std::endl;
+        std::cout << "---- Found: " << albums.items.size() << " results ----" << std::endl;
+
+        int i = 0;
+        for (auto& a : albums.items) {
+            std::cout << i++ << ". Album Title: " << a.name << std::endl;
+        }
+    } else {
+        std::cout << "\n\nNo albums found!" << std::endl;
+    }
+
+    if (search.tracks.has_value()) {
+        auto tracks = search.tracks.value();
+        std::cout << "\n\n * Search Results: Tracks * " << std::endl;
+        std::cout << "---- Found: " << tracks.items.size() << " results ----" << std::endl;
+
+        int i = 0;
+        for (auto& t : tracks.items) {
+            std::cout << i++ << ". Track Title: " << t.name << std::endl;
+        }
+    } else {
+        std::cout << "\n\nNo tracks found!" << std::endl;
+    }
+
+    if (!search.playlists.has_value()) {
+        std::cout << "\n\nNo playlists found!" << std::endl;
+    }
 
     return 0;
 }

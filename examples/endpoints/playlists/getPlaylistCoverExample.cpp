@@ -14,17 +14,9 @@ int main () {
     std::string playlist_id = "37i9dQZEVXbmL4XmQSFR2v";
     auto cover_data = client.playlist().getPlaylistCoverImage(playlist_id);
 
-    if (cover_data.has_value()) {
-        for (auto& cover : cover_data.value()) {
-            std::cout << cover.height.value_or(0) << "x" << cover.width.value_or(0) << ": " << cover.url << std::endl;
-        }
+    for (auto& cover : cover_data) {
+        std::cout << cover.height.value_or(0) << "x" << cover.width.value_or(0) << ": " << cover.url << std::endl;
     }
-
-
-
-
-
-
 
     return 0;
 }

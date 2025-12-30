@@ -18,15 +18,12 @@ int main () {
 
     auto markets = client.browse().getAvailableMarkets();
 
-    if (markets.has_value()) {
-        std::cout << "   * Available Markets: " << markets->size() << " *   " << std::endl;
-        std::cout << "--------------------------------" << std::endl;
+    std::cout << "   * Available Markets: " << markets.size() << " *   " << std::endl;
+    std::cout << "--------------------------------" << std::endl;
 
-        for (auto m : *markets) {
-            std::cout << m << std::endl;
-        }
+    for (auto m : markets) {
+        std::cout << m << std::endl;
     }
-
 
     return 0;
 }

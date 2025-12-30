@@ -23,15 +23,13 @@ int main () {
     auto check = client.episode().checkUsersSavedEpisodes(episode_ids);
 
     int i = 1;
-    if (check.has_value()) {
-        for (auto c : check.value()) {
-            if (c) {
-                std::cout << "Episode " << i << " present!";
-            } else {
-                std::cout << "Episode " << i << " not present!";
-            }
-            i++;
+    for (auto c : check) {
+        if (c) {
+            std::cout << "Episode " << i << " present!";
+        } else {
+            std::cout << "Episode " << i << " not present!";
         }
+        i++;
     }
 
 

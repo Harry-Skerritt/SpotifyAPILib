@@ -21,16 +21,14 @@ int main () {
 
     // check
     auto follow_artist = client.users().checkUserFollowsArtists(artist_ids);
-    if (follow_artist.has_value()) {
-        int i = 1;
-        for (auto artist : *follow_artist) {
-            if (artist) {
-                std::cout << "Artist " << i << " followed" << std::endl;
-            } else {
-                std::cout << "Artist " << i << " not followed" << std::endl;
-            }
-            i++;
+    int i = 1;
+    for (auto artist : follow_artist) {
+        if (artist) {
+            std::cout << "Artist " << i << " followed" << std::endl;
+        } else {
+            std::cout << "Artist " << i << " not followed" << std::endl;
         }
+        i++;
     }
 
 
@@ -50,16 +48,14 @@ int main () {
 
     // check
     auto follow_user = client.users().checkUserFollowsUsers(user_ids);
-    if (follow_user.has_value()) {
-        int i = 1;
-        for (auto user : *follow_user) {
-            if (user) {
-                std::cout << "User " << i << " followed" << std::endl;
-            } else {
-                std::cout << "User " << i << " not followed" << std::endl;
-            }
-            i++;
+    i = 1;
+    for (auto user : follow_user) {
+        if (user) {
+            std::cout << "User " << i << " followed" << std::endl;
+        } else {
+            std::cout << "User " << i << " not followed" << std::endl;
         }
+        i++;
     }
 
     std::cout << "Unfollow User? (Y/n) :" << std::endl;

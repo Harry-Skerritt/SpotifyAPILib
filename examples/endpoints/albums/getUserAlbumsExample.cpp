@@ -13,21 +13,19 @@ int main () {
 
     auto user_albums = client.album().getUsersSavedAlbums(5);
 
-    if (user_albums.has_value()) {
-        std::cout << "\n\n  * Users Top: " << user_albums->limit << " Albums *  " << std::endl;
-        std::cout << "----------------------------" << std::endl;
+    std::cout << "\n\n  * Users Top: " << user_albums.limit << " Albums *  " << std::endl;
+    std::cout << "----------------------------" << std::endl;
 
-        int i = 1;
-        for (const auto& saved_album : user_albums->items) {
-            auto album = saved_album.album;
-            std::cout << "\n\n Album: " << i << "/" << user_albums->limit << std::endl;
-            std::cout << "---------------------------" << std::endl;
-            std::cout << album.name << " by " << album.artists.at(0).name << std::endl;
-            std::cout << "Released: " << album.release_date << std::endl;
-            std::cout << "Track Count: " << album.total_tracks << std::endl;
-            std::cout << "Added on: " << saved_album.added_at << std::endl;
-            i++;
-        }
+    int i = 1;
+    for (const auto& saved_album : user_albums.items) {
+        auto album = saved_album.album;
+        std::cout << "\n\n Album: " << i << "/" << user_albums.limit << std::endl;
+        std::cout << "---------------------------" << std::endl;
+        std::cout << album.name << " by " << album.artists.at(0).name << std::endl;
+        std::cout << "Released: " << album.release_date << std::endl;
+        std::cout << "Track Count: " << album.total_tracks << std::endl;
+        std::cout << "Added on: " << saved_album.added_at << std::endl;
+        i++;
     }
 
 

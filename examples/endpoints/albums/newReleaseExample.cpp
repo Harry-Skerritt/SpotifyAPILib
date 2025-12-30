@@ -19,29 +19,24 @@ int main () {
     while (has_more) {
         auto releases = client.album().getNewReleases(limit, offset);
 
-        if (releases && !releases->items.empty()) {
-            // 2. Calculate Page Numbers
-            int currentPage = (offset / limit) + 1;
-            int totalPages = std::ceil((float)releases->total / limit);
+        int currentPage = (offset / limit) + 1;
+        int totalPages = std::ceil((float)releases.total / limit);
 
-            std::cout << "\n< Page " << currentPage << "/" << totalPages << " >" << std::endl;
-            std::cout << "--------------------------" << std::endl;
+        std::cout << "\n< Page " << currentPage << "/" << totalPages << " >" << std::endl;
+        std::cout << "--------------------------" << std::endl;
 
-            for (size_t i = 0; i < releases->items.size(); ++i) {
-                // Global index: (Page * Limit) + current item index
-                int globalIndex = offset + i + 1;
-                std::cout << globalIndex << ": " << releases->items[i].name << std::endl;
-            }
+        for (size_t i = 0; i < releases.items.size(); ++i) {
+            int globalIndex = offset + i + 1;
+            std::cout << globalIndex << ": " << releases.items[i].name << std::endl;
+        }
 
-            if (releases->next.has_value() && (offset + limit) < releases->total) {
-                offset += limit;
-            } else {
-                has_more = false;
-            }
+        if (releases.next.has_value() && (offset + limit) < releases.total) {
+            offset += limit;
         } else {
             has_more = false;
         }
     }
+
 
 
     return 0;

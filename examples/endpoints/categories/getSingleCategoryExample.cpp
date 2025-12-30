@@ -16,13 +16,11 @@ int main () {
     std::string category_id = "0JQ5DAt0tbjZptfcdMSKl3";
     auto single_category = client.category().getBrowseCategory(category_id);
 
-    if (single_category.has_value()) {
-        std::cout << "     * " << single_category->name << " *      " << std::endl;
-        std::cout << "---------------------------" << std::endl;
-        std::cout << "Image: " << single_category->icons.at(0).url << std::endl;
-        std::cout << "href: " << single_category->href << std::endl;
-        std::cout << "Id: " << single_category->id << std::endl;
-    }
+    std::cout << "     * " << single_category.name << " *      " << std::endl;
+    std::cout << "---------------------------" << std::endl;
+    std::cout << "Image: " << single_category.icons.at(0).url << std::endl;
+    std::cout << "href: " << single_category.href << std::endl;
+    std::cout << "Id: " << single_category.id << std::endl;
 
     return 0;
 }

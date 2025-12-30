@@ -13,21 +13,18 @@ int main () {
 
     auto user_audiobooks = client.audiobook().getUsersSavedAudiobooks(5);
 
-    if (user_audiobooks.has_value()) {
-        std::cout << "\n\n  * Users Top: " << user_audiobooks->limit << " Audiobooks *  " << std::endl;
-        std::cout << "----------------------------" << std::endl;
+    std::cout << "\n\n  * Users Top: " << user_audiobooks.limit << " Audiobooks *  " << std::endl;
+    std::cout << "----------------------------" << std::endl;
 
-        int i = 1;
-        for (const auto& saved_book : user_audiobooks->items) {
-            std::cout << "\n\n Audiobook: " << i << "/" << user_audiobooks->items.size() << std::endl;
-            std::cout << "---------------------------" << std::endl;
-            std::cout << saved_book.name << " by " << saved_book.authors.at(0).name << std::endl;
-            std::cout << "Edition: " << saved_book.edition << std::endl;
-            std::cout << "Chapter Count: " << saved_book.total_chapters << std::endl;
-            i++;
-        }
+    int i = 1;
+    for (const auto& saved_book : user_audiobooks.items) {
+        std::cout << "\n\n Audiobook: " << i << "/" << user_audiobooks.items.size() << std::endl;
+        std::cout << "---------------------------" << std::endl;
+        std::cout << saved_book.name << " by " << saved_book.authors.at(0).name << std::endl;
+        std::cout << "Edition: " << saved_book.edition << std::endl;
+        std::cout << "Chapter Count: " << saved_book.total_chapters << std::endl;
+        i++;
     }
-
 
     return 0;
 }

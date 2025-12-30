@@ -14,16 +14,14 @@ int main () {
 
     // Artist
     auto followed_artists = client.users().getFollowedArtists();
-    if (followed_artists.has_value()) {
 
-        std::cout << " * Followed Artists * " << std::endl;
-        std::cout << "----------------------" << std::endl;
+    std::cout << " * Followed Artists * " << std::endl;
+    std::cout << "----------------------" << std::endl;
 
-        int i = 1;
-        for (const auto& artist : followed_artists->items) {
-            std::cout << i << ": " << artist.name << std::endl;
-            i++;
-        }
+    int i = 1;
+    for (const auto& artist : followed_artists.items) {
+        std::cout << i << ": " << artist.name << std::endl;
+        i++;
     }
 
 

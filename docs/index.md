@@ -1,6 +1,7 @@
 # Placeholder...
 
 # Todo:
+* ~~Fix endpoint examples~~
 * Add endpoint examples for ShowsAPI
 * ~~Clean up Types.h~~
 * ~~Clean up includes in .hpps~~
@@ -9,10 +10,10 @@
 * Check code is as optimised as can be for now
 * ~~Neaten everything up in API headers~~
 * Neaten everything up elsewhere
-* Add Doxygen docs to .hpps
+* ~~Add Doxygen docs to .hpps~~
 * Add .md docs for more details
 * Add real-world examples alongside the endpoint ones
-* Try fix CMake so the configs are showing in folders 
+* Try to fix CMake so the configs are showing in folders 
 * Deploy 1.0.0
 
 # To Add:

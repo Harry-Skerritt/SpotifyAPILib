@@ -14,15 +14,18 @@ int main () {
 
     auto devices = client.player().getAvailableDevices();
 
+    // Todo: Add this back
+    /*
     if (!devices.has_value()) {
         std::cerr << "No player found!" << std::endl;
         return 1;
     }
+    */
 
-    std::cout << "   * " << devices->devices.size() << " Available Devices *   " << std::endl;
+    std::cout << "   * " << devices.devices.size() << " Available Devices *   " << std::endl;
     std::cout << "-----------------------------" << std::endl;
 
-    for (const auto& device : devices->devices) {
+    for (const auto& device : devices.devices) {
         std::cout << device.name << std::endl;
     }
 

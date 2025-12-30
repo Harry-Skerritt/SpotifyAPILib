@@ -19,17 +19,15 @@ int main () {
     std::vector<std::string> chapter_ids = { "0D5wENdkdwbqlrHoaJ9g29", "5Xt5DXGzch68nYYamXrNxZ" };
     auto chapters = client.chapter().getMultipleChapters(chapter_ids);
 
-    if (chapters.has_value()) {
-        std::cout << "\n\n       * Multi Chapters *       " << std::endl;
-        std::cout << "--------------------------------" << std::endl;
+    std::cout << "\n\n       * Multi Chapters *       " << std::endl;
+    std::cout << "--------------------------------" << std::endl;
 
-        for (auto chapter : chapters) {
-            std::cout << "\n\n     * " << chapter->name << " *      " << std::endl;
-            std::cout << "---------------------------" << std::endl;
-            std::cout << "Image: " << chapter->images.at(0).url << std::endl;
-            std::cout << "Id: " << chapter->id << std::endl;
-            std::cout << "Description: " << chapter->description << std::endl;
-        }
+    for (auto chapter : chapters) {
+        std::cout << "\n\n     * " << chapter->name << " *      " << std::endl;
+        std::cout << "---------------------------" << std::endl;
+        std::cout << "Image: " << chapter->images.at(0).url << std::endl;
+        std::cout << "Id: " << chapter->id << std::endl;
+        std::cout << "Description: " << chapter->description << std::endl;
     }
 
     return 0;

@@ -15,7 +15,7 @@ int main () {
 
     // Creating the playlist
     auto current_user = client.users().getCurrentUserProfile();
-    auto current_user_id = current_user.has_value() ? current_user->id : throw Spotify::Exception("No user id");
+    auto current_user_id = current_user.id;
 
     auto new_playlist = client.playlist().createPlaylist(
         current_user_id,"Test Playlist", true, false, "A test playlist made with SpotifyAPILib");

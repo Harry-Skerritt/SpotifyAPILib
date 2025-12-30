@@ -23,15 +23,13 @@ int main () {
     auto check = client.album().checkUsersSavedAlbums(album_ids);
 
     int i = 1;
-    if (check.has_value()) {
-        for (auto c : check.value()) {
-            if (c) {
-                std::cout << "Album " << i << " present!";
-            } else {
-                std::cout << "Album " << i << " not present!";
-            }
-            i++;
+    for (auto c : check) {
+        if (c) {
+            std::cout << "Album " << i << " present!";
+        } else {
+            std::cout << "Album " << i << " not present!";
         }
+        i++;
     }
 
     return 0;

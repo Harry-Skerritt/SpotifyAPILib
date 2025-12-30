@@ -13,21 +13,19 @@ int main () {
 
     auto user_episodes = client.episode().getUsersSavedEpisodes(std::nullopt, 5);
 
-    if (user_episodes.has_value()) {
-        std::cout << "\n\n  * Users Top: " << user_episodes->limit << " Episodes *  " << std::endl;
-        std::cout << "-------------------------------" << std::endl;
+    std::cout << "\n\n  * Users Top: " << user_episodes.limit << " Episodes *  " << std::endl;
+    std::cout << "-------------------------------" << std::endl;
 
-        int i = 1;
-        for (const auto& saved_episode : user_episodes->items) {
-            auto episode = saved_episode.episode;
-            std::cout << "\n\n       * Episode " << i << " *          " << std::endl;
-            std::cout << "--------------------------" << std::endl;
-            std::cout << "Episode Title: " << episode.name << std::endl;
-            std::cout << "From Show: " << episode.show.name << std::endl;
-            std::cout << "Publisher: " << episode.show.publisher << std::endl;
-            std::cout << "Description: " << episode.description << std::endl;
-            i++;
-        }
+    int i = 1;
+    for (const auto& saved_episode : user_episodes.items) {
+        auto episode = saved_episode.episode;
+        std::cout << "\n\n       * Episode " << i << " *          " << std::endl;
+        std::cout << "--------------------------" << std::endl;
+        std::cout << "Episode Title: " << episode.name << std::endl;
+        std::cout << "From Show: " << episode.show.name << std::endl;
+        std::cout << "Publisher: " << episode.show.publisher << std::endl;
+        std::cout << "Description: " << episode.description << std::endl;
+        i++;
     }
 
 

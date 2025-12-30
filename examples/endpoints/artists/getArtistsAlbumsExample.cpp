@@ -19,27 +19,22 @@ int main () {
 
     // Get artist name:
     std::string artist_name;
-    auto artist = client.artist().getArtist(artist_id);
-    if (artist.has_value()) artist_name = artist->name;
+    auto artist = client.artist().getArtist(artist_id).name;
 
 
-    if (albums.has_value()) {
+    std::cout << "\n\n" << artist_name << " - Albums" << std::endl;
+    std::cout << "----------------------------" << std::endl;
 
-        std::cout << "\n\n" << artist_name << " - Albums" << std::endl;
-        std::cout << "----------------------------" << std::endl;
-
-
-        int i = 1;
-        for (const auto& album : albums->items) {
-            std::cout << "\n\n Album: " << i << "/" << albums->limit << std::endl;
-            std::cout << "---------------------------" << std::endl;
-            std::cout << "Album Name: " << album.name << std::endl;
-            std::cout << "Release Date: " << album.release_date << std::endl;
-            std::cout << "Album Type: " << album.album_type << std::endl;
-            std::cout << "Track Count: " << album.total_tracks << std::endl;
-            std::cout << "Album Art: " << album.images.at(0).url << std::endl;
-            i++;
-        }
+    int i = 1;
+    for (const auto& album : albums.items) {
+        std::cout << "\n\n Album: " << i << "/" << albums.limit << std::endl;
+        std::cout << "---------------------------" << std::endl;
+        std::cout << "Album Name: " << album.name << std::endl;
+        std::cout << "Release Date: " << album.release_date << std::endl;
+        std::cout << "Album Type: " << album.album_type << std::endl;
+        std::cout << "Track Count: " << album.total_tracks << std::endl;
+        std::cout << "Album Art: " << album.images.at(0).url << std::endl;
+        i++;
     }
 
     return 0;

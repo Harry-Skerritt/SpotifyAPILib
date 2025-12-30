@@ -17,13 +17,11 @@ int main () {
     std::string chapter_id = "0D5wENdkdwbqlrHoaJ9g29";
     auto chapter = client.chapter().getChapter(chapter_id);
 
-    if (chapter.has_value()) {
-        std::cout << "     * " << chapter->name << " *      " << std::endl;
-        std::cout << "---------------------------" << std::endl;
-        std::cout << "Image: " << chapter->images.at(0).url << std::endl;
-        std::cout << "Id: " << chapter->id << std::endl;
-        std::cout << "Description: " << chapter->description << std::endl;
-    }
+    std::cout << "     * " << chapter.name << " *      " << std::endl;
+    std::cout << "---------------------------" << std::endl;
+    std::cout << "Image: " << chapter.images.at(0).url << std::endl;
+    std::cout << "Id: " << chapter.id << std::endl;
+    std::cout << "Description: " << chapter.description << std::endl;
 
     return 0;
 }
