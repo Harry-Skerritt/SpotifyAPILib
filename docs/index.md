@@ -12,6 +12,7 @@
 * ~~Neaten everything up in API headers~~
 * ~~Neaten everything up elsewhere~~
 * ~~Add Doxygen docs to .hpps~~
+* ~~Ensure all necessary tools are in place~~
 * Add .md docs for more details
 * Add real-world examples alongside the endpoint ones
 * Try to fix CMake so the configs are showing in folders 

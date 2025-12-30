@@ -13,6 +13,8 @@
 
 namespace Spotify::Tools {
 
+    /// @brief Loads a .env file to be accessed within code
+    /// @param filename The path to the .env file
     void loadEnv(const std::string& filename = ".env");
 
     /// @brief Checks is the input string is a valid ISO 3166 Country Code

@@ -49,7 +49,7 @@ void renderPlayback(const std::optional<PlaybackObject>& playback_state, const s
     }
 
     std::cout << "\n────────────────────────────────────────" << std::endl;
-    std::cout << "(Press Ctrl+C to quit)" << std::endl; // Quits the infinte loop in main()
+    std::cout << "(Press Ctrl+C to quit)" << std::endl; // Quits the infinite loop in main()
 }
 
 int main () {

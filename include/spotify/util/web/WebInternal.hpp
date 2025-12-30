@@ -47,7 +47,7 @@ namespace Spotify::detail {
 
     inline std::string getHttpStatusText(int code)
     {
-        switch (RFC2616_Code response_code = static_cast<RFC2616_Code>(code)) {
+        switch (auto response_code = static_cast<RFC2616_Code>(code)) {
             case (RFC2616_Code::OK):
                 return "OK";
 

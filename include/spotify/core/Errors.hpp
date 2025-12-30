@@ -26,20 +26,16 @@ namespace Spotify {
     };
 
 
-    /**
-     * @class Exception
-     * @brief Base exception for all Spotify library errors.
-     */
+    /// @class Exception
+    /// @brief Base exception for all Spotify library errors.
     class Exception : public std::runtime_error {
     public:
         explicit Exception(const std::string &message) : std::runtime_error(message) {}
     };
 
 
-    /**
-     * @class APIException
-     * @brief Thrown when the Spotify API returns a non-success status code (4xx or 5xx).
-     */
+    /// @class APIException
+    /// @brief Thrown when the Spotify API returns a non-success status code (4xx or 5xx).
     class APIException : public Exception {
         ErrorDetails m_details;
     public:
@@ -52,11 +48,8 @@ namespace Spotify {
         [[nodiscard]] std::string reason() const { return m_details.reason; }
     };
 
-    /**
-     * @class RateLimitException
-     * @brief Specifically thrown on HTTP 429 errors. Includes cooldown timing.
-     */
-
+    /// @class RateLimitException
+    /// @brief Specifically thrown on HTTP 429 errors. Includes cooldown timing.
     class RateLimitException : public APIException {
         int m_retry_after_seconds;
     public:
@@ -67,10 +60,8 @@ namespace Spotify {
     };
 
 
-    /**
-     * @class ParseException
-     * @brief Thrown when JSON deserialization fails or the API returns malformed data.
-     */
+     /// @class ParseException
+     /// @brief Thrown when JSON deserialization fails or the API returns malformed data.
     class ParseException : public Exception {
         std::string m_raw_body;
     public:
@@ -81,22 +72,17 @@ namespace Spotify {
     };
 
 
-    /**
-     * @class LogicException
-     * @brief Thrown for programmer errors (e.g., bad arguments or uninitialized state).
-     */
+    /// @class LogicException
+    /// @brief Thrown for programmer errors (e.g., bad arguments or uninitialized state).
     class LogicException : public Exception {
     public:
         using Exception::Exception;
     };
 
 
-    /**
- * @class NetworkException
- * @brief Thrown when a low-level network failure occurs (e.g., DNS failure,
- * connection timeout, or port binding issues).
- * @sa Exception
- */
+    ///@class NetworkException
+    ///@brief Thrown when a low-level network failure occurs (e.g., DNS failure,
+    ///    connection timeout, or port binding issues).
     class NetworkException : public Exception {
         int m_libcurl_code;
     public:
@@ -107,13 +93,19 @@ namespace Spotify {
         [[nodiscard]] int libcurlCode() const { return m_libcurl_code; }
     };
 
-
+    /// @class InvalidIDException
+    /// @brief Thrown when a Spotify ID is invalid or does not match the expected 22-character Base62 format.
+    /// @details Inherits from std::invalid_argument.
     class InvalidIDException : public std::invalid_argument {
     public:
         explicit InvalidIDException(const std::string& msg)
             : std::invalid_argument("Invalid ID: " + msg) {}
     };
 
+
+   /// @class InvalidResourceException
+   /// @brief Thrown when a Spotify resource type (track, album, playlist, etc.) is invalid or unsupported.
+   /// @details Inherits from std::invalid_argument.
     class InvalidResourceException : public std::invalid_argument {
     public:
         explicit InvalidResourceException(const std::string& msg)
