@@ -23,11 +23,21 @@ namespace Spotify {
         explicit BrowseAPI(Client* client) : BaseAPI(client) {};
 
         // Market
-        std::vector<std::string> getAvailableMarkets() const;
+
+        /// Gets a list of markets where Spotify is available
+        /// @return Vector of strings
+        [[nodiscard]] std::vector<std::string> getAvailableMarkets() const;
 
         // Search
-        SearchObject searchForItem(
-            const std::string& q,
+        /// Perform a search for a query
+        /// @param q Search query (IDs, URIs, or plain text)
+        /// @param type Object type to search for
+        /// @param market ISO 3166-1 country code (optional)
+        /// @param limit Max number of items to return (optional)
+        /// @param offset Index of first item to return (optional)
+        /// @param include_external Enables searching of external audio (Optional)
+        [[nodiscard]] SearchObject searchForItem(
+            const std::string &q,
             const std::vector<SearchType>& type,
             const std::optional<std::string>& market = std::nullopt,
             const std::optional<int>& limit = std::nullopt,

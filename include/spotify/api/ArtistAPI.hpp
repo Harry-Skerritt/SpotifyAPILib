@@ -23,10 +23,19 @@ namespace Spotify {
         explicit ArtistAPI(Client* client) : BaseAPI(client) {};
 
         // GET
+        /// Retrieves a Spotify artist by their ID
+        /// @param id Spotify artist ID
         [[nodiscard]] ArtistObject getArtist(const std::string &id) const;
 
+        /// Retrieves multiple Spotify artists by their IDs
+        /// @param ids A vector of Spotify artist IDs (max 50).
         [[nodiscard]] ArtistListObject getMultipleArtists(const std::vector<std::string>& ids) const;
 
+        /// Retrieves Spotify albums by a Spotify artist from their ID
+        /// @param id A Spotify artist IDs
+        /// @param market ISO 3166-1 country code (optional)
+        /// @param limit Max number of items to return (optional)
+        /// @param offset Index of first item to return (optional)
         [[nodiscard]] PagedAlbumObject getArtistsAlbums(
             const std::string &id,
             const std::optional<std::vector<IncludeGroups>>& include_groups = std::nullopt,
@@ -35,6 +44,10 @@ namespace Spotify {
             const std::optional<int>& offset = std::nullopt
         ) const;
 
+
+        /// Retrieves the top tracks by a Spotify artist from their ID
+        /// @param id A Spotify artist IDs
+        /// @param market ISO 3166-1 country code (optional)
         [[nodiscard]] TrackListObject getArtistTopTracks(
             const std::string &id,
             const std::optional<std::string>& market = std::nullopt
