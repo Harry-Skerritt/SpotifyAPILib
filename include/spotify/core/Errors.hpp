@@ -118,6 +118,8 @@ namespace Spotify {
         explicit InvalidResourceException(const std::string& msg)
             : std::invalid_argument("Invalid Resource: " + msg) {}
     };
+
+
     // Todo: Add more
 
 
