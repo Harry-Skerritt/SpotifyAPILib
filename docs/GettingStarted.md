@@ -2,7 +2,7 @@
 
 ## Step 1 - Creating a Spotify Developer App
 
-To use this library you need a Spotify developer account, along with an active Spotify developer app
+To use this library you need, a Spotify developer account, along with an active Spotify developer app
 
 - Go to [Spotify Developer Dashboard](https://developer.spotify.com/dashboard)
 - Create a new app and obtain a **Client ID** and **Client Secret**
@@ -10,20 +10,34 @@ To use this library you need a Spotify developer account, along with an active S
 
 ## Step 2 - Load Credentials
 
-There are different ways to load the credentials in. 
+## Step 2 – Load Credentials
 
-This library does provide a way to load from a `.env` file an example of which is below
+There are several ways to supply your Spotify credentials.
 
+This library provides a helper for loading them from a `.env` file.
+
+### Example `.env` file
+
+```env
+SPOTIFY_CLIENT_KEY=your_client_id_here
+SPOTIFY_CLIENT_SECRET=your_client_secret_here
+```
+
+### Loading credentials in code
 ```c++
 #include <spotify/spotify.hpp>
 #include <Tools.hpp>
 
 Tools::loadEnv("/path/to/.env");
+
 const char* client_key = std::getenv("SPOTIFY_CLIENT_KEY");
 const char* client_secret = std::getenv("SPOTIFY_CLIENT_SECRET");
+
 Spotify::Auth auth({client_key, client_secret});
 ```
+⚠️ Never commit your `.env` file or credentials to source control.
 
 ## Step 3 - Authorisation
+Once your credentials are loaded, you can authorize your application.
 
-The steps to authorise you app are [here!](/docs/Authentication.md)
+Follow the full authorization flow documentation here: [Authentication](/docs/Authentication.md)

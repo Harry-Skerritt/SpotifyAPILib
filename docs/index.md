@@ -15,10 +15,9 @@
 * ~~Ensure all necessary tools are in place~~
 * Add .md docs for more details
 * Add real-world examples alongside the endpoint ones
-* Try to fix CMake so the configs are showing in folders 
 * ~~Add helpers for getting IDs and URIs from URls~~
 * Add README.md
-* Add License
+* ~~Add License~~
 * Deploy 1.0.0
 
 # To Add:

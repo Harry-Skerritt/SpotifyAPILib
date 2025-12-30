@@ -1,6 +1,6 @@
 # Authentication
 
-## Authorization Code Flow
+## Authorisation Code Flow
 *Note: [Authorisation Code Flow](https://developer.spotify.com/documentation/web-api/tutorials/code-flow) is the only flow implemented within the library at the moment*
 
 The steps below outline how to use OAuth2 to obtain a Spotify authorisation token.
@@ -25,12 +25,12 @@ auto url = auth.createAuthoriseURL(
 See information on [`Scopes`]()
 
 ## Step 2 - Capture the code
-Once you have the authorisation URL the user will need to click it an allow the app access.
+Once you have the authorisation URL the user will need to click it and allow the app access.
 
-This will then send them to the input redirect uri with a code as part of its url. 
+This will then send them to the configured redirect uri with a code as part of its URL. -
 This can either be captured manually in a way you choose, but the library does provide easy ways of doing this
 
-The [`AuthServer`]() can make capturing the code easy:
+The `AuthServer` can make capturing the code easy:
 
 ```c++
 // Step 2: Capture the access code
@@ -39,6 +39,8 @@ std::string code = Spotify::AuthServer::waitForCode("127.0.0.1", 8888);
 ```
 
 The `waitForCode` function will return the code
+
+*See more on [`AuthServer`]()*
 
 ## Step 3 - Exchange the Code
 
@@ -49,7 +51,7 @@ The code is not the token we need quite yet, however the one line of code below 
 auth.exchangeCode(code);
 ```
 
-See information on [`AuthReponse`]()
+*See more on [`AuthResponse`]()*
 
 
 ## Step 4 - Refreshing Access Token
@@ -58,7 +60,7 @@ The access token is only valid for 3600 seconds (1 hour)
 
 After this time it needs refreshing
 
-The `.getAccessToken()` method within the `Client` handles this refresh automatically,
+The `.getAccessToken()` method within the `Client` handles this refresh automatically so most applications do not need to call `refreshAccessToken()` directly,
 but it can be done manually as explained below.
 
 ```c++
@@ -66,7 +68,7 @@ but it can be done manually as explained below.
 auth.refreshAccessToken();
 ```
 
-See more on [`.getAccessToken()`]()
+*See more on [`Client`](/docs/APIReference/Client.md)*
 
 # Full Flow Example
 
@@ -80,7 +82,10 @@ auth.exchangeCode(code);
 Client client(auth); // Now ready to make API requests
 ```
 
+
 ### Notes
 - Keep your Client ID and Secret private. **Do not** commit them publicly.
 - Tokens expire - refresh them for long-running applications.
 - Scopes must match the endpoints you intend to call.
+
+## *See Next: [Client](/docs/APIReference/Client.md)*
