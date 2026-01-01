@@ -4,7 +4,7 @@ A modern **C++ library for the Spotify Web API** providing full access to albums
 
 Built with easy authentication and easy access to endpoints in mind!
 
-Documentation: [Getting Started](/docs/GettingStarted.md)
+Documentation: [View Documentation](/docs/index.md)
 
 ## Features
 - Full access to Spotify Web API endpoints:

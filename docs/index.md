@@ -39,3 +39,13 @@
 | **Index**  | **Overview of all types**                 | **[Link](/docs/Types/index.md)** |
 | Auth       | Types related to the authorisation flow   | [Link](/docs/Types/Auth.md)      |
 | Scope      | Spotify API authorization scopes          | [Link](/docs/Types/Scope.md)     |
+
+---
+
+## Utilities
+
+| Utility   | Description                                 | Link                                 |
+|-----------|---------------------------------------------|--------------------------------------|
+| **Index** | **Overview of all utilities**               | **[Link](/docs/Utilities/index.md)** |
+| Auth      | Tools for working with Spotify IDs and URIs | [Link](/docs/Utilities/Parsing.md)   |
+| Scope     | General utility functions                   | [Link](/docs/Utilities/Tools.md)     |
