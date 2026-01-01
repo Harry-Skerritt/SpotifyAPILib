@@ -64,7 +64,11 @@ function(set_example_output_dir TARGET_NAME CATEGORY SUBFOLDER)
 endfunction()
 
 
-# --- Real World Examples
+# --- Real World Examples ---
+add_executable(example_authentication examples/realworld/authenticate.cpp)
+target_link_libraries(example_authentication PRIVATE SpotifyAPILib)
+set_example_output_dir(example_authentication "realworld" "authenticate")
+
 add_executable(example_nowPlaying examples/realworld/now_playing.cpp)
 target_link_libraries(example_nowPlaying PRIVATE SpotifyAPILib)
 set_example_output_dir(example_nowPlaying "realworld" "now_playing")
