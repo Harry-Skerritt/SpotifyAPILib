@@ -2,6 +2,10 @@
 
 Below is the table of contents leading to information about the classes, functions and data models within this library.
 
+These docs are not complete!
+
+*See: [Spotify Web API docs](https://developer.spotify.com/documentation/web-api) for more information*
+
 ***Note: Some of the docs have been written with the help from GenAI** (The plan is forthem to be rewritten)*
 
 ---

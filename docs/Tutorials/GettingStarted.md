@@ -1,5 +1,8 @@
 # Getting Started
 
+The only `#include` needed is `<spotify/spotify.hpp>`
+This will give you everything you need for the basic functionality of the library
+
 ## Step 1 - Creating a Spotify Developer App
 
 To use this library you need, a Spotify developer account, along with an active Spotify developer app
