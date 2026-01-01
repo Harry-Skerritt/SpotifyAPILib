@@ -17,7 +17,7 @@
 namespace Spotify {
 
     // Enum
-    enum class RFC2616_Code {
+    enum class HTTPStatus_Code {
         OK = 200,
         CREATED = 201,
         ACCEPTED = 202,
@@ -47,7 +47,7 @@ namespace Spotify {
         std::string scope;
         std::chrono::time_point<std::chrono::system_clock> expire_time;
         std::string refresh_token;
-        RFC2616_Code response_code;
+        HTTPStatus_Code response_code;
     };
 
 }

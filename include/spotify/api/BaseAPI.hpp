@@ -44,7 +44,7 @@ namespace Spotify {
             std::string token = tryGetAccessToken();
             auto result = HTTP::get(url, token);
 
-            if (result.code == RFC2616_Code::NO_CONTENT || (result.code == RFC2616_Code::OK && result.body.empty())) {
+            if (result.code == HTTPStatus_Code::NO_CONTENT || (result.code == HTTPStatus_Code::OK && result.body.empty())) {
                 return std::nullopt;
             }
 

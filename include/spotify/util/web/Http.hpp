@@ -15,7 +15,7 @@
 
 namespace Spotify::HTTP {
         struct Result {
-            Spotify::RFC2616_Code code;
+            Spotify::HTTPStatus_Code code;
             std::string body;
         };
 

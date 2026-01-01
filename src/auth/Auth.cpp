@@ -103,7 +103,7 @@ namespace Spotify {
                 response.refresh_token = m_refresh_token;
             }
 
-            response.response_code = RFC2616_Code::OK;
+            response.response_code = HTTPStatus_Code::OK;
             m_authResponse = response;
             return response;
         } catch (const nlohmann::json::exception &e) {

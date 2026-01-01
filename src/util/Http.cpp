@@ -39,7 +39,7 @@ namespace Spotify {
     // For API
     HTTP::Result HTTP::get(const std::string &url, const std::string &bearer, const HeaderMap &extra_headers) {
         CURL *curl;
-        HTTP:Result result { Spotify::RFC2616_Code::NOT_IMPLEMENTED, "" };
+        HTTP:Result result { Spotify::HTTPStatus_Code::NOT_IMPLEMENTED, "" };
 
         curl = curl_easy_init();
 
@@ -65,7 +65,7 @@ namespace Spotify {
 
         long status = 0;
         curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &status);
-        result.code = static_cast<Spotify::RFC2616_Code>(status);
+        result.code = static_cast<Spotify::HTTPStatus_Code>(status);
 
         curl_slist_free_all(headers);
         curl_easy_cleanup(curl);
@@ -74,7 +74,7 @@ namespace Spotify {
 
     HTTP::Result HTTP::post(const std::string &url, const std::string &bearer, const std::string &body, const HeaderMap &extra_headers, bool is_auth) {
         CURL *curl;
-        HTTP:Result result { Spotify::RFC2616_Code::NOT_IMPLEMENTED, "" };
+        HTTP:Result result { Spotify::HTTPStatus_Code::NOT_IMPLEMENTED, "" };
 
         curl = curl_easy_init();
 
@@ -111,7 +111,7 @@ namespace Spotify {
 
         long status = 0;
         curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &status);
-        result.code = static_cast<Spotify::RFC2616_Code>(status);
+        result.code = static_cast<Spotify::HTTPStatus_Code>(status);
 
         curl_slist_free_all(headers);
         curl_easy_cleanup(curl);
@@ -120,7 +120,7 @@ namespace Spotify {
 
     HTTP::Result HTTP::put(const std::string &url, const std::string &bearer, const std::string &body, const HeaderMap &extra_headers) {
         CURL *curl;
-        HTTP:Result result { Spotify::RFC2616_Code::NOT_IMPLEMENTED, "" };
+        HTTP:Result result { Spotify::HTTPStatus_Code::NOT_IMPLEMENTED, "" };
 
         curl = curl_easy_init();
 
@@ -158,7 +158,7 @@ namespace Spotify {
 
         long status = 0;
         curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &status);
-        result.code = static_cast<Spotify::RFC2616_Code>(status);
+        result.code = static_cast<Spotify::HTTPStatus_Code>(status);
 
         curl_slist_free_all(headers);
         curl_easy_cleanup(curl);
@@ -167,7 +167,7 @@ namespace Spotify {
 
     HTTP::Result HTTP::remove(const std::string &url, const std::string &bearer, const std::string &body, const HeaderMap &extra_headers) {
         CURL *curl;
-        HTTP:Result result { Spotify::RFC2616_Code::NOT_IMPLEMENTED, "" };
+        HTTP:Result result { Spotify::HTTPStatus_Code::NOT_IMPLEMENTED, "" };
 
         curl = curl_easy_init();
 
@@ -205,7 +205,7 @@ namespace Spotify {
 
         long status = 0;
         curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &status);
-        result.code = static_cast<Spotify::RFC2616_Code>(status);
+        result.code = static_cast<Spotify::HTTPStatus_Code>(status);
 
         curl_slist_free_all(headers);
         curl_easy_cleanup(curl);
@@ -215,7 +215,7 @@ namespace Spotify {
     // Other
     HTTP::Result HTTP::getImage(const std::string &url) {
         CURL *curl;
-        HTTP:Result result { Spotify::RFC2616_Code::NOT_IMPLEMENTED, "" };
+        HTTP:Result result { Spotify::HTTPStatus_Code::NOT_IMPLEMENTED, "" };
 
         curl = curl_easy_init();
 
@@ -237,7 +237,7 @@ namespace Spotify {
 
         long status = 0;
         curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &status);
-        result.code = static_cast<Spotify::RFC2616_Code>(status);
+        result.code = static_cast<Spotify::HTTPStatus_Code>(status);
 
         curl_easy_cleanup(curl);
         return result;

@@ -234,7 +234,7 @@ namespace Spotify {
             // Is URL
             auto result = HTTP::getImage(image_path);
 
-            if (result.code != RFC2616_Code::OK) {
+            if (result.code != HTTPStatus_Code::OK) {
                 throw APIException({static_cast<int>(result.code), "Failed to download image from URL", "IMAGE_DOWNLOAD_FAILED"});
             }
 

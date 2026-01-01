@@ -146,7 +146,7 @@ namespace Spotify {
                         j.value("reason", "UNKNOWN_REASON")
                     };
 
-                    if (result.code == RFC2616_Code::TOO_MANY_REQUESTS) {
+                    if (result.code == HTTPStatus_Code::TOO_MANY_REQUESTS) {
                         throw Spotify::RateLimitException(details, 30);
                     }
                     throw Spotify::APIException(details);
