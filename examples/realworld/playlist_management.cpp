@@ -101,8 +101,8 @@ int main() {
         std::string image_url = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQW6H6tLVXa2pvLWkQYhbyFBlCbAL8WfVZtDQ&s";
         client.playlist().addCustomPlaylistCover(new_playlist_id, image_url);
 
-        // Spotify time range: short_term | medium_term | long_term
-        std::string time_range = "medium_term";
+        // Spotify time range: ShortTerm | MediumTerm | LongTerm
+        TimeRange time_range = TimeRange::MediumTerm;
 
         // Value to pass to Spotify for the amount of items to return
         int return_limit = 20;
