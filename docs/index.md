@@ -1,4 +1,4 @@
-# Spotify API Lib - Documentation
+# SpotifyCPP - Documentation
 
 Below is the table of contents leading to information about the classes, functions and data models within this library.
 

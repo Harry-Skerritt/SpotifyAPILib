@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(SpotifyAPILib VERSION 0.1 LANGUAGES CXX)
+project(SpotifyCPP VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -14,7 +14,7 @@ find_package(CURL REQUIRED)
 find_package(Threads REQUIRED)
 
 # --- Library ---
-add_library(SpotifyAPILib STATIC
+add_library(SpotifyCPP STATIC
         src/auth/Auth.cpp
         src/auth/AuthServer.cpp
         src/core/Client.cpp
@@ -38,14 +38,14 @@ add_library(SpotifyAPILib STATIC
 
 )
 
-# Public includes: SpotifyAPILib
-target_include_directories(SpotifyAPILib PUBLIC include)
+# Public includes: SpotifyCPP
+target_include_directories(SpotifyCPP PUBLIC include)
 
 # Private include: Thirdparty
-target_include_directories(SpotifyAPILib PUBLIC thirdparty)
+target_include_directories(SpotifyCPP PUBLIC thirdparty)
 
 
-target_link_libraries(SpotifyAPILib PRIVATE
+target_link_libraries(SpotifyCPP PRIVATE
         CURL::libcurl
         Threads::Threads
 )

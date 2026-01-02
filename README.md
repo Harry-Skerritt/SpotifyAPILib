@@ -1,4 +1,4 @@
-# Spotify API Lib
+# SpotifyCPP
 
 A modern, high-performance **C++ library for the Spotify Web API**. Designed to be lightweight and intuitive, this library provides comprehensive access to Spotify's ecosystem—from catalog metadata to real-time player controls.
 
