@@ -34,8 +34,8 @@ Built for developers who want a "no-nonsense" interface to Spotify without the o
 
 - **[nlohmann/json](https://github.com/nlohmann/json)** - The "JSON for Modern C++" library. We use this for all JSON parsing and serialization. Its intuitive syntax allowed us to keep the library codebase clean and maintainable.
   - *Credit to Niels Lohmann and contributors for this incredible piece of software.*
-- **[yhirose/cpp-httplib](https://github.com/yhirose/cpp-httplib)** - Used for our internal `AuthServer` to handle OAuth callbacks.
-- **libcurl** - Powers the underlying HTTP network layer.
+- **[yhirose/cpp-httplib](https://github.com/yhirose/cpp-httplib)** - Used for the internal `AuthServer` to handle OAuth callbacks.
+- **[libcurl](https://curl.se/libcurl/)** - Powers the underlying HTTP network layer.
 
 ---
 
