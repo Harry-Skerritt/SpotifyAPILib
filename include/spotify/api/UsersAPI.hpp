@@ -33,7 +33,7 @@ namespace Spotify {
         /// @param offset Index of first item to return (optional)
         /// @note Requires @c user-top-read scope
         [[nodiscard]] PagedArtistObject getUsersTopArtists(
-            const std::optional<std::string>& time_range = std::nullopt,
+            const std::optional<TimeRange>& time_range = std::nullopt,
             const std::optional<int>& limit = std::nullopt,
             const std::optional<int>& offset = std::nullopt
         ) const;
@@ -44,7 +44,7 @@ namespace Spotify {
         /// @param offset Index of first item to return (optional)
         /// @note Requires @c user-top-read scope
         [[nodiscard]] PagedTrackObject getUsersTopTracks(
-            const std::optional<std::string>& time_range = std::nullopt,
+            const std::optional<TimeRange>& time_range = std::nullopt,
             const std::optional<int>& limit = std::nullopt,
             const std::optional<int>& offset = std::nullopt
         ) const;

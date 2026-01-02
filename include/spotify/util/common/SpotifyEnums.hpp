@@ -97,6 +97,25 @@ namespace Spotify {
         }
         return result;
     }
+
+
+    // --- Time Range ---
+    enum class TimeRange {
+        ShortTerm,
+        MediumTerm,
+        LongTerm
+    };
+
+    inline std::string timeRangeToString(const TimeRange& range) {
+        switch (range) {
+            case TimeRange::ShortTerm: return "short_term";
+            case TimeRange::MediumTerm: return "medium_term";
+            case TimeRange::LongTerm: return "long_term";
+            default: return "medium_term";
+        }
+    }
+
+
 }
 
 #endif //SPOTIFYENUMS_HPP

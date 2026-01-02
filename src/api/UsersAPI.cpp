@@ -17,7 +17,7 @@ namespace Spotify {
     }
 
     PagedArtistObject UsersAPI::getUsersTopArtists(
-        const std::optional<std::string> &time_range,
+        const std::optional<TimeRange> &time_range,
         const std::optional<int> &limit,
         const std::optional<int> &offset) const
     {
@@ -26,15 +26,8 @@ namespace Spotify {
 
         std::vector<std::string> params;
 
-        if (time_range.has_value() && !time_range->empty()) {
-            if (*time_range == "long_term" ||
-                *time_range == "medium_term" ||
-                *time_range == "short_term")
-            {
-                params.push_back("time_range=" + detail::urlEncode(*time_range));
-            } else {
-                throw Spotify::LogicException("Time Range is not valid!");
-            }
+        if (time_range.has_value() ) {
+            params.push_back("time_range=" + detail::urlEncode(timeRangeToString(*time_range)));
         }
 
         if (limit && detail::inRange(*limit, 1, 50)) {
@@ -57,7 +50,7 @@ namespace Spotify {
     }
 
     PagedTrackObject UsersAPI::getUsersTopTracks(
-        const std::optional<std::string> &time_range,
+        const std::optional<TimeRange> &time_range,
         const std::optional<int> &limit,
         const std::optional<int> &offset) const
     {
@@ -66,15 +59,8 @@ namespace Spotify {
 
         std::vector<std::string> params;
 
-        if (time_range.has_value() && !time_range->empty()) {
-            if (*time_range == "long_term" ||
-                *time_range == "medium_term" ||
-                *time_range == "short_term")
-            {
-                params.push_back("time_range=" + detail::urlEncode(*time_range));
-            } else {
-                throw Spotify::LogicException("Time Range is not valid!");
-            }
+        if (time_range.has_value() ) {
+            params.push_back("time_range=" + detail::urlEncode(timeRangeToString(*time_range)));
         }
 
         if (limit && detail::inRange(*limit, 1, 50)) {

@@ -128,8 +128,8 @@ int main() {
 
         Client client(auth);
 
-        // Spotify time range: short_term | medium_term | long_term
-        std::string time_range = "short_term";
+        // Spotify time range: ShortTerm | MediumTerm | LongTerm
+        TimeRange time_range = TimeRange::ShortTerm;
 
         // Value to pass to Spotify for the amount of items to return
         int return_limit = 10;
