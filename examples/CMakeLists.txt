@@ -7,7 +7,7 @@ endfunction()
 # --- Macro to reduce boilerplate ---
 macro(add_spotify_example TARGET_NAME SRC_PATH CATEGORY SUBFOLDER)
     add_executable(${TARGET_NAME} ${SRC_PATH})
-    target_link_libraries(${TARGET_NAME} PRIVATE SpotifyAPILib)
+    target_link_libraries(${TARGET_NAME} PRIVATE SpotifyCPP)
     set_example_output_dir(${TARGET_NAME} ${CATEGORY} ${SUBFOLDER})
 endmacro()
 
