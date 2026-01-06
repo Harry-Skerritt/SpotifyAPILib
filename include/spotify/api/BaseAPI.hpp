@@ -9,13 +9,14 @@
 #include <optional>
 #include <string>
 #include <iostream>
+#include <ArduinoJson.h>
 
 #include "spotify/core/Errors.hpp"
 #include "../util/web/Http.hpp"
 #include "../util/common/Tools.hpp"
 #include "../util/parse/JsonMapping.hpp"
 
-#include "nlohmann/json.hpp"
+
 
 namespace Spotify {
     class Client;
@@ -51,18 +52,33 @@ namespace Spotify {
             // Error Handling
             ErrorHandler::verifyResponse(result);
 
-            try {
-                auto data = nlohmann::json::parse(result.body);
+            // Allocate the JSON document on the Heap for large Spotify responses
+            // Spotify's default limit is 20 items, so we need a decent-sized buffer.
+            auto doc = std::make_unique<JsonDocument>();
+            DeserializationError error = deserializeJson(*doc, result.body);
 
-                // Handle wrapper
-                if (!wrapperKey.empty() && data.contains(wrapperKey)) {
-                    return data.at(wrapperKey).get<T>();
+            if (error) {
+                throw Spotify::ParseException("JSON Parse Error: " + std::string(error.c_str()), result.body);
+            }
+
+            try {
+                T target;
+                JsonVariantConst data = doc->as<JsonVariantConst>();
+
+                // Handle Spotify's "Wrapper" pattern (e.g., search results or category lists)
+                if (!wrapperKey.empty()) {
+                    if (data.containsKey(wrapperKey)) {
+                        from_json(data[wrapperKey], target);
+                    } else {
+                        throw Spotify::ParseException("Wrapper key '" + wrapperKey + "' not found.", result.body);
+                    }
+                } else {
+                    from_json(data, target);
                 }
 
-                return data.get<T>();
+                return target;
             } catch (const std::exception& e) {
-                std::string error_msg = "Failed to parse Spotify response. JSON Error: " + std::string(e.what());
-                throw Spotify::ParseException(error_msg, result.body);
+                throw Spotify::ParseException("Mapping Error: " + std::string(e.what()), result.body);
             }
         }
 

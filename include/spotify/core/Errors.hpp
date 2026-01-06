@@ -10,8 +10,8 @@
 #include <string>
 #include <stdexcept>
 #include <optional>
+#include <ArduinoJson.h>
 
-#include "nlohmann/json.hpp"
 #include "spotify/models/AuthModels.hpp"
 #include "../util/web/Http.hpp"
 
@@ -119,47 +119,53 @@ namespace Spotify {
 
     class ErrorHandler {
     public:
-        /**
-         * @brief Validates an HTTP result.
-         * @param result The result from a curl request.
-         * @throws APIException, RateLimitException, or ParseException if the request failed.
-         */
         static void verifyResponse(const HTTP::Result& result) {
             int code = static_cast<int>(result.code);
 
-            // Success
+            // Success: 2xx range
             if (code >= 200 && code < 300) return;
 
-            try {
-                if (!result.body.empty()) {
-                    auto j = nlohmann::json::parse(result.body);
-
-                    if (j.is_object() && j.contains("error")) {
-                        auto error_obj = j["error"];
-
-                        std::string msg = error_obj.is_string()
-                                  ? error_obj.get<std::string>()
-                                  : error_obj.value("message", "Unknown API Error");
-
-                        Spotify::ErrorDetails details {
-                            code,
-                            msg,
-                            j.value("reason", "UNKNOWN_REASON")
-                        };
-
-                        if (result.code == HTTPStatus_Code::TOO_MANY_REQUESTS) {
-                            throw Spotify::RateLimitException(details, 30);
-                        }
-                        throw Spotify::APIException(details);
-                    }
-
-                    throw Spotify::ParseException("Unexpected JSON format: " + j.dump(), result.body);
-                }
-            } catch (const nlohmann::json::parse_error& e) {
-                throw Spotify::ParseException("Non-JSON response: " + result.body, result.body);
-            } catch (const nlohmann::json::type_error& e) {
-                throw Spotify::ParseException("JSON Type Mismatch: " + std::string(e.what()), result.body);
+            // If body is empty, throw a generic API exception
+            if (result.body.empty()) {
+                Spotify::ErrorDetails details { code, "Empty response body", "UNKNOWN_REASON" };
+                throw Spotify::APIException(details);
             }
+
+            // Use a small JsonDocument for error parsing (error messages are typically < 1KB)
+            JsonDocument doc;
+            DeserializationError error = deserializeJson(doc, result.body);
+
+            if (error) {
+                // If it's not valid JSON, it's likely a raw server error or HTML
+                throw Spotify::ParseException("Non-JSON response: " + result.body, result.body);
+            }
+
+            // Spotify error format is usually: {"error": {"status": 401, "message": "..."}}
+            if (doc.containsKey("error")) {
+                JsonVariantConst error_obj = doc["error"];
+
+                std::string msg;
+                if (error_obj.is<std::string>()) {
+                    msg = error_obj.as<std::string>();
+                } else {
+                    msg = error_obj["message"] | "Unknown API Error";
+                }
+
+                Spotify::ErrorDetails details {
+                    code,
+                    msg,
+                    doc["reason"] | "UNKNOWN_REASON"
+                };
+
+                if (result.code == HTTPStatus_Code::TOO_MANY_REQUESTS) {
+                    // Spotify usually provides a 'Retry-After' header, but for now we'll keep your 30s default
+                    throw Spotify::RateLimitException(details, 30);
+                }
+                throw Spotify::APIException(details);
+            }
+
+            // Fallback for unexpected JSON structures
+            throw Spotify::ParseException("Unexpected JSON format", result.body);
         }
     };
 
