@@ -2,6 +2,7 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=clion,c++,jetbrains,visualstudio,visualstudiocode,macos,c
 
 /test_env
+/.pio
 
 ### C ###
 # Prerequisites
