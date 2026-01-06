@@ -2,7 +2,10 @@
 // Created by Harry Skerritt on 20/12/2025.
 //
 
-#include "httplib.h"
+#include <Arduino.h>
+#include <WiFi.h>
+#include <WebServer.h>
+
 
 #include "spotify/auth/AuthServer.hpp"
 
@@ -24,49 +27,47 @@ namespace Spotify {
     }
 
     std::string AuthServer::waitForCode(
-        const std::string &auth_url,
-        int port,
-        const std::optional<std::filesystem::path> &html_file_path,
-        bool suppress)
+    const std::string &auth_url, // On desktop this was the host, on ESP32 we usually ignore or use for logging
+    int port,
+    const std::optional<std::string> &custom_html, // Now a string, not a path
+    bool suppress)
     {
-        httplib::Server server;
+        WebServer server(port);
         std::string captured_code;
 
+        // Default HTML if custom_html isn't provided
         std::string response_html = "<html><body style='font-family:sans-serif; text-align:center; padding-top:50px;'>"
-                                "<h1>Authenticated!</h1><p>You can close this tab and return to the app.</p>"
-                                "</body></html>";
+                                    "<h1>Authenticated!</h1><p>You can close this tab and return to the app.</p>"
+                                    "</body></html>";
 
-        if (html_file_path.has_value()) {
-            std::ifstream file(html_file_path.value());
-            if (!file.is_open()) {
-                std::string error_msg = "AuthServer: Failed to open custom HTML file at " + html_file_path.value().string();
-                throw Spotify::LogicException(error_msg);
-            }
-            std::stringstream buffer;
-            buffer << file.rdbuf();
-            response_html = buffer.str();
+        if (custom_html.has_value()) {
+            response_html = custom_html.value();
         }
 
-        // Setup server
-        server.Get("/callback", [&](const httplib::Request& req, httplib::Response& res) {
-            if (req.has_param("code")) {
-                captured_code = req.get_param_value("code");
-                res.set_content(response_html, "text/html");
-                server.stop();
+        // Setup server endpoint
+        server.on("/callback", [&]() {
+            if (server.hasArg("code")) {
+                captured_code = server.arg("code").c_str();
+                server.send(200, "text/html", response_html.c_str());
+
+                // We can't call server.stop() immediately inside the lambda
+                // because we need to finish sending the response.
+            } else {
+                server.send(400, "text/plain", "Error: No code received");
             }
         });
 
-        if (!suppress)
-            std::cout << "Waiting for response on " << auth_url << ":" << port << "..." << std::endl;
+        server.begin();
 
-        if (!server.listen(auth_url, port)) {
-            throw Spotify::NetworkException("AuthServer failed to bind to port " + std::to_string(port) +
-                                      ". Is the port already in use?");
+        // Loop until code is captured
+        // Note: In a production library, you should add a timeout here
+        // so the ESP32 doesn't hang forever if the user never logs in.
+        while (captured_code.empty()) {
+            server.handleClient();
+            delay(2); // Feed the watchdog timer
         }
 
-        if (captured_code.empty()) {
-            throw Spotify::Exception("AuthServer: Server stopped without capturing an authorization code.");
-        }
+        server.stop();
         return captured_code;
     }
 }

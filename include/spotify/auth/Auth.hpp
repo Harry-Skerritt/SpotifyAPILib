@@ -14,8 +14,6 @@
 #include <iomanip>
 #include <iostream>
 
-#include <curl/curl.h>
-
 #include "spotify/models/Scopes.hpp"
 #include "spotify/internal.hpp"
 

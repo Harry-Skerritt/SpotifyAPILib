@@ -1,6 +1,8 @@
 # Created by https://www.toptal.com/developers/gitignore/api/clion,c++,jetbrains,visualstudio,visualstudiocode,macos,c
 # Edit at https://www.toptal.com/developers/gitignore?templates=clion,c++,jetbrains,visualstudio,visualstudiocode,macos,c
 
+/test_env
+
 ### C ###
 # Prerequisites
 *.d

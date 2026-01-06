@@ -3,7 +3,11 @@
 //
 
 #include <iostream>
-#include <curl/curl.h>
+
+#include <Arduino.h>
+#include <WiFi.h>               // Basic WiFi functionality
+#include <HTTPClient.h>         // Simplifies the HTTP requests (curl replacement)
+#include <WiFiClientSecure.h>   // Handles SSL/TLS (Required for Spotify)
 
 #include "../../include/spotify/util/web/Http.hpp"
 #include "../../include/spotify/util/web/base64.hpp"
@@ -16,230 +20,131 @@ namespace Spotify {
         return size * nmemb;
     }
 
-    static curl_slist* prepareHeaders(const std::string& bearer, const HTTP::HeaderMap &extra, bool is_auth = false) {
-        curl_slist* headers = NULL;
-
-        std::string auth = "Authorization: Bearer " + bearer;
-        if (!is_auth) {
-            headers = curl_slist_append(headers, auth.c_str());
-            headers = curl_slist_append(headers, "User-Agent: spotify-cpp-client");
+    static void applyHeaders(HTTPClient &http, const std::string& bearer, const HTTP::HeaderMap &extra, bool is_auth) {
+        if (!is_auth && !bearer.empty()) {
+            http.addHeader("Authorization", ("Bearer " + bearer).c_str());
         }
 
-        for (const auto& [key, value] : extra) {
-            std::string header_str = key + ": " + value;
-            headers = curl_slist_append(headers, header_str.c_str());
+        // Spotify User-Agent
+        http.addHeader("User-Agent", "spotify-cpp-esp-client");
+
+        for (const auto& [key, calue] : extra) {
+            http.addHeader(key.c_str(), calue.c_str());
         }
-
-
-
-        return headers;
     }
-
 
     // For API
     HTTP::Result HTTP::get(const std::string &url, const std::string &bearer, const HeaderMap &extra_headers) {
-        CURL *curl;
+        WiFiClientSecure client;
+        client.setInsecure();
+
+        HTTPClient http;
         HTTP:Result result { Spotify::HTTPStatus_Code::NOT_IMPLEMENTED, "" };
 
-        curl = curl_easy_init();
+        if (http.begin(client, url.c_str())) {
+            applyHeaders(http, bearer, extra_headers, false);
 
-        if (!curl) {
-            throw Spotify::Exception("Failed to initialize CURL handle (System error).");
+            int httpCode = http.GET();
+            if (httpCode > 0) {
+                result.code = static_cast<Spotify::HTTPStatus_Code>(httpCode);
+                result.body = http.getString().c_str();
+            } else {
+                throw Spotify::NetworkException(http.errorToString(httpCode).c_str());
+            }
+            http.end();
         }
-
-        curl_slist *headers = prepareHeaders(bearer, extra_headers);
-
-        curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &result.body);
-
-        auto code = curl_easy_perform(curl);
-
-        if (code != CURLE_OK) {
-            std::string err = curl_easy_strerror(code);
-            curl_slist_free_all(headers);
-            curl_easy_cleanup(curl);
-            throw Spotify::NetworkException(err);
-        }
-
-        long status = 0;
-        curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &status);
-        result.code = static_cast<Spotify::HTTPStatus_Code>(status);
-
-        curl_slist_free_all(headers);
-        curl_easy_cleanup(curl);
         return result;
     }
 
     HTTP::Result HTTP::post(const std::string &url, const std::string &bearer, const std::string &body, const HeaderMap &extra_headers, bool is_auth) {
-        CURL *curl;
-        HTTP:Result result { Spotify::HTTPStatus_Code::NOT_IMPLEMENTED, "" };
+        WiFiClientSecure client;
+        client.setInsecure();
+        HTTPClient http;
+        HTTP::Result result { Spotify::HTTPStatus_Code::NOT_IMPLEMENTED, "" };
 
-        curl = curl_easy_init();
+        if (http.begin(client, url.c_str())) {
+            applyHeaders(http, bearer, extra_headers, is_auth);
 
-        if (!curl) {
-            throw Spotify::Exception("Failed to initialize CURL handle (System error).");
+            if (!body.empty() && extra_headers.find("Content-Type") == extra_headers.end()) {
+                http.addHeader("Content-Type", "application/json");
+            }
+
+            int httpCode = http.POST(body.c_str());
+            if (httpCode > 0) {
+                result.code = static_cast<Spotify::HTTPStatus_Code>(httpCode);
+                result.body = http.getString().c_str();
+            } else {
+                throw Spotify::NetworkException(http.errorToString(httpCode).c_str());
+            }
+            http.end();
         }
-
-        curl_slist *headers = prepareHeaders(bearer, extra_headers, is_auth);
-
-        if (!body.empty() && !extra_headers.contains("Content-Type")) {
-            headers = curl_slist_append(headers, "Content-Type: application/json");
-        }
-
-        curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-        curl_easy_setopt(curl, CURLOPT_POST, 1L);
-
-        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, body.c_str());
-        curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, (long)body.length());
-
-        curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
-
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &result.body);
-
-        auto code = curl_easy_perform(curl);
-
-        if (code != CURLE_OK) {
-            std::string err = curl_easy_strerror(code);
-            curl_slist_free_all(headers);
-            curl_easy_cleanup(curl);
-            throw Spotify::NetworkException(err);
-        }
-
-        long status = 0;
-        curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &status);
-        result.code = static_cast<Spotify::HTTPStatus_Code>(status);
-
-        curl_slist_free_all(headers);
-        curl_easy_cleanup(curl);
         return result;
     }
 
     HTTP::Result HTTP::put(const std::string &url, const std::string &bearer, const std::string &body, const HeaderMap &extra_headers) {
-        CURL *curl;
-        HTTP:Result result { Spotify::HTTPStatus_Code::NOT_IMPLEMENTED, "" };
+        WiFiClientSecure client;
+        client.setInsecure();
+        HTTPClient http;
+        HTTP::Result result { Spotify::HTTPStatus_Code::NOT_IMPLEMENTED, "" };
 
-        curl = curl_easy_init();
+        if (http.begin(client, url.c_str())) {
+            applyHeaders(http, bearer, extra_headers, false);
 
-        if (!curl) {
-            throw Spotify::Exception("Failed to initialize CURL handle (System error).");
+            // Use sendRequest for PUT
+            int httpCode = http.sendRequest("PUT", (uint8_t*)body.c_str(), body.length());
+
+            if (httpCode > 0) {
+                result.code = static_cast<Spotify::HTTPStatus_Code>(httpCode);
+                result.body = http.getString().c_str();
+            }
+            http.end();
         }
-
-        curl_slist *headers = prepareHeaders(bearer, extra_headers);
-
-        if (!body.empty() && !extra_headers.contains("Content-Type")) {
-            headers = curl_slist_append(headers, "Content-Type: application/json");
-        }
-
-        curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-
-        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "PUT");
-
-        if (!body.empty()) {
-            curl_easy_setopt(curl, CURLOPT_POSTFIELDS, body.c_str());
-            curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, (long)body.length());
-        }
-
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &result.body);
-
-        auto code = curl_easy_perform(curl);
-
-        if (code != CURLE_OK) {
-            std::string err = curl_easy_strerror(code);
-            curl_slist_free_all(headers);
-            curl_easy_cleanup(curl);
-            throw Spotify::NetworkException(err);
-        }
-
-        long status = 0;
-        curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &status);
-        result.code = static_cast<Spotify::HTTPStatus_Code>(status);
-
-        curl_slist_free_all(headers);
-        curl_easy_cleanup(curl);
         return result;
     }
 
     HTTP::Result HTTP::remove(const std::string &url, const std::string &bearer, const std::string &body, const HeaderMap &extra_headers) {
-        CURL *curl;
-        HTTP:Result result { Spotify::HTTPStatus_Code::NOT_IMPLEMENTED, "" };
+        WiFiClientSecure client;
+        client.setInsecure();
+        HTTPClient http;
+        HTTP::Result result { Spotify::HTTPStatus_Code::NOT_IMPLEMENTED, "" };
 
-        curl = curl_easy_init();
+        if (http.begin(client, url.c_str())) {
+            applyHeaders(http, bearer, extra_headers, false);
 
-        if (!curl) {
-            throw Spotify::Exception("Failed to initialize CURL handle (System error).");
+            int httpCode = http.sendRequest("DELETE", (uint8_t*)body.c_str(), body.length());
+
+            if (httpCode > 0) {
+                result.code = static_cast<Spotify::HTTPStatus_Code>(httpCode);
+                result.body = http.getString().c_str();
+            }
+            http.end();
         }
-
-        curl_slist *headers = prepareHeaders(bearer, extra_headers);
-
-        if (!body.empty() && !extra_headers.contains("Content-Type")) {
-            headers = curl_slist_append(headers, "Content-Type: application/json");
-        }
-
-        curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-
-        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "DELETE");
-
-        if (!body.empty()) {
-            curl_easy_setopt(curl, CURLOPT_POSTFIELDS, body.c_str());
-            curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, (long)body.length());
-        }
-
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &result.body);
-
-        auto code = curl_easy_perform(curl);
-
-        if (code != CURLE_OK) {
-            std::string err = curl_easy_strerror(code);
-            curl_slist_free_all(headers);
-            curl_easy_cleanup(curl);
-            throw Spotify::NetworkException(err);
-        }
-
-        long status = 0;
-        curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &status);
-        result.code = static_cast<Spotify::HTTPStatus_Code>(status);
-
-        curl_slist_free_all(headers);
-        curl_easy_cleanup(curl);
         return result;
     }
 
     // Other
     HTTP::Result HTTP::getImage(const std::string &url) {
-        CURL *curl;
-        HTTP:Result result { Spotify::HTTPStatus_Code::NOT_IMPLEMENTED, "" };
+        WiFiClientSecure client;
+        client.setInsecure();
 
-        curl = curl_easy_init();
+        HTTPClient http;
+        HTTP::Result result { Spotify::HTTPStatus_Code::NOT_IMPLEMENTED, "" };
 
-        if (!curl) {
-            throw Spotify::Exception("Failed to initialize CURL handle (System error).");
+        http.setTimeout(10000);
+
+        if (http.begin(client, url.c_str())) {
+            http.addHeader("User-Agent", "spotify-cpp-esp-client");
+
+            int httpCode = http.GET();
+
+            if (httpCode > 0) {
+                result.code = static_cast<Spotify::HTTPStatus_Code>(httpCode);
+                result.body = http.getString().c_str();
+            } else {
+                throw Spotify::NetworkException(http.errorToString(httpCode).c_str());
+            }
+            http.end();
         }
-
-        curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &result.body);
-
-        auto code = curl_easy_perform(curl);
-
-        if (code != CURLE_OK) {
-            std::string err = curl_easy_strerror(code);
-            curl_easy_cleanup(curl);
-            throw Spotify::NetworkException(err);
-        }
-
-        long status = 0;
-        curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &status);
-        result.code = static_cast<Spotify::HTTPStatus_Code>(status);
-
-        curl_easy_cleanup(curl);
         return result;
     }
 
