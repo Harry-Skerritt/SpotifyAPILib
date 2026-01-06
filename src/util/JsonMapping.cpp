@@ -7,26 +7,51 @@
 #include "spotify/util/parse/InternalHelpers.hpp"
 
 namespace Spotify {
+
+    // --- Helpers ---
     template<typename T>
-    void map_optional(const json &j, const std::string &key, std::optional<T> &field) {
-        if (j.contains(key) && !j[key].is_null()) {
-            field = j.at(key).get<T>();
+    void map_optional(JsonVariantConst j, const std::string &key, std::optional<T> &field) {
+        if (j.containsKey(key) && !j[key].isNull()) {
+            field = j[key].as<T>();
         } else {
             field = std::nullopt;
         }
     }
 
     template<typename T>
-    void map_object(const json& j, const std::string& key, T& field) {
-        if (j.contains(key) && !j[key].is_null()) {
-            field = j.at(key).get<T>();
+    void map_object(JsonVariantConst j, const std::string& key, T& field) {
+        if (j.containsKey(key) && !j[key].isNull()) {
+            from_json(j[key], field); // Use the overload pattern, not .as<T>()
         }
     }
 
-    void map_queue_item(const nlohmann::json& j, Spotify::QueueObject::PlayableItem& target) {
-        if (j.is_null()) return;
+    // Helper for vector mapping since ArduinoJson doesn't do this automatically
+    template<typename T>
+    void map_vector(JsonVariantConst j, const std::string& key, std::vector<T>& vec) {
+        vec.clear();
+        JsonArrayConst arr = j[key];
+        for (JsonVariantConst v : arr) {
+            T item;
+            from_json(v, item);
+            vec.push_back(item);
+        }
+    }
 
-        std::string type = j.value("type", "");
+    // Helper for simple primitive vectors (strings, ints)
+    template<typename T>
+    void map_simple_vector(JsonVariantConst j, const std::string& key, std::vector<T>& vec) {
+        vec.clear();
+        JsonArrayConst arr = j[key];
+        for (JsonVariantConst v : arr) {
+            vec.push_back(v.as<T>());
+        }
+    }
+
+
+    void map_queue_item(const JsonVariantConst j, Spotify::QueueObject::PlayableItem& target) {
+        if (j.isNull()) return;
+
+        std::string type = j["type"] | "";
 
         if (type == "track") {
             auto track = std::make_shared<Spotify::TrackObject>();
@@ -41,324 +66,321 @@ namespace Spotify {
     }
 
     // --- Base Objects ---
-    void from_json(const json &j, ImageObject &i) {
-        i.url = j.value("url", "");
+    void from_json(JsonVariantConst j, ImageObject &i) {
+        i.url = j["url"] | "";
         map_optional(j, "width", i.width);
         map_optional(j, "height", i.height);
     }
 
-    void from_json(const json &j, CursorObject &c) {
-        c.after = j.value("after", "");
-        c.before = j.value("before", "");
+    void from_json(JsonVariantConst j, CursorObject &c) {
+        c.after = j["after"] | "";
+        c.before = j["before"] | "";
     }
 
-
-    void from_json(const json &j, CopyrightObject &c) {
-        c.text = j.value("text", "");
-        c.type = j.value("type", "");
+    void from_json(JsonVariantConst j, CopyrightObject &c) {
+        c.text = j["text"] | "";
+        c.type = j["type"] | "";
     }
 
-    void from_json(const json &j, ExternalURL &e) {
-        e.spotify = j.value("spotify", "");
+    void from_json(JsonVariantConst j, ExternalURL &e) {
+        e.spotify = j["spotify"] | "";
     }
 
-    void from_json(const json &j, URIObject &u) {
-        u.uri = j.value("uri", "");
+    void from_json(JsonVariantConst j, URIObject &u) {
+        u.uri = j["uri"] | "";
     }
 
-
-    void from_json(const json &j, RestrictionsObject &r) {
-        r.reason = j.value("reason", "");
+    void from_json(JsonVariantConst j, RestrictionsObject &r) {
+        r.reason = j["reason"] | "";
     }
 
-    void from_json(const json &j, ExternalID &e) {
-        e.isrc = j.value("isrc", "");
-        e.ean = j.value("ean", "");
-        e.upc = j.value("upc", "");
+    void from_json(JsonVariantConst j, ExternalID &e) {
+        e.isrc = j["isrc"] | "";
+        e.ean = j["ean"] | "";
+        e.upc = j["upc"] | "";
     }
 
-    void from_json(const json &j, LinkedFromObject &l) {
+    void from_json(JsonVariantConst j, LinkedFromObject &l) {
         map_object(j, "external_urls", l.external_urls);
-        l.href = j.value("href", "");
-        l.id = j.value("id", "");
-        l.type = j.value("type", "");
-        l.uri = j.value("uri", "");
+        l.href = j["href"] | "";
+        l.id = j["id"] | "";
+        l.type = j["type"] | "";
+        l.uri = j["uri"] | "";
     }
 
-    void from_json(const json &j, FollowersObject &f) {
+    void from_json(JsonVariantConst j, FollowersObject &f) {
         map_optional(j, "href", f.href);
-        f.total = j.value("total", 0);
+        f.total = j["total"] | 0;
     }
 
-    void from_json(const json &j, ResumePointObject &r) {
-        r.fully_played = j.value("fully_played", false);
-        r.resume_position_ms = j.value("resume_position_ms", 0);
+    void from_json(JsonVariantConst j, ResumePointObject &r) {
+        r.fully_played = j["fully_played"] | false;
+        r.resume_position_ms = j["resume_position_ms"] | 0;
     }
 
-    void from_json(const json &j, NarratorObject &n) {
-        n.name = j.value("name", "");
+    void from_json(JsonVariantConst j, NarratorObject &n) {
+        n.name = j["name"] | "";
     }
 
-    void from_json(const json &j, AuthorObject &a) {
-        a.name = j.value("name", "");
+    void from_json(JsonVariantConst j, AuthorObject &a) {
+        a.name = j["name"] | "";
     }
 
-    void from_json(const json &j, CategoryObject &c) {
-        c.icons = j.value("icons", std::vector<ImageObject>{});
-        c.href = j.value("href", "");
-        c.id = j.value("id", "");
-        c.name = j.value("name", "");
+    void from_json(JsonVariantConst j, CategoryObject &c) {
+        map_vector(j, "icons", c.icons);
+        c.href = j["href"] | "";
+        c.id = j["id"] | "";
+        c.name = j["name"] | "";
     }
 
-    void from_json(const json &j, GenreObject &g) {
-        g.genres = j.value("genres", std::vector<std::string>{});
+    void from_json(JsonVariantConst j, GenreObject &g) {
+        map_simple_vector(j, "genres", g.genres);
     }
 
-    void from_json(const json &j, MarketObject &m) {
-        m.markets = j.value("markets", std::vector<std::string>{});
+    void from_json(JsonVariantConst j, MarketObject &m) {
+        map_simple_vector(j, "markets", m.markets);
     }
 
-    void from_json(const json&j, DeviceObject& d) {
+    void from_json(JsonVariantConst j, DeviceObject& d) {
         map_optional(j, "id", d.id);
-        d.is_active = j.value("is_active", false);
-        d.is_private_session = j.value("is_private_session", false);
-        d.is_restricted = j.value("is_restricted", false);
-        d.name = j.value("name", "Unknown");
-        d.type = j.value("type", "Unknown");
+        d.is_active = j["is_active"] | false;
+        d.is_private_session = j["is_private_session"] | false;
+        d.is_restricted = j["is_restricted"] | false;
+        d.name = j["name"] | "Unknown";
+        d.type = j["type"] | "Unknown";
         map_optional(j, "volume_percent", d.volume_percent);
-        d.supports_volume = j.value("supports_volume", false);
+        d.supports_volume = j["supports_volume"] | false;
     }
 
-    void from_json(const json &j, ContextObject &c) {
-        c.type = j.value("type", "");
-        c.href = j.value("href", "");
-        c.uri = j.value("uri", "");
+    void from_json(JsonVariantConst j, ContextObject &c) {
+        c.type = j["type"] | "";
+        c.href = j["href"] | "";
+        c.uri = j["uri"] | "";
         map_object(j, "external_urls", c.external_urls);
-
     }
 
-    void from_json(const json &j, ActionsObject &a) {
-        const auto& dis = j.value("disallows", json::object());
-
-        a.interrupting_playback = !dis.value("interrupting_playback", false);
-        a.pausing = !dis.value("pausing", false);
-        a.resuming = !dis.value("resuming", false);
-        a.seeking = !dis.value("seeking", false);
-        a.skipping_next = !dis.value("skipping_next", false);
-        a.skipping_prev = !dis.value("skipping_prev", false);
-        a.toggling_repeat_context = !dis.value("toggling_repeat_context", false);
-        a.toggling_shuffle = !dis.value("toggling_shuffle", false);
-        a.toggling_repeat_track = !dis.value("toggling_repeat_track", false);
-        a.transferring_playback = !dis.value("transferring_playback", false);
+    void from_json(JsonVariantConst j, ActionsObject &a) {
+        JsonObjectConst dis = j["disallows"];
+        a.interrupting_playback = !(dis["interrupting_playback"] | false);
+        a.pausing = !(dis["pausing"] | false);
+        a.resuming = !(dis["resuming"] | false);
+        a.seeking = !(dis["seeking"] | false);
+        a.skipping_next = !(dis["skipping_next"] | false);
+        a.skipping_prev = !(dis["skipping_prev"] | false);
+        a.toggling_repeat_context = !(dis["toggling_repeat_context"] | false);
+        a.toggling_shuffle = !(dis["toggling_shuffle"] | false);
+        a.toggling_repeat_track = !(dis["toggling_repeat_track"] | false);
+        a.transferring_playback = !(dis["transferring_playback"] | false);
     }
 
-    void from_json(const json &j, ExplicitContentObject &e) {
-        e.filter_enabled = j.value("filter_enabled", false);
-        e.filter_locked = j.value("filter_locked", false);
+    void from_json(JsonVariantConst j, ExplicitContentObject &e) {
+        e.filter_enabled = j["filter_enabled"] | false;
+        e.filter_locked = j["filter_locked"] | false;
     }
 
-    void from_json(const json &j, AddedByObject &a) {
+    void from_json(JsonVariantConst j, AddedByObject &a) {
         map_object(j, "external_urls", a.external_urls);
-        a.href = j.value("href", "");
-        a.id = j.value("id", "");
-        a.type = j.value("type", "");
-        a.uri = j.value("uri", "");
+        a.href = j["href"] | "";
+        a.id = j["id"] | "";
+        a.type = j["type"] | "";
+        a.uri = j["uri"] | "";
     }
 
-    void from_json(const json &j, OwnerObject &o) {
+    void from_json(JsonVariantConst j, OwnerObject &o) {
         map_object(j, "external_urls", o.external_urls);
-        o.href = j.value("href", "");
-        o.id = j.value("id", "");
-        o.type = j.value("type", "");
-        o.uri = j.value("uri", "");
+        o.href = j["href"] | "";
+        o.id = j["id"] | "";
+        o.type = j["type"] | "";
+        o.uri = j["uri"] | "";
         map_optional(j, "display_name", o.display_name);
     }
 
-    void from_json(const json &j, TrackCollectionObject &t) {
-        t.href = j.value("href", "");
-        t.total = j.value("total", 0);
+    void from_json(JsonVariantConst j, TrackCollectionObject &t) {
+        t.href = j["href"] | "";
+        t.total = j["total"] | 0;
     }
 
 
     // --- Simplified Objects ---
-    void from_json(const json &j, SimplifiedArtistObject &a) {
+    void from_json(JsonVariantConst j, SimplifiedArtistObject &a) {
         map_object(j, "external_urls", a.external_urls);
-        a.href = j.value("href", "");
-        a.id = j.value("id", "");
-        a.name = j.value("name", "");
-        a.type = j.value("type", "");
-        a.uri = j.value("uri", "");
+        a.href = j["href"] | "";
+        a.id = j["id"] | "";
+        a.name = j["name"] | "";
+        a.type = j["type"] | "";
+        a.uri = j["uri"] | "";
     }
 
-    void from_json(const json &j, SimplifiedTrackObject &t) {
-        t.artists = j.value("artists", std::vector<SimplifiedArtistObject>{});
-        t.available_markets = j.value("available_markets", std::vector<std::string>{});
-        t.disc_number = j.value("disc_number", 0);
-        t.duration_ms = j.value("duration_ms", 0);
-        t.is_explicit = j.value("explicit", false);
+    void from_json(JsonVariantConst j, SimplifiedTrackObject &t) {
+        map_vector(j, "artists", t.artists);
+        map_simple_vector(j, "available_markets", t.available_markets);
+        t.disc_number = j["disc_number"] | 0;
+        t.duration_ms = j["duration_ms"] | 0;
+        t.is_explicit = j["explicit"] | false;
         map_object(j, "external_urls", t.external_urls);
-        t.href = j.value("href", "");
-        t.id = j.value("id", "");
-        t.is_playable = j.value("is_playable", false);
+        t.href = j["href"] | "";
+        t.id = j["id"] | "";
+        t.is_playable = j["is_playable"] | false;
         map_object(j, "linked_from", t.linked_from);
         map_object(j, "restrictions", t.restrictions);
-        t.name = j.value("name", "");
+        t.name = j["name"] | "";
         map_optional(j, "preview_url", t.preview_url);
-        t.track_number = j.value("track_number", 0);
-        t.type = j.value("type", "");
-        t.uri = j.value("uri", "");
-        t.is_local = j.value("is_local", false);
+        t.track_number = j["track_number"] | 0;
+        t.type = j["type"] | "";
+        t.uri = j["uri"] | "";
+        t.is_local = j["is_local"] | false;
     }
 
-    void from_json(const json &j, SimplifiedChapterObject &c) {
+    void from_json(JsonVariantConst j, SimplifiedChapterObject &c) {
         map_optional(j, "audio_preview_url", c.audio_preview_url);
-        c.available_markets = j.value("available_markets", std::vector<std::string>{});
-        c.chapter_number = j.value("chapter_number", 0);
-        c.description = j.value("description", "");
-        c.html_description = j.value("html_description", "");
-        c.duration_ms = j.value("duration_ms", 0);
-        c.is_explicit = j.value("explicit", false);
+        map_simple_vector(j, "available_markets", c.available_markets);
+        c.chapter_number = j["chapter_number"] | 0;
+        c.description = j["description"] | "";
+        c.html_description = j["html_description"] | "";
+        c.duration_ms = j["duration_ms"] | 0;
+        c.is_explicit = j["explicit"] | false;
         map_object(j, "external_urls", c.external_urls);
-        c.href = j.value("href", "");
-        c.id = j.value("id", "");
-        c.images = j.value("images", std::vector<ImageObject>{});
-        c.is_playable = j.value("is_playable", false);
-        c.languages = j.value("languages", std::vector<std::string>{});
-        c.name = j.value("name", "");
-        c.release_date = j.value("release_date", "");
-        c.release_date_precision = j.value("release_date_precision", "");
+        c.href = j["href"] | "" ;
+        c.id = j["id"] | "" ;
+        map_vector(j, "images", c.images);
+        c.is_playable = j["is_playable"] | false ;
+        map_simple_vector(j, "languages", c.languages);
+        c.name = j["name"] | "" ;
+        c.release_date = j["release_date"] | "" ;
+        c.release_date_precision = j["release_date_precision"] | "" ;
         map_object(j, "resume_point", c.resume_point);
-        c.type = j.value("type", "");
-        c.uri = j.value("uri", "");
+        c.type = j["type"] | "";
+        c.uri = j["uri"] | "";
+        c.uri = j["uri"] | "";
         map_object(j, "restrictions", c.restrictions);
     }
 
-    void from_json(const json &j, SimplifiedAudiobookObject &a) {
-        a.authors = j.value("authors", std::vector<AuthorObject>{});
-        a.available_markets = j.value("available_markets", std::vector<std::string>{});
-        a.copyrights = j.value("copyrights", std::vector<CopyrightObject>{});
-        a.description = j.value("description", "");
-        a.html_description = j.value("html_description", "");
-        a.edition = j.value("edition", "");
-        a.is_explicit = j.value("explicit", false);
+    void from_json(JsonVariantConst j, SimplifiedAudiobookObject &a) {
+        map_vector(j, "authors", a.authors);
+        map_simple_vector(j, "available_markets", a.available_markets);
+        map_vector(j, "copyrights", a.copyrights);
+        a.description = j["description"] | "" ;
+        a.html_description = j["html_description"] | "" ;
+        a.edition = j["edition"] | "" ;
+        a.is_explicit = j["explicit"] | false ;
         map_object(j, "external_urls", a.external_urls);
-        a.href = j.value("href", "");
-        a.id = j.value("id", "");
-        a.images = j.value("images", std::vector<ImageObject>{});
-        a.languages = j.value("languages", std::vector<std::string>{});
-        a.media_type = j.value("media_type", "");
-        a.name = j.value("name", "");
-        a.narrators = j.value("narrators", std::vector<NarratorObject>{});
-        a.publisher = j.value("publisher", "");
-        a.type = j.value("type", "");
-        a.uri = j.value("uri", "");
-        a.total_chapters = j.value("total_chapters", 0);
+        a.href = j["href"] | "" ;
+        a.id = j["id"] | "" ;
+        map_vector(j, "images", a.images);
+        map_simple_vector(j, "languages", a.languages);
+        a.media_type = j["media_type"] | "" ;
+        a.name = j["name"] | "" ;
+        map_vector(j, "narrators", a.narrators);
+        a.publisher = j["publisher"] | "" ;
+        a.type = j["type"] | "" ;
+        a.uri = j["uri"] | "" ;
+        a.total_chapters = j["total_chapters"] | 0 ;
     }
 
-    void from_json(const json &j, SimplifiedEpisodeObject &e) {
+    void from_json(JsonVariantConst j, SimplifiedEpisodeObject &e) {
         map_optional(j, "audio_preview_url", e.audio_preview_url);
-        e.description = j.value("description", "");
-        e.html_description = j.value("html_description", "");
-        e.duration_ms = j.value("duration_ms", 0);
-        e.is_explicit = j.value("explicit", false);
+        e.description = j["description"] | "";
+        e.html_description = j["html_description"] | "";
+        e.duration_ms = j["duration_ms"] | 0;
+        e.is_explicit = j["explicit"] | false;
         map_object(j, "external_urls", e.external_urls);
-        e.href = j.value("href", "");
-        e.id = j.value("id", "");
-        e.images = j.value("images", std::vector<ImageObject>{});
-        e.is_externally_hosted = j.value("is_externally_hosted", false);
-        e.is_playable = j.value("is_playable", false);
-        e.language = j.value("language", "");
-        e.languages = j.value("languages", std::vector<std::string>{});
-        e.name = j.value("name", "");
-        e.release_date = j.value("release_date", "");
-        e.release_date_precision = j.value("release_date_precision", "");
+        e.href = j["href"] | "";
+        e.id = j["id"] | "";
+        map_vector(j, "images", e.images);
+        e.is_externally_hosted = j["is_externally_hosted"] | false;
+        e.is_playable = j["is_playable"] | false;
+        e.language = j["language"] | "";
+        map_simple_vector(j, "languages", e.languages);
+        e.name = j["name"] | "";
+        e.release_date = j["release_date"] | "";
+        e.release_date_precision = j["release_date_precision"] | "";
         map_object(j, "resume_point", e.resume_point);
-        e.type = j.value("type", "");
-        e.uri = j.value("uri", "");
+        e.type = j["type"] | "";
+        e.uri = j["uri"] | "";
         map_object(j, "restrictions", e.restrictions);
     }
 
-    void from_json(const json &j, SimplifiedShowObject &s) {
-        s.available_markets = j.value("available_markets", std::vector<std::string>{});
-        s.copyrights = j.value("copyrights", std::vector<CopyrightObject>{});
-        s.description = j.value("description", "");
-        s.html_description = j.value("html_description", "");
-        s.is_explicit = j.value("explicit", false);
+    void from_json(JsonVariantConst j, SimplifiedShowObject &s) {
+        map_simple_vector(j, "available_markets", s.available_markets);
+        map_vector(j, "copyrights", s.copyrights);
+        s.description = j["description"] | "";
+        s.html_description = j["html_description"] | "";
+        s.is_explicit = j["explicit"] | false;
         map_object(j, "external_urls", s.external_urls);
-        s.href = j.value("href", "");
-        s.id = j.value("id", "");
-        s.images = j.value("images", std::vector<ImageObject>{});
-        s.is_externally_hosted = j.value("is_externally_hosted", false);
-        s.languages = j.value("languages", std::vector<std::string>{});
-        s.media_type = j.value("media_type", "");
-        s.name = j.value("name", "");
-        s.publisher = j.value("publisher", "");
-        s.type = j.value("type", "");
-        s.uri = j.value("uri", "");
-        s.total_episodes = j.value("total_episodes", 0);
+        s.href = j["href"] | "";
+        s.id = j["id"] | "";
+        map_vector(j, "images", s.images);
+        s.is_externally_hosted = j["is_externally_hosted"] | false;
+        map_simple_vector(j, "languages", s.languages);
+        s.media_type = j["media_type"] | "";
+        s.name = j["name"] | "";
+        s.publisher = j["publisher"] | "";
+        s.type = j["type"] | "";
+        s.uri = j["uri"] | "";
+        s.total_episodes = j["total_episodes"] | 0;
     }
 
-    void from_json(const json &j, SimplifiedPlaylistObject &p) {
-        p.collaborative = j.value("collaborative", false);
-        p.description = j.value("description", "");
+    void from_json(JsonVariantConst j, SimplifiedPlaylistObject &p) {
+        p.collaborative = j["collaborative"] | false;
+        p.description = j["description"] | "";
         map_object(j, "external_urls", p.external_urls);
-        p.href = j.value("href", "");
-        p.id = j.value("id", "");
-        p.images = j.value("images", std::vector<ImageObject>{});
-        p.name = j.value("name", "");
+        p.href = j["href"] | "";
+        p.id = j["id"] | "";
+        map_vector(j, "images", p.images);
+        p.name = j["name"] | "";
         map_object(j, "owner", p.owner);
-        p.is_public = j.value("public", false);
-        p.snapshot_id = j.value("snapshot_id", "");
+        p.is_public = j["public"] | false;
+        p.snapshot_id = j["snapshot_id"] | "";
         map_object(j, "tracks", p.tracks);
-        p.type = j.value("type", "");
-        p.uri = j.value("uri", "");
+        p.type = j["type"] | "";
+        p.uri = j["uri"] | "";
     }
 
-    void from_json(const json &j, SimplifiedAlbumObject &a) {
-        a.album_type = j.value("album_type", "");
-        a.total_tracks = j.value("total_tracks", 0);
-        a.available_markets = j.value("available_markets", std::vector<std::string>{});
+    void from_json(JsonVariantConst j, SimplifiedAlbumObject &a) {
+        a.album_type = j["album_type"] | "";
+        a.total_tracks = j["total_tracks"] | 0;
+        map_simple_vector(j, "available_markets", a.available_markets);
         map_object(j, "external_urls", a.external_urls);
-        a.href = j.value("href", "");
-        a.id = j.value("id", "");
-        a.images = j.value("images", std::vector<ImageObject>{});
-        a.name = j.value("name", "");
-        a.release_date = j.value("release_date", "");
-        a.release_date_precision = j.value("release_date_precision", "");
+        a.href = j["href"] | "";
+        a.id = j["id"] | "";
+        map_vector(j, "images", a.images);
+        a.name = j["name"] | "";
+        a.release_date = j["release_date"] | "";
+        a.release_date_precision = j["release_date_precision"] | "";
         map_object(j, "restrictions", a.restrictions);
-        a.type = j.value("type", "");
-        a.uri = j.value("uri", "");
-        a.artists = j.value("artists", std::vector<SimplifiedArtistObject>{});
+        a.type = j["type"] | "";
+        a.uri = j["uri"] | "";
+        map_vector(j, "artists", a.artists);
     }
 
     // --- Linked Objects ---
-    void from_json(const nlohmann::json& j, PlaylistTrackObject& pt) {
-        pt.added_at = j.value("added_at", "");
-        if (j.contains("added_by")) pt.added_by = j.at("added_by").get<AddedByObject>();
-        pt.is_local = j.value("is_local", false);
+    void from_json(const JsonVariantConst j, PlaylistTrackObject& pt) {
+        pt.added_at = j["added_at"] | "";
+        map_object(j, "added_by", pt.added_by);
+        pt.is_local = j["is_local"] | false;
 
         // Handle Variant
-        if (j.contains("track") && !j["track"].is_null()) {
-            const auto& track_data = j.at("track");
-            std::string type = track_data.value("type", "");
+        if (j.containsKey("track") && !j["track"].isNull()) {
+            JsonVariantConst track_data = j["track"];
+            std::string type = track_data["type"] | "";
 
             if (type == "track") {
                 auto t = std::make_shared<TrackObject>();
-                track_data.get_to(*t); // Calls from_json(..., TrackObject&)
+                from_json(track_data, *t);
                 pt.track = t;
             } else if (type == "episode") {
                 auto e = std::make_shared<EpisodeObject>();
-                track_data.get_to(*e); // Calls from_json(..., EpisodeObject&)
+                from_json(track_data, *e);
                 pt.track = e;
             }
         }
     }
 
     template <typename T>
-    void from_json(const nlohmann::json& j, PagingObject<T>& p) {
-        p.href = j.value("href", "");
-        p.limit = j.value("limit", 0);
-        p.total = j.value("total", 0);
+    void from_json(const JsonVariantConst j, PagingObject<T>& p) {
+        p.href = j["href"] | "";
+        p.limit = j["limit"] | 0;
+        p.total = j["total"] | 0;
 
         map_optional(j, "offset", p.offset);
         map_optional(j, "next", p.next);
@@ -366,245 +388,250 @@ namespace Spotify {
 
         map_optional(j, "cursors", p.cursors);
 
-        p.items = j.value("items", std::vector<T>{});
+        p.items.clear();
+        JsonArrayConst itemsArr = j["items"];
+
+        for (JsonVariantConst itemJson : itemsArr) {
+            T item;
+            from_json(itemJson, item);
+            p.items.push_back(item);
+        }
     }
 
 
     // --- 'Main' Response Objects ---
-    void from_json(const json &j, AlbumObject &a) {
-        a.album_type = j.value("album_type", "");
-        a.total_tracks = j.value("total_tracks", 0);
-        a.available_markets = j.value("available_markets", std::vector<std::string>{});
+    void from_json(JsonVariantConst j, AlbumObject &a) {
+        a.album_type = j["album_type"] | "";
+        a.total_tracks = j["total_tracks"] | 0;
+        map_simple_vector(j, "available_markets", a.available_markets);
         map_object(j, "external_urls", a.external_urls);
-        a.href = j.value("href", "");
-        a.id = j.value("id", "");
-        a.images = j.value("images", std::vector<ImageObject>{});
-        a.name = j.value("name", "");
-        a.release_date = j.value("release_date", "");
-        a.release_date_precision = j.value("release_date_precision", "");
+        a.href = j["href"] | "";
+        a.id = j["id"] | "";
+        map_vector(j, "images", a.images);
+        a.name = j["name"] | "";
+        a.release_date = j["release_date"] | "";
+        a.release_date_precision = j["release_date_precision"] | "";
         map_object(j, "restrictions", a.restrictions);
-        a.type = j.value("type", "");
-        a.uri = j.value("uri", "");
-        a.artists = j.value("artists", std::vector<SimplifiedArtistObject>{});
+        a.type = j["type"] | "";
+        a.uri = j["uri"] | "";
+        map_vector(j, "artists", a.artists);
         map_object(j, "tracks", a.tracks);
-        a.copyrights = j.value("copyrights", std::vector<CopyrightObject>{});
+        map_vector(j, "copyrights", a.copyrights);
         map_object(j, "external_ids", a.external_ids);
-        a.genres = j.value("genres", std::vector<std::string>{});
-        a.label = j.value("label", "");
-        a.popularity = j.value("popularity", 0);
+        map_simple_vector(j, "genres", a.genres);
+        a.label = j["label"] | "";
+        a.popularity = j["popularity"] | 0;
     }
 
-    void from_json(const json &j, ArtistObject &a) {
+    void from_json(JsonVariantConst j, ArtistObject &a) {
         map_object(j, "external_urls", a.external_urls);
         map_object(j, "followers", a.followers);
-        a.genres = j.value("genres", std::vector<std::string>{});
-        a.href = j.value("href", "");
-        a.images = j.value("images", std::vector<ImageObject>{});
-        a.name = j.value("name", "");
-        a.popularity = j.value("popularity", 0);
-        a.type = j.value("type", "");
-        a.uri = j.value("uri", "");
+        map_simple_vector(j, "genres", a.genres);
+        a.href = j["href"] | "";
+        map_vector(j, "images", a.images);
+        a.name = j["name"] | "";
+        a.popularity = j["popularity"] | 0;
+        a.type = j["type"] | "";
+        a.uri = j["uri"] | "";
     }
 
-    void from_json(const json &j, TrackObject &a) {
+    void from_json(JsonVariantConst j, TrackObject &a) {
         map_object(j, "album", a.album);
-        a.artists = j.value("artists", std::vector<SimplifiedArtistObject>{});
-        a.available_markets = j.value("available_markets", std::vector<std::string>{});
-        a.disc_number = j.value("disc_number", 0);
-        a.duration_ms = j.value("duration_ms", 0);
-        a.is_explicit = j.value("explicit", false);
+        map_vector(j, "artists", a.artists);
+        map_simple_vector(j, "available_markets", a.available_markets);
+        a.disc_number = j["disc_number"] | 0;
+        a.duration_ms = j["duration_ms"] | 0;
+        a.is_explicit = j["explicit"] | false;
         map_object(j, "external_ids", a.external_ids);
         map_object(j, "external_urls", a.external_urls);
-        a.href = j.value("href", "");
-        a.id = j.value("id", "");
-        a.is_playable = j.value("is_playable", false);
+        a.href = j["href"] | "";
+        a.id = j["id"] | "";
+        a.is_playable = j["is_playable"] | false;
         map_object(j, "linked_from", a.linked_from);
         map_object(j, "restrictions", a.restrictions);
-        a.name = j.value("name", "");
-        a.popularity = j.value("popularity", 0);
+        a.name = j["name"] | "";
+        a.popularity = j["popularity"] | 0;
         map_optional(j, "preview_url", a.preview_url);
-        a.track_number = j.value("track_number", 0);
-        a.type = j.value("type", "");
-        a.uri = j.value("uri", "");
-        a.is_local = j.value("is_local", false);
+        a.track_number = j["track_number"] | 0;
+        a.type = j["type"] | "";
+        a.uri = j["uri"] | "";
+        a.is_local = j["is_local"] | false;
     }
 
-    void from_json(const json &j, AudiobookObject &a) {
-        a.authors = j.value("authors", std::vector<AuthorObject>{});
-        a.available_markets = j.value("available_markets", std::vector<std::string>{});
-        a.copyrights = j.value("copyrights", std::vector<CopyrightObject>{});
-        a.description = j.value("description", "");
-        a.html_description = j.value("html_description", "");
-        a.edition = j.value("edition", "");
-        a.is_explicit = j.value("explicit", false);
+    void from_json(JsonVariantConst j, AudiobookObject &a) {
+        map_vector(j, "authors", a.authors);
+        map_simple_vector(j, "available_markets", a.available_markets);
+        map_vector(j, "copyrights", a.copyrights);
+        a.description = j["description"] | "";
+        a.html_description = j["html_description"] | "";
+        a.edition = j["edition"] | "";
+        a.is_explicit = j["explicit"] | false;
         map_object(j, "external_urls", a.external_urls);
-        a.href = j.value("href", "");
-        a.id = j.value("id", "");
-        a.images = j.value("images", std::vector<ImageObject>{});
-        a.languages = j.value("languages", std::vector<std::string>{});
-        a.media_type = j.value("media_type", "");
-        a.name = j.value("name", "");
-        a.narrators = j.value("narrators", std::vector<NarratorObject>{});
-        a.publisher = j.value("publisher", "");
-        a.type = j.value("type", "");
-        a.uri = j.value("uri", "");
-        a.total_chapters = j.value("total_chapters", 0);
+        a.href = j["href"] | "";
+        a.id = j["id"] | "";
+        map_vector(j, "images", a.images);
+        map_simple_vector(j, "languages", a.languages);
+        a.media_type = j["media_type"] | "";
+        a.name = j["name"] | "";
+        map_vector(j, "narrators", a.narrators);
+        a.publisher = j["publisher"] | "";
+        a.type = j["type"] | "";
+        a.uri = j["uri"] | "";
+        a.total_chapters = j["total_chapters"] | 0;
         map_object(j, "chapters", a.chapters);
     }
 
-    void from_json(const json &j, ChapterObject &c) {
+    void from_json(JsonVariantConst j, ChapterObject &c) {
         map_optional(j, "audio_preview_url", c.audio_preview_url);
-        c.available_markets = j.value("available_markets", std::vector<std::string>{});
-        c.chapter_number = j.value("chapter_number", 0);
-        c.description = j.value("description", "");
-        c.html_description = j.value("html_description", std::string{});
-        c.duration_ms = j.value("duration_ms", 0);
-        c.is_explicit = j.value("explicit", false);
+        map_simple_vector(j, "available_markets" , c.available_markets);
+        c.chapter_number = j["chapter_number"] | 0;
+        c.description = j["description"] | "";
+        c.html_description = j["html_description"] | std::string{};
+        c.duration_ms = j["duration_ms"] | 0;
+        c.is_explicit = j["explicit"] | false;
         map_object(j, "external_urls", c.external_urls);
-        c.href = j.value("href", "");
-        c.id = j.value("id", "");
-        c.images = j.value("images", std::vector<ImageObject>{});
-        c.is_playable = j.value("is_playable", false);
-        c.languages = j.value("languages", std::vector<std::string>{});
-        c.name = j.value("name", "");
-        c.release_date = j.value("release_date", "");
-        c.release_date_precision = j.value("release_date_precision", "");
+        c.href = j["href"] | "";
+        c.id = j["id"] | "";
+        map_vector(j, "images", c.images);
+        c.is_playable = j["is_playable"] | false;
+        map_simple_vector(j, "languages", c.languages);
+        c.name = j["name"] | "";
+        c.release_date = j["release_date"] | "";
+        c.release_date_precision = j["release_date_precision"] | "";
         map_object(j, "resume_point", c.resume_point);
-        c.type = j.value("type", "");
-        c.uri = j.value("uri", "");
+        c.type = j["type"] | "";
+        c.uri = j["uri"] | "";
         map_object(j, "restrictions", c.restrictions);
         map_object(j, "audiobook", c.audiobook);
     }
 
-    void from_json(const json &j, EpisodeObject &e) {
+    void from_json(JsonVariantConst j, EpisodeObject &e) {
         map_optional(j, "audio_preview_url", e.audio_preview_url);
-        e.description = j.value("description", "");
-        e.html_description = j.value("html_description", std::string{});
-        e.duration_ms = j.value("duration_ms", 0);
-        e.is_explicit = j.value("explicit", false);
+        e.description = j["description"] | "";
+        e.html_description = j["html_description"] | std::string{};
+        e.duration_ms = j["duration_ms"] | 0;
+        e.is_explicit = j["explicit"] | false;
         map_object(j, "external_urls", e.external_urls);
-        e.href = j.value("href", "");
-        e.id = j.value("id", "");
-        e.images = j.value("images", std::vector<ImageObject>{});
-        e.is_externally_hosted = j.value("is_externally_hosted", false);
-        e.is_playable = j.value("is_playable", false);
-        e.language = j.value("language", "");
-        e.languages = j.value("languages", std::vector<std::string>{});
-        e.name = j.value("name", "");
-        e.release_date = j.value("release_date", "");
-        e.release_date_precision = j.value("release_date_precision", "");
+        e.href = j["href"] | "";
+        e.id = j["id"] | "";
+        map_vector(j, "images", e.images);
+        e.is_externally_hosted = j["is_externally_hosted"] | false;
+        e.is_playable = j["is_playable"] | false;
+        e.language = j["language"] | "";
+        map_simple_vector(j, "languages", e.languages);
+        e.name = j["name"] | "";
+        e.release_date = j["release_date"] | "";
+        e.release_date_precision = j["release_date_precision"] | "";
         map_object(j, "resume_point", e.resume_point);
-        e.type = j.value("type", "");
-        e.uri = j.value("uri", "");
+        e.type = j["type"] | "";
+        e.uri = j["uri"] | "";
         map_object(j, "restrictions", e.restrictions);
         map_object(j, "show", e.show);
     }
 
-    void from_json(const json &j, ShowObject &s) {
-        s.available_markets = j.value("available_markets", std::vector<std::string>{});
-        s.copyrights = j.value("copyrights", std::vector<CopyrightObject>{});
-        s.description = j.value("description", "");
-        s.html_description = j.value("html_description", std::string{});
-        s.is_explicit = j.value("explicit", false);
+    void from_json(JsonVariantConst j, ShowObject &s) {
+        map_simple_vector(j, "available_markets", s.available_markets);
+        map_vector(j, "copyrights", s.copyrights);
+        s.description = j["description"] | "";
+        s.html_description = j["html_description"] | std::string{};
+        s.is_explicit = j["explicit"] | false;
         map_object(j, "external_urls", s.external_urls);
-        s.href = j.value("href", "");
-        s.id = j.value("id", "");
-        s.images = j.value("images", std::vector<ImageObject>{});
-        s.is_externally_hosted = j.value("is_externally_hosted", false);
-        s.languages = j.value("languages", std::vector<std::string>{});
-        s.media_type = j.value("media_type", "");
-        s.name = j.value("name", "");
-        s.publisher = j.value("publisher", "");
-        s.type = j.value("type", "");
-        s.uri = j.value("uri", "");
-        s.total_episodes = j.value("total_episodes", 0);
+        s.href = j["href"] | "";
+        s.id = j["id"] | "";
+        map_vector(j, "images", s.images);
+        s.is_externally_hosted = j["is_externally_hosted"] | false;
+        map_simple_vector(j, "languages", s.languages);
+        s.media_type = j["media_type"] | "";
+        s.name = j["name"] | "";
+        s.publisher = j["publisher"] | "";
+        s.type = j["type"] | "";
+        s.uri = j["uri"] | "";
+        s.total_episodes = j["total_episodes"] | 0;
         map_object(j, "episodes", s.episodes);
     }
 
-    void from_json(const json &j, PlaybackObject &p) {
-        if (j.contains("device")) p.device = j.at("device").get<DeviceObject>();
+    void from_json(JsonVariantConst j, PlaybackObject &p) {
+        map_object(j, "device", p.device);
         p.repeat_state = detail::repeatStateFromString(
-            j.value("repeat_state", "")
+            j["repeat_state"] | ""
         );
-        p.shuffle_state = j.value("shuffle_state", false);
+        p.shuffle_state = j["shuffle_state"] | false;
         map_object(j, "context", p.context);
-        p.timestamp = j.value("timestamp", 0LL);
-        p.progress_ms = j.value("progress_ms", 0);
-        p.is_playing = j.value("is_playing", false);
-        p.currently_playing_type = j.value("currently_playing_type", "track");
+        p.timestamp = j["timestamp"] | 0LL;
+        p.progress_ms = j["progress_ms"] | 0;
+        p.is_playing = j["is_playing"] | false;
+        p.currently_playing_type = j["currently_playing_type"] | "track";
 
-        if (j.contains("item") && !j["item"].is_null()) {
+        if (j.containsKey("item") && !j["item"].isNull()) {
+            JsonVariantConst item_data = j["item"];
             if (p.currently_playing_type == "track") {
                 auto track = std::make_shared<TrackObject>();
-                j.at("item").get_to(*track);
+                from_json(item_data, *track);
                 p.item = track;
             } else if (p.currently_playing_type == "episode") {
                 auto episode = std::make_shared<EpisodeObject>();
-                j.at("item").get_to(*episode);
+                from_json(item_data, *episode);
                 p.item = episode;
             }
         }
-
         map_object(j, "actions", p.actions);
     }
 
-    void from_json(const json &j, PlaylistObject &p) {
-        p.collaborative = j.value("collaborative", false);
+    void from_json(JsonVariantConst j, PlaylistObject &p) {
+        p.collaborative = j["collaborative"] | false;
         map_optional(j, "description", p.description);
         map_object(j, "external_urls", p.external_urls);
-        p.href = j.value("href", "");
-        p.id = j.value("id", "");
-        p.images = j.value("images", std::vector<ImageObject>{});
-        p.name = j.value("name", "");
+        p.href = j["href"] | "";
+        p.id = j["id"] | "";
+        map_vector(j, "images", p.images);
+        p.name = j["name"] | "";
         map_object(j, "owner", p.owner);
-        p.is_public = j.value("public", false);
-        p.snapshot_id = j.value("snapshot_id", "");
+        p.is_public = j["public"] | false;
+        p.snapshot_id = j["snapshot_id"] | "";
         map_object(j, "tracks", p.tracks);
-        p.type = j.value("type", "");
-        p.uri = j.value("uri", "");
+        p.type = j["type"] | "";
+        p.uri = j["uri"] | "";
     }
 
-    void from_json(const json &j, UserObject &u) {
-        u.country = j.value("country", "");
-        u.display_name = j.value("display_name", "");
-        u.email = j.value("email", "");
+    void from_json(JsonVariantConst j, UserObject &u) {
+        u.country = j["country"] | "";
+        u.display_name = j["display_name"] | "";
+        u.email = j["email"] | "";
         map_object(j, "explicit_content", u.explicit_content);
         map_object(j, "external_urls", u.external_urls);
         map_object(j, "followers", u.followers);
-        u.href = j.value("href", "");
-        u.id = j.value("id", "");
-        u.images = j.value("images", std::vector<ImageObject>{});
-        u.product = j.value("product", "");
-        u.type = j.value("type", "");
-        u.uri = j.value("uri", "");
+        u.href = j["href"] | "";
+        u.id = j["id"] | "";
+        map_vector(j, "images", u.images);
+        u.product = j["product"] | "";
+        u.type = j["type"] | "";
+        u.uri = j["uri"] | "";
     }
 
-    void from_json(const json &j, PlayHistoryObject &p) {
+    void from_json(JsonVariantConst j, PlayHistoryObject &p) {
         map_object(j, "track", p.track);
-        p.played_at = j.value("played_at", "");
+        p.played_at = j["played_at"] | "";
         map_object(j, "context", p.context);
     }
 
-    void from_json(const json &j, QueueObject &q) {
-        if (j.contains("currently_playing") && !j["currently_playing"].is_null()) {
-            map_queue_item(j.at("currently_playing"), q.currently_playing);
+    void from_json(JsonVariantConst j, QueueObject &q) {
+        if (j.containsKey("currently_playing") && !j["currently_playing"].isNull()) {
+            map_queue_item(j["currently_playing"], q.currently_playing);
         }
 
-
         q.queue.clear();
-        if (j.contains("queue") && j.at("queue").is_array()) {
-            for (const auto& item_json : j.at("queue")) {
-                Spotify::QueueObject::PlayableItem item;
-                map_queue_item(item_json, item);
-                q.queue.push_back(item);
-            }
+        JsonArrayConst queueArr = j["queue"];
+        for (JsonVariantConst item_json : queueArr) {
+            Spotify::QueueObject::PlayableItem item;
+            map_queue_item(item_json, item);
+            q.queue.push_back(item);
         }
     }
 
 
 
     // --- Search ---
-    void from_json(const json &j, SearchObject &s) {
+    void from_json(JsonVariantConst j, SearchObject &s) {
         map_optional(j, "tracks", s.tracks);
         map_optional(j, "artists",s.artists);
         map_optional(j, "albums", s.albums);
@@ -615,75 +642,75 @@ namespace Spotify {
     }
 
     // --- List Objects ---
-    void from_json(const json &j, DeviceListObject &dl) {
-        dl.devices = j.value("devices", std::vector<DeviceObject>{});
+    void from_json(JsonVariantConst j, DeviceListObject &dl) {
+        map_vector(j, "devices", dl.devices);
     }
 
-    void from_json(const json &j, AlbumListObject &al) {
-        al.albums = j.value("albums", std::vector<AlbumObject>{});
+    void from_json(JsonVariantConst j, AlbumListObject &al) {
+        map_vector(j, "albums", al.albums);
     }
 
-    void from_json(const json &j, ArtistListObject &al) {
-        al.artists = j.value("artists", std::vector<ArtistObject>{});
+    void from_json(JsonVariantConst j, ArtistListObject &al) {
+        map_vector(j, "artists", al.artists);
     }
 
-    void from_json(const json &j, AudiobookListObject &ab) {
-        ab.audiobooks = j.value("audiobooks", std::vector<AudiobookObject>{});
+    void from_json(JsonVariantConst j, AudiobookListObject &ab) {
+        map_vector(j, "audiobooks", ab.audiobooks);
     }
 
-    void from_json(const json &j, ChapterListObject &cl) {
-        cl.chapters = j.value("chapters", std::vector<ChapterObject>{});
+    void from_json(JsonVariantConst j, ChapterListObject &cl) {
+        map_vector(j, "chapters", cl.chapters);
     }
 
-    void from_json(const json &j, EpisodeListObject &el) {
-        el.episodes = j.value("episodes", std::vector<EpisodeObject>{});
+    void from_json(JsonVariantConst j, EpisodeListObject &el) {
+        map_vector(j, "episodes", el.episodes);
     }
 
-    void from_json(const json &j, ShowListObject &sl) {
-        sl.shows = j.value("shows", std::vector<ShowObject>{});
+    void from_json(JsonVariantConst j, ShowListObject &sl) {
+        map_vector(j, "shows", sl.shows);
     }
 
-    void from_json(const json &j, TrackListObject &tl) {
-        tl.tracks = j.value("tracks", std::vector<TrackObject>{});
+    void from_json(JsonVariantConst j, TrackListObject &tl) {
+        map_vector(j, "tracks", tl.tracks);
     }
 
 
 
-    void from_json(const json &j, SavedAlbumObject &s) {
-        s.added_at = j.value("added_at", "");
+    void from_json(JsonVariantConst j, SavedAlbumObject &s) {
+        s.added_at = j["added_at"] | "";
         map_object(j, "album", s.album);
     }
 
-    void from_json(const json &j, SavedEpisodeObject &e) {
-        e.added_at = j.value("added_at", "");
+    void from_json(JsonVariantConst j, SavedEpisodeObject &e) {
+        e.added_at = j["added_at"] | "";
         map_object(j, "episode", e.episode);
     }
 
-    void from_json(const json &j, SavedShowObject &s) {
-        s.added_at = j.value("added_at", "");
+    void from_json(JsonVariantConst j, SavedShowObject &s) {
+        s.added_at = j["added_at"] | "";
         map_object(j, "show", s.show);
     }
 
-    void from_json(const json &j, SavedTrackObject &t) {
-        t.added_at = j.value("added_at", "");
+    void from_json(JsonVariantConst j, SavedTrackObject &t) {
+        t.added_at = j["added_at"] | "";
         map_object(j, "track", t.track);
     }
 
     // --- Explicit Paging Implementation ---
 
-    template void from_json<TrackObject>(const json& j, PagingObject<TrackObject>& p);
-    template void from_json<SimplifiedChapterObject>(const json& j, PagingObject<SimplifiedChapterObject>& p);
-    template void from_json<ArtistObject>(const json& j, PagingObject<ArtistObject>& p);
-    template void from_json<SimplifiedAlbumObject>(const json& j, PagingObject<SimplifiedAlbumObject>& p);
-    template void from_json<SimplifiedTrackObject>(const json& j, PagingObject<SimplifiedTrackObject>& p);
-    template void from_json<PlaylistTrackObject>(const json& j, PagingObject<PlaylistTrackObject>& p);
-    template void from_json<SimplifiedPlaylistObject>(const json& j, PagingObject<SimplifiedPlaylistObject>& p);
-    template void from_json<SavedAlbumObject>(const json& j, PagingObject<SavedAlbumObject>& p);
-    template void from_json<SavedEpisodeObject>(const json& j, PagingObject<SavedEpisodeObject>& p);
-    template void from_json<SavedShowObject>(const json& j, PagingObject<SavedShowObject>& p);
-    template void from_json<SavedTrackObject>(const json& j, PagingObject<SavedTrackObject>& p);
-    template void from_json<PlayHistoryObject>(const json& j, PagingObject<PlayHistoryObject>& p);
-    template void from_json<CategoryObject>(const json& j, PagingObject<CategoryObject>& p);
+    template void from_json<TrackObject>(JsonVariantConst j, PagingObject<TrackObject>& p);
+    template void from_json<SimplifiedChapterObject>(JsonVariantConst j, PagingObject<SimplifiedChapterObject>& p);
+    template void from_json<ArtistObject>(JsonVariantConst j, PagingObject<ArtistObject>& p);
+    template void from_json<SimplifiedAlbumObject>(JsonVariantConst j, PagingObject<SimplifiedAlbumObject>& p);
+    template void from_json<SimplifiedTrackObject>(JsonVariantConst j, PagingObject<SimplifiedTrackObject>& p);
+    template void from_json<PlaylistTrackObject>(JsonVariantConst j, PagingObject<PlaylistTrackObject>& p);
+    template void from_json<SimplifiedPlaylistObject>(JsonVariantConst j, PagingObject<SimplifiedPlaylistObject>& p);
+    template void from_json<SavedAlbumObject>(JsonVariantConst j, PagingObject<SavedAlbumObject>& p);
+    template void from_json<SavedEpisodeObject>(JsonVariantConst j, PagingObject<SavedEpisodeObject>& p);
+    template void from_json<SavedShowObject>(JsonVariantConst j, PagingObject<SavedShowObject>& p);
+    template void from_json<SavedTrackObject>(JsonVariantConst j, PagingObject<SavedTrackObject>& p);
+    template void from_json<PlayHistoryObject>(JsonVariantConst j, PagingObject<PlayHistoryObject>& p);
+    template void from_json<CategoryObject>(JsonVariantConst j, PagingObject<CategoryObject>& p);
 
 }
 

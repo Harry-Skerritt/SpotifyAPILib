@@ -7,10 +7,10 @@
 
 #include <string>
 
-#define SPOTIFY_LIB_NAME "SpotifyAPILib"
+#define SPOTIFY_LIB_NAME "SpotifyCPP-ESP"
 #define SPOTIFY_VERSION_MAJOR 0
 #define SPOTIFY_VERSION_MINOR 9
-#define SPOTIFY_VERSION_PATCH 1
+#define SPOTIFY_VERSION_PATCH 2
 
 #define SPOTIFY_STR_HELPER(x) #x
 #define SPOTIFY_STR(x) SPOTIFY_STR_HELPER(x)
