@@ -141,7 +141,7 @@ namespace Spotify {
             }
 
             // Spotify error format is usually: {"error": {"status": 401, "message": "..."}}
-            if (doc.containsKey("error")) {
+            if (doc["error"]) {
                 JsonVariantConst error_obj = doc["error"];
 
                 std::string msg;

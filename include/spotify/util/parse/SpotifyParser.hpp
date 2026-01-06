@@ -21,8 +21,8 @@ namespace Spotify::Parse {
     /// @return True if the ID is correctly formatted
     inline bool isValidID(const std::string &id) {
         if (id.length() != 22) return false;
-        return std::ranges::all_of(id, [](unsigned char c) {
-            return std::isalnum(c);
+        return std::all_of(id.begin(), id.end(), [](unsigned char c) {
+            return std::isalnum(c) || c == '_' || c == '-';
         });
     }
 
@@ -126,21 +126,19 @@ namespace Spotify::Parse {
     /// @throws InvalidResourceException if the resource type is unsupported or invalid
     /// @throws InvalidIDException if the extracted ID is not a valid Spotify ID
     inline std::string extractURI(const std::string& input) {
-        if (input.starts_with("spotify:") && input.find('?') == std::string::npos) {
-            // Already a URI
-            extractID(input);
+        if (input.compare(0, 8, "spotify:") == 0 && input.find('?') == std::string::npos) {
             return input;
         }
 
         std::string type;
-        if (input.contains("/album/")) type = "album";
-        else if (input.contains("/track/")) type = "track";
-        else if (input.contains("/artist/")) type = "artist";
-        else if (input.contains("/playlist/")) type = "playlist";
-        else if (input.contains("/show/")) type = "show";
-        else if (input.contains("/episode/")) type = "episode";
-        else if (input.contains("/user/")) type = "user";
-        else throw InvalidResourceException("Could not find a valid Spotify type in: " + input);
+        // Replace input.contains("/album/") with .find()
+        if (input.find("/album/") != std::string::npos) type = "album";
+        else if (input.find("/track/") != std::string::npos) type = "track";
+        else if (input.find("/artist/") != std::string::npos) type = "artist";
+        else if (input.find("/playlist/") != std::string::npos) type = "playlist";
+        else if (input.find("/show/") != std::string::npos) type = "show";
+        else if (input.find("/episode/") != std::string::npos) type = "episode";
+        else if (input.find("/user/") != std::string::npos) type = "user";
 
         return "spotify:" + type + ":" + extractID(input);
     }
@@ -192,6 +190,7 @@ namespace Spotify::Parse {
 
     /// Attempts to extract and validate Spotify URIs from a list of input strings
     ///
+    /// This function is a non-throwing wrapper around @c extractURIs
     /// This function is a non-throwing wrapper around @c extractURIs
     /// If any input fails validation, the function returns @c std::nullopt
     /// and optionally provides an error message describing the failure

@@ -14,6 +14,15 @@
 namespace Spotify {
 
     template <typename T>
+    void from_json(JsonVariantConst j, std::vector<T>& vec);
+
+    template <>
+    void from_json(JsonVariantConst j, std::vector<bool>& vec);
+
+    template <>
+    void from_json(JsonVariantConst j, std::vector<std::string>& vec);
+
+    template <typename T>
     void map_optional(JsonVariantConst j, const std::string& key, std::optional<T>& field);
 
     template <typename T>
@@ -21,6 +30,7 @@ namespace Spotify {
 
     template <typename T>
     void from_json(JsonVariantConst j, PagingObject<T>& p);
+
 
     // --- Base Objects ---
     void from_json(JsonVariantConst j, ImageObject& i);

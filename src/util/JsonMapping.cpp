@@ -8,23 +8,6 @@
 
 namespace Spotify {
 
-    // --- Helpers ---
-    template<typename T>
-    void map_optional(JsonVariantConst j, const std::string &key, std::optional<T> &field) {
-        if (j.containsKey(key) && !j[key].isNull()) {
-            field = j[key].as<T>();
-        } else {
-            field = std::nullopt;
-        }
-    }
-
-    template<typename T>
-    void map_object(JsonVariantConst j, const std::string& key, T& field) {
-        if (j.containsKey(key) && !j[key].isNull()) {
-            from_json(j[key], field); // Use the overload pattern, not .as<T>()
-        }
-    }
-
     // Helper for vector mapping since ArduinoJson doesn't do this automatically
     template<typename T>
     void map_vector(JsonVariantConst j, const std::string& key, std::vector<T>& vec) {
@@ -44,6 +27,62 @@ namespace Spotify {
         JsonArrayConst arr = j[key];
         for (JsonVariantConst v : arr) {
             vec.push_back(v.as<T>());
+        }
+    }
+
+    template <typename T>
+    void from_json(JsonVariantConst j, std::vector<T>& vec) {
+        vec.clear();
+        JsonArrayConst arr = j.as<JsonArrayConst>();
+        for (JsonVariantConst v : arr) {
+            T item;
+            from_json(v, item);
+            vec.push_back(item);
+        }
+    }
+
+    void from_json(JsonVariantConst j, std::vector<bool>& vec) {
+        vec.clear();
+        JsonArrayConst arr = j.as<JsonArrayConst>();
+        for (JsonVariantConst v : arr) {
+            vec.push_back(v.as<bool>());
+        }
+    }
+
+    void from_json(JsonVariantConst j, std::vector<std::string>& vec) {
+        vec.clear();
+        JsonArrayConst arr = j.as<JsonArrayConst>();
+        for (JsonVariantConst v : arr) {
+            vec.push_back(v.as<std::string>());
+        }
+    }
+
+    // --- Helpers ---
+    template<typename T> struct is_vector : std::false_type {};
+    template<typename T> struct is_vector<std::vector<T>> : std::true_type {};
+
+    template<typename T>
+    void map_optional(JsonVariantConst j, const std::string &key, std::optional<T> &field) {
+        if (j[key] && !j[key].isNull()) {
+            // If it's a simple type ArduinoJson knows, use .as<T>()
+            if constexpr (std::is_fundamental_v<T> || std::is_same_v<T, std::string>) {
+                field = j[key].as<T>();
+            }
+            // Otherwise, it's one of our custom Spotify structs
+            else {
+                T obj;
+                from_json(j[key], obj);
+                field = obj;
+            }
+        } else {
+            field = std::nullopt;
+        }
+    }
+
+    template<typename T>
+    void map_object(JsonVariantConst j, const std::string& key, T& field) {
+        if (j[key] && !j[key].isNull()) {
+            from_json(j[key], field);
         }
     }
 
@@ -360,7 +399,7 @@ namespace Spotify {
         pt.is_local = j["is_local"] | false;
 
         // Handle Variant
-        if (j.containsKey("track") && !j["track"].isNull()) {
+        if (j["track"] && !j["track"].isNull()) {
             JsonVariantConst track_data = j["track"];
             std::string type = track_data["type"] | "";
 
@@ -562,7 +601,7 @@ namespace Spotify {
         p.is_playing = j["is_playing"] | false;
         p.currently_playing_type = j["currently_playing_type"] | "track";
 
-        if (j.containsKey("item") && !j["item"].isNull()) {
+        if (j["item"] && !j["item"].isNull()) {
             JsonVariantConst item_data = j["item"];
             if (p.currently_playing_type == "track") {
                 auto track = std::make_shared<TrackObject>();
@@ -615,7 +654,7 @@ namespace Spotify {
     }
 
     void from_json(JsonVariantConst j, QueueObject &q) {
-        if (j.containsKey("currently_playing") && !j["currently_playing"].isNull()) {
+        if (j["currently_playing"] && !j["currently_playing"].isNull()) {
             map_queue_item(j["currently_playing"], q.currently_playing);
         }
 
