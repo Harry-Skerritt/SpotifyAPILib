@@ -24,15 +24,15 @@ namespace Spotify::Extensions {
 
     // --- Average Colour ---
     Colour VisualAPI::getAverageColour(const std::string &imageUrl) {
-        std::string encodedImageUrl = detail::urlEncode(imageUrl);
-        std::string requestUrl = "https://avaerage-color-api.vercel.app/api/analyse?url=" + encodedImageUrl;
+        const std::string encodedImageUrl = detail::urlEncode(imageUrl);
+        const std::string requestUrl = "https://avaerage-color-api.vercel.app/api/analyse?url=" + encodedImageUrl;
 
         auto response = HTTP::get(requestUrl, "");
         ErrorHandler::verifyResponse(response);
 
         try {
             auto j = nlohmann::json::parse(response.body);
-            std::string avgHex = j.at("average").get<std::string>();
+            const std::string avgHex = j.at("average").get<std::string>();
             return parseHex(avgHex);
         }catch (const std::exception& e) {
             throw Spotify::Exception("VisualAPI: Failed to parse average colour: " + std::string(e.what()));
@@ -46,8 +46,8 @@ namespace Spotify::Extensions {
 
     // --- Colour Palette ---
     ImagePalette VisualAPI::getImagePalette(const std::string &imageUrl) {
-        std::string encodedImageUrl = detail::urlEncode(imageUrl);
-        std::string requestUrl = "https://avaerage-color-api.vercel.app/api/analyse?url=" + encodedImageUrl;
+        const std::string encodedImageUrl = detail::urlEncode(imageUrl);
+        const std::string requestUrl = "https://avaerage-color-api.vercel.app/api/analyse?url=" + encodedImageUrl;
 
         auto response = HTTP::get(requestUrl, "");
         ErrorHandler::verifyResponse(response);

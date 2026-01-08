@@ -25,9 +25,9 @@ namespace Spotify::Extensions {
     inline std::string Colour::toHex() const {
         std::stringstream ss;
         ss << "#" << std::hex << std::setfill('0')
-            << std::setw(2) << (int)r
-            << std::setw(2) << (int)g
-            << std::setw(2) << (int)b;
+            << std::setw(2) << static_cast<int>(r)
+            << std::setw(2) << static_cast<int>(g)
+            << std::setw(2) << static_cast<int>(b);
         return ss.str();
     }
 

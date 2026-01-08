@@ -34,8 +34,7 @@ add_library(SpotifyCPP STATIC
         src/api/ShowsAPI.cpp
         src/api/TrackAPI.cpp
         src/api/UsersAPI.cpp
-
-
+        src/extensions/VisualAPI.cpp
 )
 
 # Public includes: SpotifyCPP
